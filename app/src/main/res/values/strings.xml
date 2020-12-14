@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">BaseProject</string>
+    <string name="http_error">网络异常！</string>
+    <string name="token_error">未登录或token过期,请重新登录!</string>
+    <string name="unKnown_error">未知错误！</string>
+    <string name="socket_time_out_error">网络连接超时，请检查输入的服务器URL是否正确!</string>
+    <string name="not_result_error">未获取到数据！</string>
+    <string name="empty_page_text">没有数据</string>
+</resources>
