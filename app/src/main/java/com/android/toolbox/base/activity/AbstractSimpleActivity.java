@@ -2,7 +2,9 @@ package com.android.toolbox.base.activity;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+
 import com.android.toolbox.component.ActivityCollector;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import me.yokeyword.fragmentation.SupportActivity;
