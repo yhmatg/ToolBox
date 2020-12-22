@@ -9,4 +9,10 @@
     <string name="box_title">RFID智能工具管理柜</string>
     <string name="original_title">标题</string>
     <string name="confirm">确定</string>
+    <string name="assets_title">请输入工具名称，工具编号</string>
+    <string name="screen_str">筛选</string>
+    <string name="assets_name">资产名称</string>
+    <string name="assets_id">资产编号</string>
+    <string name="tool_type">工具分类</string>
+    <string name="mode_type">规格型号</string>
 </resources>

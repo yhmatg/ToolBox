@@ -7,6 +7,7 @@ import android.support.multidex.MultiDex;
 import com.android.toolbox.BuildConfig;
 import com.android.toolbox.R;
 import com.android.toolbox.base.activity.BaseActivity;
+import com.android.toolbox.utils.Utils;
 import com.android.toolbox.utils.logger.MyCrashListener;
 import com.android.toolbox.utils.logger.TxtFormatStrategy;
 import com.bumptech.glide.Glide;
@@ -57,6 +58,7 @@ public class ToolBoxApplication extends Application {
         refWatcher = LeakCanary.install(this);
         instance = this;
         initLogger();
+        Utils.init(this);
         //崩溃日志保存到本地
         ///storage/emulated/0/Android/data/com.common.esimrfid/cache/crash_log
         XLog.init(this);

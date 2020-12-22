@@ -63,7 +63,7 @@ public class RetrofitClient {
     private RetrofitClient() {
         url = PreferenceHelperImpl.getInstance().getHostUrl();
         if(StringUtils.isEmpty(url)){
-            url ="http://assets.esimtekiot.com";
+            url ="http://172.16.61.223:30000";
         }
         retrofit = createRetrofit(provideClient(), url);
 
@@ -149,9 +149,9 @@ public class RetrofitClient {
      * execute your customer API
      * For example:
      * MyApiService service =
-     * RetrofitClient.getInstance(MainActivity.this).create(MyApiService.class);
+     * RetrofitClient.getInstance(HomeActivity.this).create(MyApiService.class);
      * <p>
-     * RetrofitClient.getInstance(MainActivity.this)
+     * RetrofitClient.getInstance(HomeActivity.this)
      * .execute(service.lgon("name", "password"), subscriber)
      * * @param subscriber
      */

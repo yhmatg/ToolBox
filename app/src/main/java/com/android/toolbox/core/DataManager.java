@@ -1,11 +1,17 @@
 package com.android.toolbox.core;
 import com.android.toolbox.core.bean.BaseResponse;
+import com.android.toolbox.core.bean.assist.AssetsListPage;
+import com.android.toolbox.core.bean.assist.AssetsType;
+import com.android.toolbox.core.bean.terminal.TerminalInfo;
+import com.android.toolbox.core.bean.terminal.TerminalLoginPara;
 import com.android.toolbox.core.bean.user.UserInfo;
 import com.android.toolbox.core.bean.user.UserLoginResponse;
 import com.android.toolbox.core.http.HttpHelper;
 import com.android.toolbox.core.http.HttpHelperImpl;
 import com.android.toolbox.core.prefs.PreferenceHelper;
 import com.android.toolbox.core.prefs.PreferenceHelperImpl;
+
+import java.util.List;
 
 import io.reactivex.Observable;
 
@@ -65,6 +71,20 @@ public class DataManager implements HttpHelper, PreferenceHelper {
         return mHttpHelper.login(userInfo);
     }
 
+    @Override
+    public Observable<BaseResponse<TerminalInfo>> terminalLogin(TerminalLoginPara terminalLoginPara) {
+        return mHttpHelper.terminalLogin(terminalLoginPara);
+    }
+
+    @Override
+    public Observable<BaseResponse<AssetsListPage>> fetchPageAssetsList(Integer size, Integer page, String patternName, String userRealName, String conditions) {
+        return mHttpHelper.fetchPageAssetsList(size, page, patternName, userRealName, conditions);
+    }
+
+    @Override
+    public Observable<BaseResponse<List<AssetsType>>> getAllAssetsType() {
+        return mHttpHelper.getAllAssetsType();
+    }
 
 
 }
