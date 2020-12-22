@@ -20,7 +20,7 @@
         android:layout_below="@+id/tv_title"
         android:layout_marginStart="@dimen/dp_50"
         android:layout_marginTop="@dimen/dp_30"
-        android:src="@color/enabled_color1" />
+        android:src="@color/ast_free" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -42,7 +42,7 @@
         android:layout_marginStart="@dimen/dp_20"
         android:layout_marginTop="@dimen/dp_30"
         android:layout_marginEnd="@dimen/dp_50"
-        android:src="@color/enabled_color1" />
+        android:src="@color/ast_free" />
 
     <TextView
         android:id="@+id/tv_inout_str"
@@ -65,7 +65,7 @@
         android:layout_marginStart="@dimen/dp_20"
         android:layout_marginTop="@dimen/dp_20"
         android:layout_marginEnd="@dimen/dp_50"
-        android:src="@color/enabled_color1" />
+        android:src="@color/ast_free" />
 
     <TextView
         android:layout_width="wrap_content"

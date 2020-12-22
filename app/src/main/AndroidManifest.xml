@@ -3,11 +3,11 @@
     package="com.android.toolbox">
 
     <application
+        android:name="com.android.toolbox.app.ToolBoxApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:name="com.android.toolbox.app.ToolBoxApplication"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name="com.android.toolbox.MainActivity">
@@ -17,6 +17,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.verify.VerifyActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ui.verify.FaceVerifyActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"></activity>
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.android.toolbox.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

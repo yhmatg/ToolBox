@@ -7,4 +7,6 @@
     <string name="not_result_error">未获取到数据！</string>
     <string name="empty_page_text">没有数据</string>
     <string name="box_title">RFID智能工具管理柜</string>
+    <string name="original_title">标题</string>
+    <string name="confirm">确定</string>
 </resources>
