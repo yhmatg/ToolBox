@@ -3,6 +3,8 @@ package com.android.toolbox.core.http.api;
 import com.android.toolbox.core.bean.BaseResponse;
 import com.android.toolbox.core.bean.assist.AssetsListPage;
 import com.android.toolbox.core.bean.assist.AssetsType;
+import com.android.toolbox.core.bean.assist.DepartmentBean;
+import com.android.toolbox.core.bean.assist.ManagerListPage;
 import com.android.toolbox.core.bean.terminal.TerminalInfo;
 import com.android.toolbox.core.bean.terminal.TerminalLoginPara;
 import com.android.toolbox.core.bean.user.UserInfo;
@@ -14,6 +16,7 @@ import io.reactivex.Observable;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -39,4 +42,11 @@ public interface GeeksApis {
     @GET("assets-server/assets/multiconditions")
     Observable<BaseResponse<AssetsListPage>> fetchPageAssetsList(@Query("size") Integer size, @Query("page") Integer page, @Query("pattern_name") String patternName, @Query("user_real_name") String userRealName, @Query("conditions") String conditions);
 
+    //获取公司所有部门
+    @GET("user-server/orgs/{comId}/subs")
+    Observable<BaseResponse<List<DepartmentBean>>> getAllDeparts(@Path("comId") String comId);
+
+    //获取所有员工分页
+    @GET("user-server/emps")
+    Observable<BaseResponse<ManagerListPage>> getAllEmpUsers(@Query("size") Integer size, @Query("page") Integer page, @Query("pattern_name") String patternName);
 }

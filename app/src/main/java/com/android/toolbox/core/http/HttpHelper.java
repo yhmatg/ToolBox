@@ -3,6 +3,8 @@ package com.android.toolbox.core.http;
 import com.android.toolbox.core.bean.BaseResponse;
 import com.android.toolbox.core.bean.assist.AssetsListPage;
 import com.android.toolbox.core.bean.assist.AssetsType;
+import com.android.toolbox.core.bean.assist.DepartmentBean;
+import com.android.toolbox.core.bean.assist.ManagerListPage;
 import com.android.toolbox.core.bean.terminal.TerminalInfo;
 import com.android.toolbox.core.bean.terminal.TerminalLoginPara;
 import com.android.toolbox.core.bean.user.UserInfo;
@@ -26,4 +28,8 @@ public interface HttpHelper {
     Observable<BaseResponse<AssetsListPage>> fetchPageAssetsList(Integer size, Integer page, String patternName, String userRealName, String conditions);
 
     Observable<BaseResponse<List<AssetsType>>> getAllAssetsType();
+
+    Observable<BaseResponse<List<DepartmentBean>>> getAllDeparts(String comId);
+
+    Observable<BaseResponse<ManagerListPage>> getAllEmpUsers(Integer size, Integer page, String patternName);
 }

@@ -2,6 +2,8 @@ package com.android.toolbox.core;
 import com.android.toolbox.core.bean.BaseResponse;
 import com.android.toolbox.core.bean.assist.AssetsListPage;
 import com.android.toolbox.core.bean.assist.AssetsType;
+import com.android.toolbox.core.bean.assist.DepartmentBean;
+import com.android.toolbox.core.bean.assist.ManagerListPage;
 import com.android.toolbox.core.bean.terminal.TerminalInfo;
 import com.android.toolbox.core.bean.terminal.TerminalLoginPara;
 import com.android.toolbox.core.bean.user.UserInfo;
@@ -84,6 +86,16 @@ public class DataManager implements HttpHelper, PreferenceHelper {
     @Override
     public Observable<BaseResponse<List<AssetsType>>> getAllAssetsType() {
         return mHttpHelper.getAllAssetsType();
+    }
+
+    @Override
+    public Observable<BaseResponse<List<DepartmentBean>>> getAllDeparts(String comId) {
+        return mHttpHelper.getAllDeparts(comId);
+    }
+
+    @Override
+    public Observable<BaseResponse<ManagerListPage>> getAllEmpUsers(Integer size, Integer page, String patternName) {
+        return mHttpHelper.getAllEmpUsers(size, page, patternName);
     }
 
 

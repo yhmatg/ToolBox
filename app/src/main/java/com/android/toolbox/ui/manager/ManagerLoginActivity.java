@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.toolbox.R;
+import com.android.toolbox.app.ToolBoxApplication;
 import com.android.toolbox.base.activity.BaseActivity;
 import com.android.toolbox.contract.ManagerLoginContract;
 import com.android.toolbox.core.DataManager;
@@ -77,6 +78,7 @@ public class ManagerLoginActivity extends BaseActivity<ManagerLoginPresenter> im
     @Override
     public void handleLogin(UserLoginResponse userLoginResponse) {
         DataManager.getInstance().setToken(userLoginResponse.getToken());
+        ToolBoxApplication.getInstance().setCurrentUser(userLoginResponse.getUserinfo());
         startActivity(new Intent(this,ManagerHomeActivity.class));
         finish();
     }

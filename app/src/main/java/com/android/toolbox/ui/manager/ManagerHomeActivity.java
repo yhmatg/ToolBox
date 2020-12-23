@@ -44,6 +44,7 @@ public class ManagerHomeActivity extends BaseActivity {
             case R.id.iv_manage_tool:
                 break;
             case R.id.iv_manager_user:
+                startActivity(new Intent(this,StaffManageActivity.class));
                 break;
             case R.id.iv_return_home:
                 Intent intent = new Intent();

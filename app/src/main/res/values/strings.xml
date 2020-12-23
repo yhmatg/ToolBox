@@ -18,4 +18,6 @@
     <string name="login">登录</string>
     <string name="login_hint">账号</string>
     <string name="user_passward">密码</string>
+    <string name="name_str">姓名</string>
+    <string name="user_code">员工编号</string>
 </resources>

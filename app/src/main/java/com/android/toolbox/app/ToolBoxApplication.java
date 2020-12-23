@@ -7,6 +7,7 @@ import android.support.multidex.MultiDex;
 import com.android.toolbox.BuildConfig;
 import com.android.toolbox.R;
 import com.android.toolbox.base.activity.BaseActivity;
+import com.android.toolbox.core.bean.user.UserInfo;
 import com.android.toolbox.utils.Utils;
 import com.android.toolbox.utils.logger.MyCrashListener;
 import com.android.toolbox.utils.logger.TxtFormatStrategy;
@@ -36,6 +37,7 @@ public class ToolBoxApplication extends Application {
     public static synchronized ToolBoxApplication getInstance() {
         return instance;
     }
+    private UserInfo currentUser;
 
     public static RefWatcher getRefWatcher(Context context) {
         ToolBoxApplication application = (ToolBoxApplication) context.getApplicationContext();
@@ -107,4 +109,11 @@ public class ToolBoxApplication extends Application {
         }
     }
 
+    public UserInfo getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(UserInfo currentUser) {
+        this.currentUser = currentUser;
+    }
 }
