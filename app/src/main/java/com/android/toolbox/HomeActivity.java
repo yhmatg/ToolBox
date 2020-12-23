@@ -47,10 +47,6 @@ public class HomeActivity extends BaseActivity<HomePresenter> implements HomeCon
                 mPresenter.terminalLogin(new TerminalLoginPara("rfidbox","123456"));
                 break;
             case R.id.iv_manager:
-                /*Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_MAIN);
-                intent.addCategory(Intent.CATEGORY_HOME);
-                startActivity(intent);*/
                 startActivity(new Intent(this, ManagerLoginActivity.class));
                 break;
         }

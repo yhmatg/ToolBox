@@ -45,6 +45,10 @@
             android:name=".ui.manager.ManagerLoginActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ui.manager.ManagerHomeActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

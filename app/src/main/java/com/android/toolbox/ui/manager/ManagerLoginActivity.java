@@ -1,9 +1,9 @@
 package com.android.toolbox.ui.manager;
 
+import android.content.Intent;
 import android.text.TextUtils;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -77,7 +77,8 @@ public class ManagerLoginActivity extends BaseActivity<ManagerLoginPresenter> im
     @Override
     public void handleLogin(UserLoginResponse userLoginResponse) {
         DataManager.getInstance().setToken(userLoginResponse.getToken());
-        Log.e(TAG,userLoginResponse.toString());
+        startActivity(new Intent(this,ManagerHomeActivity.class));
+        finish();
     }
 
     @OnClick({R.id.title_back,R.id.btn_login})
