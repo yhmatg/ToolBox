@@ -15,4 +15,7 @@
     <string name="assets_id">资产编号</string>
     <string name="tool_type">工具分类</string>
     <string name="mode_type">规格型号</string>
+    <string name="login">登录</string>
+    <string name="login_hint">账号</string>
+    <string name="user_passward">密码</string>
 </resources>

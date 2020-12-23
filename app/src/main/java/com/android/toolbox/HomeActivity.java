@@ -10,6 +10,7 @@ import com.android.toolbox.core.bean.BaseResponse;
 import com.android.toolbox.core.bean.terminal.TerminalInfo;
 import com.android.toolbox.core.bean.terminal.TerminalLoginPara;
 import com.android.toolbox.presenter.HomePresenter;
+import com.android.toolbox.ui.manager.ManagerLoginActivity;
 import com.android.toolbox.ui.toolquery.ToolQueryActivity;
 import com.android.toolbox.ui.verify.VerifyActivity;
 
@@ -46,10 +47,11 @@ public class HomeActivity extends BaseActivity<HomePresenter> implements HomeCon
                 mPresenter.terminalLogin(new TerminalLoginPara("rfidbox","123456"));
                 break;
             case R.id.iv_manager:
-                Intent intent = new Intent();
+                /*Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_HOME);
-                startActivity(intent);
+                startActivity(intent);*/
+                startActivity(new Intent(this, ManagerLoginActivity.class));
                 break;
         }
     }

@@ -5,11 +5,11 @@ public class UserLoginResponse {
     private UserInfo userinfo;
     private String token;
 
-    public UserInfo getSysUser() {
+    public UserInfo getUserinfo() {
         return userinfo;
     }
 
-    public void setSysUser(UserInfo userinfo) {
+    public void setUserinfo(UserInfo userinfo) {
         this.userinfo = userinfo;
     }
 
@@ -20,5 +20,4 @@ public class UserLoginResponse {
     public void setToken(String token) {
         this.token = token;
     }
-
 }
