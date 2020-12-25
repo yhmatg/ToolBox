@@ -84,4 +84,5 @@ dependencies {
     implementation 'com.github.xuexiangjys.XLog:xlog-crash:1.2.1'
     implementation 'com.contrarywind:Android-PickerView:4.1.9'
     implementation 'com.github.zhangke3016:MultilevelTreeList:1.0.2'
+    implementation 'com.alibaba:fastjson:1.2.68'
 }
