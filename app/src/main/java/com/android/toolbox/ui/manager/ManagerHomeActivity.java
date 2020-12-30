@@ -2,18 +2,14 @@ package com.android.toolbox.ui.manager;
 
 import android.content.Intent;
 import android.view.View;
-import android.widget.TextView;
 
 import com.android.toolbox.R;
 import com.android.toolbox.base.activity.BaseActivity;
 import com.android.toolbox.base.presenter.AbstractPresenter;
 
-import butterknife.BindView;
 import butterknife.OnClick;
 
 public class ManagerHomeActivity extends BaseActivity {
-    @BindView(R.id.title_content)
-    TextView mTitle;
 
     @Override
     public AbstractPresenter initPresenter() {
@@ -22,7 +18,7 @@ public class ManagerHomeActivity extends BaseActivity {
 
     @Override
     protected void initEventAndData() {
-        mTitle.setText("管理员权限");
+
     }
 
     @Override

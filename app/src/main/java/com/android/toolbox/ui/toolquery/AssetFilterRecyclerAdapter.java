@@ -65,9 +65,9 @@ public class AssetFilterRecyclerAdapter extends TreeRecyclerAdapter {
         }else {
             viewHolder.divideView.setVisibility(View.GONE);
         }
-        if(node.getLevel() == 1){
+       /* if(node.getLevel() == 1){
             holder.itemView.setPadding(0, 3, 3, 3);
-        }
+        }*/
 
     }
 

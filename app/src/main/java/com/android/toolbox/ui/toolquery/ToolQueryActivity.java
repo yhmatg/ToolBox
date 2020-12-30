@@ -144,7 +144,7 @@ public class ToolQueryActivity extends BaseActivity<QueryToolPresenter> implemen
     @Override
     public void handleGetAllAssetsType(List<AssetsType> assetTypes) {
         mAssetsTypes.clear();
-        mAssetsTypes.add(new Node("-1", "-2", "全部"));
+        //mAssetsTypes.add(new Node("-1", "-2", "全部"));
         for (AssetsType assetsType : assetTypes) {
             String pId = StringUtils.isEmpty(assetsType.getType_superid()) ? "-1" : assetsType.getType_superid();
             mAssetsTypes.add(new Node(assetsType.getId(), pId, assetsType.getType_name()));
