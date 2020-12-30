@@ -5,11 +5,13 @@ import com.android.toolbox.skrfidbox.callback.ILockStatusCallback;
 import com.android.toolbox.skrfidbox.callback.IRfidReadCallback;
 import com.android.toolbox.skrfidbox.econst.EByteBase;
 import com.android.toolbox.skrfidbox.econst.ECmdType;
+import com.android.toolbox.skrfidbox.econst.ELed;
 import com.android.toolbox.skrfidbox.econst.ELock;
 import com.android.toolbox.skrfidbox.econst.ERfid;
 import com.android.toolbox.skrfidbox.entity.MsgObjBase;
 import com.android.toolbox.skrfidbox.entity.MsgObj_HeartBeat;
 import com.android.toolbox.skrfidbox.entity.Tags;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,6 +73,35 @@ public class TaskThread extends Thread {
     public void sendGetAllTagsCmd() {
         sendCmd(ECmdType.RFID, ERfid.GetAllTags, new byte[]{1});
     }
+
+    /**
+     * 发送打开照明指令
+     */
+    public void sendLightLedOpen() {
+        sendCmd(ECmdType.LED, ELed.OpenLightLED, new byte[]{1});
+    }
+
+    /**
+     * 发送关闭照明指令
+     */
+    public void sendLightLedClose() {
+        sendCmd(ECmdType.LED, ELed.CloseLightLED, new byte[]{1});
+    }
+
+    /**
+     * 发送打开报警指令
+     */
+    public void sendAlarmLedOpen() {
+        sendCmd(ECmdType.LED, ELed.OpenAlarmLED, new byte[]{1});
+    }
+
+    /**
+     * 发送关闭报警指令
+     */
+    public void sendAlarmLedClose() {
+        sendCmd(ECmdType.LED, ELed.CloseALarmLED, new byte[]{1});
+    }
+
 
     /**
      * 发送一个指令

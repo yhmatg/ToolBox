@@ -15,5 +15,10 @@ public class Tags {
 
     static class _tag {
         public String epc;
+
+        @Override
+        public String toString() {
+            return epc;
+        }
     }
 }

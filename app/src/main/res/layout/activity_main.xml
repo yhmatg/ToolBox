@@ -78,5 +78,11 @@
         android:text="管理员权限"
         android:textSize="@dimen/sp_16" />
 
-
+    <TextView
+        android:id="@+id/tv_tags"
+        android:textSize="@dimen/sp_18"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </RelativeLayout>

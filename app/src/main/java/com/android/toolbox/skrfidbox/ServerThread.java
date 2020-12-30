@@ -1,5 +1,7 @@
 package com.android.toolbox.skrfidbox;
 
+import com.android.toolbox.utils.ToastUtils;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 
@@ -23,9 +25,11 @@ public class ServerThread extends Thread {
         try {
             if (null == serverSocket) {
                 this.serverSocket = new ServerSocket(port);
+                ToastUtils.showShort("成功");
             }
         } catch (IOException e) {
             e.printStackTrace();
+            ToastUtils.showShort("失败");
         }
     }
 

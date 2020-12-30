@@ -8,6 +8,7 @@ import com.android.toolbox.BuildConfig;
 import com.android.toolbox.R;
 import com.android.toolbox.base.activity.BaseActivity;
 import com.android.toolbox.core.bean.user.UserInfo;
+import com.android.toolbox.skrfidbox.ServerThread;
 import com.android.toolbox.utils.Utils;
 import com.android.toolbox.utils.logger.MyCrashListener;
 import com.android.toolbox.utils.logger.TxtFormatStrategy;
@@ -34,6 +35,8 @@ public class ToolBoxApplication extends Application {
     private static ToolBoxApplication instance;
     private RefWatcher refWatcher;
     private ArrayList<BaseActivity> activities = new ArrayList<>();
+    private ServerThread serverThread;
+
     public static synchronized ToolBoxApplication getInstance() {
         return instance;
     }
@@ -65,6 +68,7 @@ public class ToolBoxApplication extends Application {
         ///storage/emulated/0/Android/data/com.common.esimrfid/cache/crash_log
         XLog.init(this);
         CrashHandler.getInstance().setOnCrashListener(new MyCrashListener());
+        serverThread = new ServerThread(5460, 3 * 100000);
 
     }
 
@@ -115,5 +119,9 @@ public class ToolBoxApplication extends Application {
 
     public void setCurrentUser(UserInfo currentUser) {
         this.currentUser = currentUser;
+    }
+
+    public ServerThread getServerThread() {
+        return serverThread;
     }
 }
