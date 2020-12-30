@@ -6,21 +6,32 @@
     android:paddingTop="@dimen/dp_25"
     android:paddingBottom="@dimen/dp_5">
 
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginBottom="@dimen/dp_10"
+        android:text="工具查询"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_18" />
+
     <ImageView
         android:id="@+id/titleLeft"
         android:layout_width="@dimen/dp_40"
         android:layout_height="@dimen/dp_40"
-        android:layout_gravity="center_vertical"
         android:padding="@dimen/dp_12"
         android:src="@drawable/left_arrow" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_31"
+        android:layout_below="@+id/tv_title"
         android:layout_gravity="center"
-        android:layout_marginStart="@dimen/dp_10"
-        android:layout_marginEnd="@dimen/dp_50"
-        android:layout_toEndOf="@+id/titleLeft"
+        android:layout_marginStart="@dimen/dp_30"
+        android:layout_marginEnd="@dimen/dp_60"
+        android:layout_marginBottom="@dimen/dp_10"
         android:background="@drawable/bg_search"
         android:orientation="horizontal">
 
@@ -35,7 +46,7 @@
             android:hint="@string/assets_title"
             android:imeOptions="actionSearch"
             android:singleLine="true"
-            android:textColor="@color/white"
+            android:textColor="@color/search_text"
             android:textColorHint="@color/search_hint"
             android:textSize="@dimen/sp_13" />
     </LinearLayout>
@@ -44,9 +55,10 @@
         android:id="@+id/tv_screen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_title"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="@dimen/dp_6"
-        android:layout_marginEnd="@dimen/dp_10"
+        android:layout_marginEnd="@dimen/dp_20"
         android:text="@string/screen_str"
         android:textColor="@color/white"
         android:textSize="@dimen/sp_16" />

@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
 
 public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.ViewHolder> {
     private static final String TAG_EPC = "tag_epc";
-    private static final String ASSETS_ID="assets_id";
+    private static final String ASSETS_ID = "assets_id";
     private List<AssetsListItemInfo> Data;
     private Context context;
 
@@ -45,12 +45,19 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.View
         String astName = TextUtils.isEmpty(astItemInfo.getAst_name()) ? "" : astItemInfo.getAst_name();
         viewHolder.astName.setText(astName);
         String typeName = astItemInfo.getType_name() == null ? "" : astItemInfo.getType_name();
-        viewHolder.userName.setText(typeName);
+        viewHolder.typeName.setText(typeName);
         String modeName = astItemInfo.getAst_model() == null ? "" : astItemInfo.getAst_model();
-        viewHolder.location.setText(modeName);
+        viewHolder.mode.setText(modeName);
+        String locName = astItemInfo.getLoc_name() == null ? "" : astItemInfo.getLoc_name();
+        viewHolder.location.setText(locName);
         int astStatus = astItemInfo.getAst_used_status();
         String statusName = TextUtils.isEmpty(AssetsUseStatus.getName(astStatus)) ? "" : AssetsUseStatus.getName(astStatus);
         viewHolder.astStatus.setText(statusName);
+        if("闲置".equals(statusName)){
+            viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.free_status_back));
+        }else {
+            viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.inuse_status_back));
+        }
         viewHolder.itemLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,10 +76,12 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.View
         TextView astCode;
         @BindView(R.id.ast_real_name)
         TextView astName;
-        @BindView(R.id.tv_user_name)
-        TextView userName;
+        @BindView(R.id.tv_type_name)
+        TextView typeName;
         @BindView(R.id.tv_ast_loc_name)
         TextView location;
+        @BindView(R.id.tv_ast_mode_name)
+        TextView mode;
         @BindView(R.id.ast_status)
         TextView astStatus;
         @BindView(R.id.item_detail)

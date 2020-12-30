@@ -93,6 +93,8 @@ public class ToolQueryActivity extends BaseActivity<QueryToolPresenter> implemen
         mRefreshLayout.setEnableAutoLoadMore(false);
         //分类筛选
         filterView = LayoutInflater.from(this).inflate(R.layout.filter_item_layout, null);
+        TextView filterTitle = filterView.findViewById(R.id.title_content);
+        filterTitle.setText("工具类型");
         mBackImg = filterView.findViewById(R.id.title_back);
         mBackImg.setOnClickListener(new View.OnClickListener() {
             @Override
