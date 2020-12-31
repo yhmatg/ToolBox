@@ -15,8 +15,8 @@ public interface StaffManageContract {
     }
 
     interface Presenter extends AbstractPresenter<View> {
-        void getAllDeparts(String comId);
+        void getAllOrgs();
 
-        void getAllEmpUsers(Integer size, Integer page, String patternName);
+        void getAllEmpUsers(Integer size, Integer page, String patternName, String deptId);
     }
 }

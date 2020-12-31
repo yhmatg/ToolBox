@@ -75,8 +75,13 @@ public class HttpHelperImpl implements HttpHelper {
     }
 
     @Override
-    public Observable<BaseResponse<ManagerListPage>> getAllEmpUsers(Integer size, Integer page, String patternName) {
-        return mGeeksApis.getAllEmpUsers(size, page, patternName);
+    public Observable<BaseResponse<ManagerListPage>> getAllEmpUsers(Integer size, Integer page, String patternName,String deptId) {
+        return mGeeksApis.getAllEmpUsers(size, page, patternName,deptId);
+    }
+
+    @Override
+    public Observable<BaseResponse<List<DepartmentBean>>> getAllOrgs() {
+        return mGeeksApis.getAllOrgs();
     }
 
 }

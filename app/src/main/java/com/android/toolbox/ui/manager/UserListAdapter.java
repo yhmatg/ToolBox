@@ -41,7 +41,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         viewHolder.userName.setText(name);
         String code = TextUtils.isEmpty(mangerUser.getUser_emp_code()) ? "" : mangerUser.getUser_emp_code();
         viewHolder.userCode.setText(code);
-        String depName = TextUtils.isEmpty(mangerUser.getDept_name()) ? "" : mangerUser.getUser_real_name();
+        String depName = TextUtils.isEmpty(mangerUser.getDept_name()) ? "" : mangerUser.getDept_name();
         viewHolder.depName.setText(depName);
 
     }

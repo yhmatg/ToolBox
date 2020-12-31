@@ -25,7 +25,7 @@
         android:layout_height="@dimen/dp_24"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="@dimen/dp_20"
-        android:background="@drawable/bt_background_two"
+        android:background="@drawable/free_status_back"
         android:gravity="center"
         android:text="状态"
         android:textColor="@color/white"

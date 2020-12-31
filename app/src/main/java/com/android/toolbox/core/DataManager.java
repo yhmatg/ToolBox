@@ -1,4 +1,5 @@
 package com.android.toolbox.core;
+
 import com.android.toolbox.core.bean.BaseResponse;
 import com.android.toolbox.core.bean.assist.AssetsListPage;
 import com.android.toolbox.core.bean.assist.AssetsType;
@@ -94,9 +95,12 @@ public class DataManager implements HttpHelper, PreferenceHelper {
     }
 
     @Override
-    public Observable<BaseResponse<ManagerListPage>> getAllEmpUsers(Integer size, Integer page, String patternName) {
-        return mHttpHelper.getAllEmpUsers(size, page, patternName);
+    public Observable<BaseResponse<ManagerListPage>> getAllEmpUsers(Integer size, Integer page, String patternName, String deptId) {
+        return mHttpHelper.getAllEmpUsers(size, page, patternName, deptId);
     }
 
-
+    @Override
+    public Observable<BaseResponse<List<DepartmentBean>>> getAllOrgs() {
+        return mHttpHelper.getAllOrgs();
+    }
 }

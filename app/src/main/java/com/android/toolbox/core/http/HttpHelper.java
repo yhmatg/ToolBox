@@ -31,5 +31,7 @@ public interface HttpHelper {
 
     Observable<BaseResponse<List<DepartmentBean>>> getAllDeparts(String comId);
 
-    Observable<BaseResponse<ManagerListPage>> getAllEmpUsers(Integer size, Integer page, String patternName);
+    Observable<BaseResponse<ManagerListPage>> getAllEmpUsers(Integer size, Integer page, String patternName, String deptId);
+
+    Observable<BaseResponse<List<DepartmentBean>>> getAllOrgs();
 }

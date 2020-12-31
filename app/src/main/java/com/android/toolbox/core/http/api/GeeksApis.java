@@ -42,11 +42,15 @@ public interface GeeksApis {
     @GET("assets-server/assets/multiconditions")
     Observable<BaseResponse<AssetsListPage>> fetchPageAssetsList(@Query("size") Integer size, @Query("page") Integer page, @Query("pattern_name") String patternName, @Query("user_real_name") String userRealName, @Query("conditions") String conditions);
 
-    //获取公司所有部门
+    //获取一个公司下所有部门
     @GET("user-server/orgs/{comId}/subs")
     Observable<BaseResponse<List<DepartmentBean>>> getAllDeparts(@Path("comId") String comId);
 
+    //获取所有的公司部门
+    @GET("user-server/orgs/authOrgs")
+    Observable<BaseResponse<List<DepartmentBean>>> getAllOrgs();
+
     //获取所有员工分页
     @GET("user-server/emps")
-    Observable<BaseResponse<ManagerListPage>> getAllEmpUsers(@Query("size") Integer size, @Query("page") Integer page, @Query("pattern_name") String patternName);
+    Observable<BaseResponse<ManagerListPage>> getAllEmpUsers(@Query("size") Integer size, @Query("page") Integer page, @Query("pattern_name") String patternName,@Query("dept_id") String deptId);
 }

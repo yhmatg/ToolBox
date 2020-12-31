@@ -21,7 +21,6 @@ import com.android.toolbox.R;
 import com.android.toolbox.app.ToolBoxApplication;
 import com.android.toolbox.base.activity.BaseActivity;
 import com.android.toolbox.contract.StaffManageContract;
-import com.android.toolbox.core.bean.assist.AssetFilterParameter;
 import com.android.toolbox.core.bean.assist.DepartmentBean;
 import com.android.toolbox.core.bean.assist.MangerUser;
 import com.android.toolbox.core.bean.user.UserInfo;
@@ -44,6 +43,8 @@ public class StaffManageActivity extends BaseActivity<StaffManagePresenter> impl
     EditText search;
     @BindView(R.id.titleLeft)
     ImageView titleLeft;
+    @BindView(R.id.tv_title)
+    TextView titleContent;
     @BindView(R.id.tv_screen)
     TextView tvScreen;
     @BindView(R.id.asset_recycler)
@@ -58,7 +59,6 @@ public class StaffManageActivity extends BaseActivity<StaffManagePresenter> impl
     private String preFilter = "";
     private int currentPage = 1;
     private int pageSize = 10;
-    private AssetFilterParameter conditions = new AssetFilterParameter();
     private Dialog filterDialog;
     private View filterView;
     private RecyclerView multiRecycle;
@@ -66,6 +66,7 @@ public class StaffManageActivity extends BaseActivity<StaffManagePresenter> impl
     ImageView mBackImg;
     Button mConfirm;
     private UserInfo currentUser;
+    private StringBuffer deptIds = new StringBuffer();
 
     @Override
     public StaffManagePresenter initPresenter() {
@@ -74,6 +75,7 @@ public class StaffManageActivity extends BaseActivity<StaffManagePresenter> impl
 
     @Override
     protected void initEventAndData() {
+        titleContent.setText("员工信息管理");
         currentUser = ToolBoxApplication.getInstance().getCurrentUser();
         adapter = new UserListAdapter( mData,this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -89,7 +91,7 @@ public class StaffManageActivity extends BaseActivity<StaffManagePresenter> impl
                     currentPage++;
                 }
                 preFilter = assetsId;
-                mPresenter.getAllEmpUsers(pageSize, currentPage, assetsId);
+                mPresenter.getAllEmpUsers(pageSize, currentPage, assetsId,deptIds.toString());
             }
         });
         mRefreshLayout.setEnableRefresh(false);//使上拉加载具有弹性效果
@@ -98,6 +100,8 @@ public class StaffManageActivity extends BaseActivity<StaffManagePresenter> impl
         mRefreshLayout.setEnableAutoLoadMore(false);
         //分类筛选
         filterView = LayoutInflater.from(this).inflate(R.layout.filter_item_layout, null);
+        TextView titleView = filterView.findViewById(R.id.title_content);
+        titleView.setText("部门");
         mBackImg = filterView.findViewById(R.id.title_back);
         mBackImg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,17 +115,16 @@ public class StaffManageActivity extends BaseActivity<StaffManagePresenter> impl
             public void onClick(View v) {
                 List<Node> allNodes = multiFilterAdapter.getAllNodes();
                 mSelectDepts.clear();
+                deptIds = new StringBuffer();
                 for (Node node : allNodes) {
                     if (node.isChecked()) {
                         mSelectDepts.add(node);
+                        deptIds.append(node.getId() + ",");
                     }
                 }
-
                 isNeedClearData = true;
                 currentPage = 1;
-                conditions.clearData();
-                conditions.setmSelectAssetsTypes(mSelectDepts);
-                mPresenter.getAllEmpUsers(pageSize, currentPage, "");
+                mPresenter.getAllEmpUsers(pageSize, currentPage, "", deptIds.toString());
                 filterDialog.dismiss();
             }
         });
@@ -130,8 +133,8 @@ public class StaffManageActivity extends BaseActivity<StaffManagePresenter> impl
         multiFilterAdapter = new AssetFilterRecyclerAdapter(multiRecycle, this,
                 mAssetsDepts, 2, R.drawable.tree_reduce, R.drawable.tree_add);
         multiRecycle.setAdapter(multiFilterAdapter);
-        mPresenter.getAllDeparts(currentUser.getCorpInfo().getId());
-        mPresenter.getAllEmpUsers(pageSize, 1, "");
+        mPresenter.getAllOrgs();
+        mPresenter.getAllEmpUsers(pageSize, 1, "","");
 
     }
 
@@ -148,7 +151,7 @@ public class StaffManageActivity extends BaseActivity<StaffManagePresenter> impl
     @Override
     public void handleGetAllDeparts(List<DepartmentBean> departs) {
         mAssetsDepts.clear();
-        mAssetsDepts.add(new Node("-1", "-2", "全部"));
+        //mAssetsDepts.add(new Node("-1", "-2", "全部"));
         for (DepartmentBean deptBean : departs) {
             String pId = StringUtils.isEmpty(deptBean.getOrg_superid()) ? "-1" : deptBean.getOrg_superid();
             mAssetsDepts.add(new Node(deptBean.getId(), pId, deptBean.getOrg_name()));
@@ -179,8 +182,7 @@ public class StaffManageActivity extends BaseActivity<StaffManagePresenter> impl
                     isNeedClearData = true;
                     currentPage = 1;
                     preFilter = assetsId;
-                    conditions.clearData();
-                    mPresenter.getAllEmpUsers(pageSize, currentPage, assetsId);
+                    mPresenter.getAllEmpUsers(pageSize, currentPage, assetsId,"");
                     return true;
                 }
                 return false;

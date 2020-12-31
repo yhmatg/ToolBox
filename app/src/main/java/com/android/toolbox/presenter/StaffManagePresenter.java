@@ -13,8 +13,8 @@ import java.util.List;
 
 public class StaffManagePresenter extends BasePresenter<StaffManageContract.View> implements StaffManageContract.Presenter {
     @Override
-    public void getAllDeparts(String comId) {
-        addSubscribe(DataManager.getInstance().getAllDeparts(comId)
+    public void getAllOrgs() {
+        addSubscribe(DataManager.getInstance().getAllOrgs()
         .compose(RxUtils.handleResult())
         .compose(RxUtils.rxSchedulerHelper())
         .subscribeWith(new BaseObserver<List<DepartmentBean>>(mView, false) {
@@ -26,8 +26,8 @@ public class StaffManagePresenter extends BasePresenter<StaffManageContract.View
     }
 
     @Override
-    public void getAllEmpUsers(Integer size, Integer page, String patternName) {
-        addSubscribe(DataManager.getInstance().getAllEmpUsers(size, page, patternName)
+    public void getAllEmpUsers(Integer size, Integer page, String patternName, String deptId) {
+        addSubscribe(DataManager.getInstance().getAllEmpUsers(size, page, patternName,deptId)
         .compose(RxUtils.handleResult())
         .compose(RxUtils.rxSchedulerHelper())
         .subscribeWith(new BaseObserver<ManagerListPage>(mView, false) {
