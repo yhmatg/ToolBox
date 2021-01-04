@@ -70,7 +70,7 @@ public class ToolQueryActivity extends BaseActivity<QueryToolPresenter> implemen
 
     @Override
     protected void initEventAndData() {
-        adapter = new AssetListAdapter(this, mData);
+        adapter = new AssetListAdapter( mData,this,false);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
         mRefreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {

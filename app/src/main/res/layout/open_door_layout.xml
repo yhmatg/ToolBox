@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/open_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/iv_open_door"
+        android:layout_centerHorizontal="true"
+        android:text="@string/open_door_str"
+        android:textSize="@dimen/sp_24"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/iv_open_door"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="@dimen/dp_20"
+        android:layout_marginBottom="@dimen/dp_30"
+        android:src="@drawable/open_door" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/iv_open_door"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="@string/open_door_toast"
+        android:textSize="@dimen/sp_16" />
+</RelativeLayout>

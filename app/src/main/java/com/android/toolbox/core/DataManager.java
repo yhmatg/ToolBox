@@ -1,10 +1,13 @@
 package com.android.toolbox.core;
 
 import com.android.toolbox.core.bean.BaseResponse;
+import com.android.toolbox.core.bean.assist.AssetsListItemInfo;
 import com.android.toolbox.core.bean.assist.AssetsListPage;
 import com.android.toolbox.core.bean.assist.AssetsType;
 import com.android.toolbox.core.bean.assist.DepartmentBean;
 import com.android.toolbox.core.bean.assist.ManagerListPage;
+import com.android.toolbox.core.bean.terminal.AssetBackPara;
+import com.android.toolbox.core.bean.terminal.AssetBorrowPara;
 import com.android.toolbox.core.bean.terminal.TerminalInfo;
 import com.android.toolbox.core.bean.terminal.TerminalLoginPara;
 import com.android.toolbox.core.bean.user.UserInfo;
@@ -102,5 +105,20 @@ public class DataManager implements HttpHelper, PreferenceHelper {
     @Override
     public Observable<BaseResponse<List<DepartmentBean>>> getAllOrgs() {
         return mHttpHelper.getAllOrgs();
+    }
+
+    @Override
+    public Observable<BaseResponse<List<AssetsListItemInfo>>> fetchAllAssetsInfos() {
+        return mHttpHelper.fetchAllAssetsInfos();
+    }
+
+    @Override
+    public Observable<BaseResponse> borrowTools(AssetBorrowPara borrowPara) {
+        return mHttpHelper.borrowTools(borrowPara);
+    }
+
+    @Override
+    public Observable<BaseResponse> backTools(AssetBackPara backPara) {
+        return mHttpHelper.backTools(backPara);
     }
 }

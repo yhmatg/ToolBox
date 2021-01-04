@@ -23,4 +23,8 @@
     <string name="device_name">设备名称:</string>
     <string name="ast_loc">存放位置</string>
     <string name="user_depa">所属部门:</string>
+    <string name="open_door_str">门已打开</string>
+    <string name="open_door_toast">门已打开!您可以对工具进行维护! \n维护完成后，请记得关门哦!</string>
+    <string name="maintenance_str">维护结果</string>
+    <string name="maintenance_result">您本次放入%1$d个工具，移出%2$d个工具</string>
 </resources>

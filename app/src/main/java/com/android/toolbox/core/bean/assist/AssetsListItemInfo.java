@@ -14,6 +14,7 @@ public class AssetsListItemInfo {
     private long ast_buy_date;
     private String type_name;
     private String ast_model;
+    private String ast_epc_code;
 
     public String getAst_barcode() {
         return ast_barcode;
@@ -94,6 +95,14 @@ public class AssetsListItemInfo {
 
     public void setAst_model(String ast_model) {
         this.ast_model = ast_model;
+    }
+
+    public String getAst_epc_code() {
+        return ast_epc_code;
+    }
+
+    public void setAst_epc_code(String ast_epc_code) {
+        this.ast_epc_code = ast_epc_code;
     }
 
     @Override

@@ -24,10 +24,12 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.View
     private static final String ASSETS_ID = "assets_id";
     private List<AssetsListItemInfo> Data;
     private Context context;
+    private boolean isManager = false;
 
-    public AssetListAdapter(Context context, List<AssetsListItemInfo> assetsInfos) {
+    public AssetListAdapter(List<AssetsListItemInfo> data, Context context, boolean isManager) {
+        Data = data;
         this.context = context;
-        this.Data = assetsInfos;
+        this.isManager = isManager;
     }
 
     @NonNull
@@ -51,13 +53,25 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.View
         String locName = astItemInfo.getLoc_name() == null ? "" : astItemInfo.getLoc_name();
         viewHolder.location.setText(locName);
         int astStatus = astItemInfo.getAst_used_status();
-        String statusName = TextUtils.isEmpty(AssetsUseStatus.getName(astStatus)) ? "" : AssetsUseStatus.getName(astStatus);
-        viewHolder.astStatus.setText(statusName);
-        if("闲置".equals(statusName)){
-            viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.free_status_back));
-        }else {
-            viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.inuse_status_back));
+        if (isManager) {
+            if (0 == astStatus) {
+                viewHolder.astStatus.setText("放入");
+                viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.inuse_status_back));
+            } else if (6 == astStatus) {
+                viewHolder.astStatus.setText("移出");
+                viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.free_status_back));
+            }
+        } else {
+            String statusName = TextUtils.isEmpty(AssetsUseStatus.getName(astStatus)) ? "" : AssetsUseStatus.getName(astStatus);
+            viewHolder.astStatus.setText(statusName);
+            if ("闲置".equals(statusName)) {
+                viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.free_status_back));
+            } else {
+                viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.inuse_status_back));
+            }
         }
+
+
         viewHolder.itemLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

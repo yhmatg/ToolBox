@@ -1,10 +1,13 @@
 package com.android.toolbox.core.http.api;
 
 import com.android.toolbox.core.bean.BaseResponse;
+import com.android.toolbox.core.bean.assist.AssetsListItemInfo;
 import com.android.toolbox.core.bean.assist.AssetsListPage;
 import com.android.toolbox.core.bean.assist.AssetsType;
 import com.android.toolbox.core.bean.assist.DepartmentBean;
 import com.android.toolbox.core.bean.assist.ManagerListPage;
+import com.android.toolbox.core.bean.terminal.AssetBackPara;
+import com.android.toolbox.core.bean.terminal.AssetBorrowPara;
 import com.android.toolbox.core.bean.terminal.TerminalInfo;
 import com.android.toolbox.core.bean.terminal.TerminalLoginPara;
 import com.android.toolbox.core.bean.user.UserInfo;
@@ -53,4 +56,16 @@ public interface GeeksApis {
     //获取所有员工分页
     @GET("user-server/emps")
     Observable<BaseResponse<ManagerListPage>> getAllEmpUsers(@Query("size") Integer size, @Query("page") Integer page, @Query("pattern_name") String patternName,@Query("dept_id") String deptId);
+
+    //获取资产的所有详情
+    @GET("assets-server/assets/multiconditions/unpage")
+    Observable<BaseResponse<List<AssetsListItemInfo>>> fetchAllAssetsInfos();
+
+    //借用工具
+    @POST("assets-server/borrows/bymanager")
+    Observable<BaseResponse> borrowTools(@Body AssetBorrowPara borrowPara);
+
+    //归还工具
+    @POST("assets-server/backs/byemp")
+    Observable<BaseResponse> backTools(@Body AssetBackPara backPara);
 }

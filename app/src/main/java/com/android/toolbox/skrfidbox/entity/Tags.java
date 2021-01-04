@@ -13,7 +13,7 @@ public class Tags {
     public List<_tag> loss_tag_list;
     public List<_tag> tag_list;
 
-    static class _tag {
+    public static class _tag {
         public String epc;
 
         @Override

@@ -57,8 +57,11 @@
         <activity
             android:name=".SdkActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".ui.manager.ManageToolActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

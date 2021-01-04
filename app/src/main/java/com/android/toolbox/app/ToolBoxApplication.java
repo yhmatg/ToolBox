@@ -69,6 +69,7 @@ public class ToolBoxApplication extends Application {
         XLog.init(this);
         CrashHandler.getInstance().setOnCrashListener(new MyCrashListener());
         serverThread = new ServerThread(5460, 3 * 100000);
+        serverThread.start();
 
     }
 

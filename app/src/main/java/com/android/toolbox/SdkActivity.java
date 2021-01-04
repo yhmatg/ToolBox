@@ -42,7 +42,6 @@ public class SdkActivity extends BaseActivity {
     @Override
     protected void initEventAndData() {
         serverThread = ToolBoxApplication.getInstance().getServerThread();
-        serverThread.start();
     }
 
     @OnClick({R.id.bt_unlock, R.id.bt_inv, R.id.bt_open_light, R.id.bt_close_light, R.id.bt_open_alarm, R.id.bt_close_alarm})
