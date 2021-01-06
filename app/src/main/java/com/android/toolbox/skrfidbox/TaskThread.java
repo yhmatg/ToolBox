@@ -11,6 +11,7 @@ import com.android.toolbox.skrfidbox.econst.ERfid;
 import com.android.toolbox.skrfidbox.entity.MsgObjBase;
 import com.android.toolbox.skrfidbox.entity.MsgObj_HeartBeat;
 import com.android.toolbox.skrfidbox.entity.Tags;
+import com.xuexiang.xlog.XLog;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -168,7 +169,7 @@ public class TaskThread extends Thread {
             dis = new DataInputStream(inputStream);
             int cacheSize = 1024 * 10;
             byte[] data = new byte[cacheSize];
-            while (dis.read(data) > 0) {
+            while ( dis.read(data) > 0) {
                 final MsgObjBase msgObjBase = new MsgObjBase(data);
                 if (this.rfidReadCallback != null) {
                     this.rfidReadCallback.OnReceiveData(msgObjBase);
@@ -188,6 +189,8 @@ public class TaskThread extends Thread {
                         switch ((ERfid) msgObjBase.getCmdTag()) {
                             case NotifyReadData:
                                 String jsonStr = DataConverts.Bytes_To_ASCII(msgObjBase.getCmdData());
+                                XLog.get().e("NotifyReadData111====" + new String(msgObjBase.getCmdData()));
+                                XLog.get().e("NotifyReadData222====" + jsonStr);
                                 tags = (Tags) JSON.parseObject(jsonStr, Tags.class);
                                 sendGetAllTagsCmd();
                                 if (this.rfidReadCallback != null) {
@@ -196,6 +199,8 @@ public class TaskThread extends Thread {
                                 break;
                             case GetAllTags:
                                 String jsonStr2 = DataConverts.Bytes_To_ASCII(msgObjBase.getCmdData());
+                                XLog.get().e("GetAllTags111====" + new String(msgObjBase.getCmdData()));
+                                XLog.get().e("GetAllTags222====" + jsonStr2);
                                 tags = (Tags) JSON.parseObject(jsonStr2, Tags.class);
                                 if (this.rfidReadCallback != null) {
                                     this.rfidReadCallback.OnGetAllTags(tags);

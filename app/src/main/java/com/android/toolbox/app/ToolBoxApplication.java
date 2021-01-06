@@ -20,7 +20,10 @@ import com.orhanobut.logger.PrettyFormatStrategy;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.xuexiang.xlog.XLog;
+import com.xuexiang.xlog.annotation.LogLevel;
 import com.xuexiang.xlog.crash.CrashHandler;
+import com.xuexiang.xlog.logger.LoggerFactory;
+import com.xuexiang.xlog.strategy.log.DiskLogStrategy;
 
 import java.util.ArrayList;
 
@@ -68,6 +71,10 @@ public class ToolBoxApplication extends Application {
         ///storage/emulated/0/Android/data/com.common.esimrfid/cache/crash_log
         XLog.init(this);
         CrashHandler.getInstance().setOnCrashListener(new MyCrashListener());
+        DiskLogStrategy diskLogStrategy = LoggerFactory.getDiskLogStrategy(
+                "xlogTool", "xlog", LogLevel.ERROR, LogLevel.DEBUG
+        );
+        LoggerFactory.getSimpleDiskLogger("DiskLogger", diskLogStrategy, 0);
         serverThread = new ServerThread(5460, 3 * 100000);
         serverThread.start();
 

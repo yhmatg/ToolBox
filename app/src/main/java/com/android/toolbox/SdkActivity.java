@@ -42,12 +42,13 @@ public class SdkActivity extends BaseActivity {
     @Override
     protected void initEventAndData() {
         serverThread = ToolBoxApplication.getInstance().getServerThread();
+        //serverThread.start();
     }
 
     @OnClick({R.id.bt_unlock, R.id.bt_inv, R.id.bt_open_light, R.id.bt_close_light, R.id.bt_open_alarm, R.id.bt_close_alarm})
     public void performClick(View view) {
         switch (view.getId()) {
-            case R.id.bt_unlock:
+           case R.id.bt_unlock:
                 unlock();
                 ToastUtils.showShort("开锁");
                 break;
@@ -124,13 +125,13 @@ public class SdkActivity extends BaseActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                ToastUtils.showShort("OnNotifyReadData add====" + tags.add_tag_list);
+                               /* ToastUtils.showShort("OnNotifyReadData add====" + tags.add_tag_list);
                                 ToastUtils.showShort("OnNotifyReadData loss====" + tags.loss_tag_list);
                                 ToastUtils.showShort("OnNotifyReadData all====" + tags.tag_list);
                                 tvTags.setText("OnNotifyReadData\n"
                                         + "add====" + tags.add_tag_list + "\n"
                                         + " loss====" + tags.loss_tag_list + "\n"
-                                        + "tags====" + tags.tag_list);
+                                        + "tags====" + tags.tag_list);*/
                             }
                         });
                     }
@@ -148,7 +149,7 @@ public class SdkActivity extends BaseActivity {
                                 tvTags.setText("OnGetAllTags\n"
                                         + "add====" + tags.add_tag_list + "\n"
                                         + " loss====" + tags.loss_tag_list + "\n"
-                                        + "tags====" + tags.tag_list);
+                                        + "tags====" + tags.tag_list.size());
                             }
                         });
                     }

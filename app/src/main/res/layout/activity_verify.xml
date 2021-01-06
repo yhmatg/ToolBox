@@ -1,52 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/verify_back">
 
-    <include layout="@layout/title_layout" />
+    <ImageView
+        android:id="@+id/title_back"
+        android:layout_width="@dimen/dp_40"
+        android:layout_height="@dimen/dp_40"
+        android:layout_marginTop="@dimen/dp_20"
+        android:padding="@dimen/dp_12"
+        android:src="@drawable/left_arrow" />
 
     <ImageView
         android:id="@+id/iv_face_verify"
-        android:layout_width="@dimen/dp_80"
-        android:layout_height="@dimen/dp_80"
-        android:layout_below="@+id/title_layout"
-        android:layout_marginStart="@dimen/dp_60"
-        android:layout_marginTop="@dimen/dp_120"
-        android:layout_marginEnd="@dimen/dp_50"
-        android:src="@color/ast_free" />
-
-    <TextView
-        android:id="@+id/tv_face_str"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/iv_face_verify"
-        android:layout_alignStart="@+id/iv_face_verify"
-        android:layout_alignEnd="@+id/iv_face_verify"
-        android:layout_marginTop="@dimen/dp_20"
-        android:gravity="center"
-        android:text="人脸验证"
-        android:textSize="@dimen/sp_16" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dp_260"
+        android:src="@drawable/face_verify" />
+
 
     <ImageView
         android:id="@+id/iv_code_verify"
-        android:layout_width="@dimen/dp_80"
-        android:layout_height="@dimen/dp_80"
-        android:layout_below="@+id/title_layout"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="@dimen/dp_20"
-        android:layout_marginTop="@dimen/dp_120"
-        android:layout_marginEnd="@dimen/dp_60"
-        android:src="@color/ast_free" />
-
-    <TextView
-        android:id="@+id/tv_inout_str"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/iv_code_verify"
-        android:layout_alignStart="@+id/iv_code_verify"
-        android:layout_alignEnd="@+id/iv_code_verify"
-        android:layout_marginTop="@dimen/dp_20"
-        android:gravity="center"
-        android:text="工卡验证"
-        android:textSize="@dimen/sp_16" />
+        android:layout_below="@+id/iv_face_verify"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/card_verify" />
 </RelativeLayout>
