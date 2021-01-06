@@ -10,6 +10,7 @@ public class AssetsListItemInfo {
     private String loc_name;
     private String user_name;
     private double ast_price;
+    //0 闲置 6 使用中 -1归还错误
     private int ast_used_status;
     private long ast_buy_date;
     private String type_name;

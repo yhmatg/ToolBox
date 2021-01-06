@@ -62,6 +62,16 @@
             android:name=".ui.manager.ManageToolActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"></activity>
+
+        <activity
+            android:name=".ui.verify.CardVerifyActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"></activity>
+
+        <activity
+            android:name=".ui.verify.BorrowBackToolActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

@@ -60,6 +60,9 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.View
             } else if (6 == astStatus) {
                 viewHolder.astStatus.setText("移出");
                 viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.free_status_back));
+            }else if( -1 == astStatus){
+                viewHolder.astStatus.setText("位置错误");
+                viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.inuse_status_back));
             }
         } else {
             String statusName = TextUtils.isEmpty(AssetsUseStatus.getName(astStatus)) ? "" : AssetsUseStatus.getName(astStatus);

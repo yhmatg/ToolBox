@@ -7,9 +7,14 @@ import com.android.toolbox.R;
 import com.android.toolbox.base.activity.BaseActivity;
 import com.android.toolbox.base.presenter.AbstractPresenter;
 
+import java.io.File;
+
 import butterknife.OnClick;
 
-public class VerifyActivity extends BaseActivity {
+public class CardVerifyActivity extends BaseActivity {
+    private static final int REQUEST_CODE_TAKE_PICTURE = 100;
+    private File newFile;
+
     @Override
     public AbstractPresenter initPresenter() {
         return null;
@@ -22,7 +27,7 @@ public class VerifyActivity extends BaseActivity {
 
     @Override
     protected int getLayoutId() {
-        return R.layout.activity_verify;
+        return R.layout.activity_card_verify;
     }
 
     @Override
@@ -30,18 +35,16 @@ public class VerifyActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.title_back,R.id.iv_face_verify,R.id.iv_code_verify})
-    public void performClick(View view){
-        switch (view.getId()){
+    @OnClick({R.id.title_back, R.id.bt_retry})
+    public void performClick(View view) {
+        switch (view.getId()) {
             case R.id.title_back:
                 finish();
                 break;
-            case R.id.iv_face_verify:
-                startActivity(new Intent(this,FaceVerifyActivity.class));
+            case R.id.bt_retry:
+                startActivity(new Intent(this, BorrowBackToolActivity.class));
                 break;
-            case R.id.iv_code_verify:
-                startActivity(new Intent(this,CardVerifyActivity.class));
-                break;
+
         }
 
     }

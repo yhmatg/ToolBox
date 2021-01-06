@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/face_verify_back">
+    android:background="@drawable/card_verify_back">
     <ImageView
         android:id="@+id/title_back"
         android:layout_width="@dimen/dp_40"
@@ -18,7 +18,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="@dimen/dp_40"
         android:layout_marginBottom="@dimen/dp_100"
-        android:background="@drawable/change_card_verify" />
+        android:background="@drawable/change_face_verify" />
 
     <Button
         android:id="@+id/bt_retry"
