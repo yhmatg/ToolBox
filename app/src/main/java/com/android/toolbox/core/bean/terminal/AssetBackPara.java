@@ -1,5 +1,6 @@
 package com.android.toolbox.core.bean.terminal;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +11,7 @@ public class AssetBackPara {
     private String rev_user_name;
     private Date actual_rever_date;
     private String odr_remark;
-    private List<String> ast_ids;
+    private List<String> ast_ids = new ArrayList<>();
 
     public String getBelong_dept_id() {
         return belong_dept_id;
@@ -58,5 +59,31 @@ public class AssetBackPara {
 
     public void setAst_ids(List<String> ast_ids) {
         this.ast_ids = ast_ids;
+    }
+
+    @Override
+    public String toString() {
+        return  "{" +
+                "\"belong_dept_id\":\"" + belong_dept_id + '\"' +
+                ",\"rev_user_id\":\"" + rev_user_id + '\"' +
+                ",\"rev_user_name\":\"" + rev_user_name + '\"' +
+                ",\"actual_rever_date\":" + actual_rever_date.getTime() +
+                ",\"odr_remark\":\"" + odr_remark + '\"' +
+                ",\"ast_ids\":" + getListString() +
+                '}';
+    }
+
+    private String getListString() {
+        String astIdString = "[";
+        for (int i = 0; i < ast_ids.size(); i++) {
+            String astId = ast_ids.get(i);
+            astId = "\"" + astId + "\"";
+            if (0 < ast_ids.size() - 1) {
+                astId += ',';
+            }
+            astIdString += astId;
+        }
+        astIdString = astIdString + "]";
+        return astIdString;
     }
 }

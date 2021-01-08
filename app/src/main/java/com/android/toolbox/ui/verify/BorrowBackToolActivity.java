@@ -2,6 +2,7 @@ package com.android.toolbox.ui.verify;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
@@ -15,6 +16,7 @@ import com.android.toolbox.core.bean.BaseResponse;
 import com.android.toolbox.core.bean.assist.AssetsListItemInfo;
 import com.android.toolbox.core.bean.terminal.AssetBackPara;
 import com.android.toolbox.core.bean.terminal.AssetBorrowPara;
+import com.android.toolbox.core.bean.terminal.NewBorrowBackPara;
 import com.android.toolbox.core.bean.user.UserInfo;
 import com.android.toolbox.presenter.ManageToolPresenter;
 import com.android.toolbox.skrfidbox.Logger;
@@ -36,6 +38,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> implements ManageToolContract.View {
+    private static String TAG = "BorrowBackToolActivity";
     @BindView(R.id.rv_result)
     RelativeLayout resultView;
     @BindView(R.id.open_layout)
@@ -57,7 +60,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     private AssetListAdapter adapter;
     private UserInfo currentUser;
     private List<AssetsListItemInfo> wrongList = new ArrayList<>();
-    private String locName = "locName";
+    private String locName = "二楼";
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -67,6 +70,11 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     @Override
     protected void initEventAndData() {
         currentUser = ToolBoxApplication.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            currentUser = new UserInfo();
+            currentUser.setId("85ddbc5649cb4131adfa1db222fd9d9b");
+            currentUser.setUser_real_name("周");
+        }
         adapter = new AssetListAdapter(toolList, this, true);
         inOutRecycleView.setLayoutManager(new LinearLayoutManager(this));
         inOutRecycleView.setAdapter(adapter);
@@ -138,76 +146,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
 
                     @Override
                     public void OnGetAllTags(Tags tags) {
-                        Logger.info("OnGetAllTags");
-                        Logger.info(tags);
-                        invEpcList.clear();
-                        wrongList.clear();
-                        for (Tags._tag tag : tags.tag_list) {
-                            invEpcList.add(tag.epc);
-                        }
-                        Date today = new Date();
-                        AssetBorrowPara assetBorrowPara = new AssetBorrowPara();
-                        assetBorrowPara.setBor_user_id(currentUser.getId());
-                        assetBorrowPara.setBor_user_name(currentUser.getUser_real_name());
-                        assetBorrowPara.setBor_date(today);
-                        assetBorrowPara.setExpect_rever_date(new Date(today.getTime() + 604800000));
-                        assetBorrowPara.setOdr_remark("");
-                        AssetBackPara assetBackPara = new AssetBackPara();
-                        assetBackPara.setRev_user_id(currentUser.getId());
-                        assetBackPara.setRev_user_name(currentUser.getUser_real_name());
-                        assetBackPara.setActual_rever_date(today);
-                        assetBackPara.setOdr_remark("");
-                        List<String> tempEpcList = new ArrayList<>();
-                        tempEpcList.addAll(epcList);
-                        //获取新添加的工具
-                        tempEpcList.removeAll(invEpcList);
-                        for (String backEpc : tempEpcList) {
-                            AssetsListItemInfo backTool = epcToolMap.get(backEpc);
-                            if (backTool != null) {
-                                if (locName.equals(backTool.getLoc_name())) {
-                                    backTool.setAst_used_status(0);
-                                    toolList.add(backTool);
-                                } else {
-                                    backTool.setAst_used_status(-1);
-                                    wrongList.add(backTool);
-                                }
-
-                                assetBackPara.getAst_ids().add(backTool.getId());
-                            }
-                        }
-                        //todo 需要检查是否有归还位置错误的工具，有错误就不进行领用归还操作，自动打开工具门，再次归还
-                        //获取取出的工具
-                        invEpcList.removeAll(epcList);
-                        for (String borrowEpc : invEpcList) {
-                            AssetsListItemInfo borrowTool = epcToolMap.get(borrowEpc);
-                            if (borrowTool != null) {
-                                borrowTool.setAst_used_status(6);
-                                toolList.add(borrowTool);
-                                assetBorrowPara.getAst_ids().add(borrowTool.getId());
-                            }
-                        }
-                        if (wrongList.size() == 0) {
-                            mPresenter.backTools(assetBackPara);
-                            mPresenter.borrowTools(assetBorrowPara);
-                        } else {
-                            toolList.clear();
-                            toolList.addAll(wrongList);
-                            //开锁
-                            unlock();
-                        }
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                loadingView.setVisibility(View.GONE);
-                                resultView.setVisibility(View.VISIBLE);
-                                if (wrongList.size() == 0) {
-                                    tvResult.setText(BorrowBackToolActivity.this.getString(R.string.maintenance_result, tempEpcList.size(), invEpcList.size()));
-                                } else {
-                                    tvResult.setText(BorrowBackToolActivity.this.getString(R.string.wrong_back_result, wrongList.size()));
-                                }
-                                adapter.notifyDataSetChanged();
-                            }
-                        });
+                        handleAllTags(tags);
                     }
                 });
             }
@@ -219,24 +158,30 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         epcToolMap.clear();
         epcList.clear();
         for (AssetsListItemInfo tool : assetsListItemInfos) {
-            if (tool.getAst_used_status() == 0) {
-                epcToolMap.put(tool.getAst_epc_code(), tool);
+            if (tool.getAst_used_status() == 0 && locName.equals(tool.getLoc_name())) {
                 epcList.add(tool.getAst_epc_code());
+            }
+            if (locName.equals(tool.getLoc_name())) {
+                epcToolMap.put(tool.getAst_epc_code(), tool);
             }
         }
     }
 
     @Override
     public void handleBorrowTools(BaseResponse borrowToolsResponse) {
-
+        if ("200000".equals(borrowToolsResponse.getCode())) {
+            ToastUtils.showShort("借用工具成功");
+        }
     }
 
     @Override
     public void handleBackTools(BaseResponse backToolsResponse) {
-
+        if ("200000".equals(backToolsResponse.getCode())) {
+            ToastUtils.showShort("归还工具成功");
+        }
     }
 
-    @OnClick({R.id.titleLeft, R.id.bt_open_door, R.id.bt_know})
+    @OnClick({R.id.titleLeft, R.id.bt_open_door, R.id.bt_know, R.id.bt_close, R.id.bt_open, R.id.bt_get_tag})
     public void performClick(View view) {
         switch (view.getId()) {
             case R.id.titleLeft:
@@ -244,11 +189,132 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                 break;
             case R.id.bt_open_door:
                 resultView.setVisibility(View.GONE);
-                unlock();
+                testOpenClock();
                 break;
             case R.id.bt_know:
                 finish();
                 break;
+            case R.id.bt_close:
+                testCloseClock();
+                break;
+            case R.id.bt_open:
+                testOpenClock();
+                break;
+            case R.id.bt_get_tag:
+                testOnGetAllTags();
+                break;
         }
+    }
+
+    public void testOpenClock() {
+        openView.setVisibility(View.VISIBLE);
+        ToastUtils.showShort("OnOpenLock");
+    }
+
+    public void testCloseClock() {
+        Log.e(TAG, "OnCloseLock");
+        ToastUtils.showShort("OnCloseLock");
+        openView.setVisibility(View.GONE);
+        loadingView.setVisibility(View.VISIBLE);
+        testOnGetAllTags();
+    }
+
+    public void testOnGetAllTags() {
+        Log.e(TAG, "testOnGetAllTags");
+        ToastUtils.showShort("testOnGetAllTags");
+        Tags tags = new Tags();
+        tags.tag_list = new ArrayList<>();
+        //todo 添加测试epc
+        tags.tag_list.add(new Tags._tag("E22020123118399545740202"));
+        tags.tag_list.add(new Tags._tag("E22020123118399545760202"));
+        tags.tag_list.add(new Tags._tag("E22020123118399545780202"));
+        tags.tag_list.add(new Tags._tag("E22020121626133698580202"));
+        tags.tag_list.add(new Tags._tag("E22020121602221607040202"));
+
+        handleAllTags(tags);
+    }
+
+    public void handleAllTags(Tags tags) {
+        Log.e(TAG, "handleAllTags");
+        Log.e(TAG, "tags====" + tags);
+        ToastUtils.showShort("handleAllTags");
+        invEpcList.clear();
+        wrongList.clear();
+        for (Tags._tag tag : tags.tag_list) {
+            invEpcList.add(tag.epc);
+        }
+        Date today = new Date();
+        AssetBorrowPara assetBorrowPara = new AssetBorrowPara();
+        assetBorrowPara.setOdr_transactor_id(currentUser.getId());
+        assetBorrowPara.setBor_user_id(currentUser.getId());
+        assetBorrowPara.setExpect_rever_date(new Date(today.getTime() + 604800000));
+        assetBorrowPara.setBor_date(today);
+        assetBorrowPara.setOdr_remark("");
+        assetBorrowPara.setUser_mobile(currentUser.getUser_mobile());
+        assetBorrowPara.setTra_user_name(currentUser.getUser_real_name());
+        assetBorrowPara.setBor_user_name(currentUser.getUser_real_name());
+
+        AssetBackPara assetBackPara = new AssetBackPara();
+        assetBackPara.setBelong_dept_id(currentUser.getDeptInfo().getId());
+        assetBackPara.setRev_user_id(currentUser.getId());
+        assetBackPara.setRev_user_name(currentUser.getUser_real_name());
+        assetBackPara.setActual_rever_date(today);
+        assetBackPara.setOdr_remark("back");
+        List<String> tempEpcList = new ArrayList<>();
+        tempEpcList.addAll(epcList);
+        //获取借走的工具
+        tempEpcList.removeAll(invEpcList);
+        for (String borrowEpc : tempEpcList) {
+            AssetsListItemInfo borrowTool = epcToolMap.get(borrowEpc);
+            if (borrowTool != null) {
+                borrowTool.setAst_used_status(6);
+                toolList.add(borrowTool);
+                assetBorrowPara.getAstids().add(borrowTool.getId());
+            }
+        }
+        //获取新添加的工具
+        invEpcList.removeAll(epcList);
+        for (String backEpc : invEpcList) {
+            AssetsListItemInfo backTool = epcToolMap.get(backEpc);
+            if (backTool != null) {
+                if (locName.equals(backTool.getLoc_name())) {
+                    backTool.setAst_used_status(0);
+                    toolList.add(backTool);
+                    assetBackPara.getAst_ids().add(backTool.getId());
+                } else {
+                    backTool.setAst_used_status(-1);
+                    wrongList.add(backTool);
+                }
+            }
+        }
+        if (wrongList.size() == 0) {
+            if (assetBackPara.getAst_ids().size() > 0) {
+                String formData = assetBackPara.toString();
+                String title = currentUser.getUser_real_name() + "提交的归还申请";
+                mPresenter.backTools(new NewBorrowBackPara(formData,"[]",title) );
+            }
+            if (assetBorrowPara.getAstids().size() > 0) {
+                String formData = assetBorrowPara.toString();
+                String title = currentUser.getUser_real_name() + "提交的借用申请";
+                mPresenter.borrowTools(new NewBorrowBackPara(formData,"[]",title));
+            }
+        } else {
+            toolList.clear();
+            toolList.addAll(wrongList);
+            //todo 开门动作
+        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                loadingView.setVisibility(View.GONE);
+                resultView.setVisibility(View.VISIBLE);
+                if (wrongList.size() == 0) {
+                    tvResult.setText(BorrowBackToolActivity.this.getString(R.string.maintenance_result, invEpcList.size(), tempEpcList.size()));
+                } else {
+                    tvResult.setText(BorrowBackToolActivity.this.getString(R.string.wrong_back_result, wrongList.size()));
+                }
+                adapter.notifyDataSetChanged();
+            }
+        });
     }
 }

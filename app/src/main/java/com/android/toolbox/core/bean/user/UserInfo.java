@@ -12,8 +12,11 @@ public class UserInfo {
     private String user_name;
     private String user_real_name;
     private String user_password;
-    private int managerClient = 1;
+    private String user_mobile;
+    private int managerClient = 0;
+    private int env = 1;
     private CorpInfo corpInfo;
+    private DeptInfo deptInfo;
 
     public String getId() {
         return id;
@@ -63,6 +66,30 @@ public class UserInfo {
         this.corpInfo = corpInfo;
     }
 
+    public int getEnv() {
+        return env;
+    }
+
+    public void setEnv(int env) {
+        this.env = env;
+    }
+
+    public String getUser_mobile() {
+        return user_mobile;
+    }
+
+    public void setUser_mobile(String user_mobile) {
+        this.user_mobile = user_mobile;
+    }
+
+    public DeptInfo getDeptInfo() {
+        return deptInfo;
+    }
+
+    public void setDeptInfo(DeptInfo deptInfo) {
+        this.deptInfo = deptInfo;
+    }
+
     public static class CorpInfo {
         /**
          * create_date : 1583136900000
@@ -96,4 +123,27 @@ public class UserInfo {
             this.org_name = org_name;
         }
     }
+
+    public static class DeptInfo {
+
+        private String id;
+        private String org_name;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getOrg_name() {
+            return org_name;
+        }
+
+        public void setOrg_name(String org_name) {
+            this.org_name = org_name;
+        }
+    }
+
 }

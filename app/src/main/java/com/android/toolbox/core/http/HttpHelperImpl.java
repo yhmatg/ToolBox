@@ -6,8 +6,7 @@ import com.android.toolbox.core.bean.assist.AssetsListPage;
 import com.android.toolbox.core.bean.assist.AssetsType;
 import com.android.toolbox.core.bean.assist.DepartmentBean;
 import com.android.toolbox.core.bean.assist.ManagerListPage;
-import com.android.toolbox.core.bean.terminal.AssetBackPara;
-import com.android.toolbox.core.bean.terminal.AssetBorrowPara;
+import com.android.toolbox.core.bean.terminal.NewBorrowBackPara;
 import com.android.toolbox.core.bean.terminal.TerminalInfo;
 import com.android.toolbox.core.bean.terminal.TerminalLoginPara;
 import com.android.toolbox.core.bean.user.UserInfo;
@@ -93,12 +92,12 @@ public class HttpHelperImpl implements HttpHelper {
     }
 
     @Override
-    public Observable<BaseResponse> borrowTools(AssetBorrowPara borrowPara) {
+    public Observable<BaseResponse> borrowTools(NewBorrowBackPara borrowPara) {
         return mGeeksApis.borrowTools(borrowPara);
     }
 
     @Override
-    public Observable<BaseResponse> backTools(AssetBackPara backPara) {
+    public Observable<BaseResponse> backTools(NewBorrowBackPara backPara) {
         return mGeeksApis.backTools(backPara);
     }
 

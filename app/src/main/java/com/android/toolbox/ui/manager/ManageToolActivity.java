@@ -15,6 +15,7 @@ import com.android.toolbox.core.bean.BaseResponse;
 import com.android.toolbox.core.bean.assist.AssetsListItemInfo;
 import com.android.toolbox.core.bean.terminal.AssetBackPara;
 import com.android.toolbox.core.bean.terminal.AssetBorrowPara;
+import com.android.toolbox.core.bean.terminal.NewBorrowBackPara;
 import com.android.toolbox.core.bean.user.UserInfo;
 import com.android.toolbox.presenter.ManageToolPresenter;
 import com.android.toolbox.skrfidbox.Logger;
@@ -56,6 +57,8 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     private List<AssetsListItemInfo> toolList = new ArrayList<>();
     private AssetListAdapter adapter;
     private UserInfo currentUser;
+    private List<AssetsListItemInfo> wrongList = new ArrayList<>();
+    private String locName = "二楼";
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -144,46 +147,74 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                         }
                         Date today = new Date();
                         AssetBorrowPara assetBorrowPara = new AssetBorrowPara();
+                        assetBorrowPara.setOdr_transactor_id(currentUser.getId());
                         assetBorrowPara.setBor_user_id(currentUser.getId());
-                        assetBorrowPara.setBor_user_name(currentUser.getUser_real_name());
-                        assetBorrowPara.setBor_date(today);
                         assetBorrowPara.setExpect_rever_date(new Date(today.getTime() + 604800000));
+                        assetBorrowPara.setBor_date(today);
                         assetBorrowPara.setOdr_remark("");
+                        assetBorrowPara.setUser_mobile(currentUser.getUser_mobile());
+                        assetBorrowPara.setTra_user_name(currentUser.getUser_real_name());
+                        assetBorrowPara.setBor_user_name(currentUser.getUser_real_name());
+
                         AssetBackPara assetBackPara = new AssetBackPara();
+                        assetBackPara.setBelong_dept_id(currentUser.getDeptInfo().getId());
                         assetBackPara.setRev_user_id(currentUser.getId());
                         assetBackPara.setRev_user_name(currentUser.getUser_real_name());
                         assetBackPara.setActual_rever_date(today);
-                        assetBackPara.setOdr_remark("");
+                        assetBackPara.setOdr_remark("back");
                         List<String> tempEpcList = new ArrayList<>();
                         tempEpcList.addAll(epcList);
-                        //获取新添加的工具
+                        //获取借走的工具
                         tempEpcList.removeAll(invEpcList);
-                        for (String backEpc : tempEpcList) {
-                            AssetsListItemInfo backTool = epcToolMap.get(backEpc);
-                            if (backTool != null) {
-                                backTool.setAst_used_status(0);
-                                toolList.add(backTool);
-                                assetBackPara.getAst_ids().add(backTool.getId());
-                            }
-                        }
-                        mPresenter.backTools(assetBackPara);
-                        //获取取出的工具
-                        invEpcList.removeAll(epcList);
-                        for (String borrowEpc : invEpcList) {
+                        for (String borrowEpc : tempEpcList) {
                             AssetsListItemInfo borrowTool = epcToolMap.get(borrowEpc);
                             if (borrowTool != null) {
                                 borrowTool.setAst_used_status(6);
                                 toolList.add(borrowTool);
-                                assetBorrowPara.getAst_ids().add(borrowTool.getId());
+                                assetBorrowPara.getAstids().add(borrowTool.getId());
                             }
                         }
-                       mPresenter.borrowTools(assetBorrowPara);
+                        //获取新添加的工具
+                        invEpcList.removeAll(epcList);
+                        for (String backEpc : invEpcList) {
+                            AssetsListItemInfo backTool = epcToolMap.get(backEpc);
+                            if (backTool != null) {
+                                if (locName.equals(backTool.getLoc_name())) {
+                                    backTool.setAst_used_status(0);
+                                    toolList.add(backTool);
+                                    assetBackPara.getAst_ids().add(backTool.getId());
+                                } else {
+                                    backTool.setAst_used_status(-1);
+                                    wrongList.add(backTool);
+                                }
+                            }
+                        }
+                        if (wrongList.size() == 0) {
+                            if (assetBackPara.getAst_ids().size() > 0) {
+                                String formData = assetBackPara.toString();
+                                String title = currentUser.getUser_real_name() + "提交的归还申请";
+                                mPresenter.backTools(new NewBorrowBackPara(formData,"[]",title) );
+                            }
+                            if (assetBorrowPara.getAstids().size() > 0) {
+                                String formData = assetBorrowPara.toString();
+                                String title = currentUser.getUser_real_name() + "提交的借用申请";
+                                mPresenter.borrowTools(new NewBorrowBackPara(formData,"[]",title));
+                            }
+                        } else {
+                            toolList.clear();
+                            toolList.addAll(wrongList);
+                            //todo 开门动作
+                        }
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 loadingView.setVisibility(View.GONE);
                                 resultView.setVisibility(View.VISIBLE);
-                                tvResult.setText(ManageToolActivity.this.getString(R.string.maintenance_result, tempEpcList.size(), invEpcList.size()));
+                                if (wrongList.size() == 0) {
+                                    tvResult.setText(ManageToolActivity.this.getString(R.string.maintenance_result, invEpcList.size(), tempEpcList.size()));
+                                } else {
+                                    tvResult.setText(ManageToolActivity.this.getString(R.string.wrong_back_result, wrongList.size()));
+                                }
                                 adapter.notifyDataSetChanged();
                             }
                         });

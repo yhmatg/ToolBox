@@ -3,21 +3,23 @@ package com.android.toolbox.core.http.client;
 import android.content.Context;
 
 import com.android.toolbox.BuildConfig;
-import com.android.toolbox.app.ToolBoxApplication;
 import com.android.toolbox.app.Constants;
+import com.android.toolbox.app.ToolBoxApplication;
 import com.android.toolbox.core.http.interceptor.AppendUrlIntercepter;
 import com.android.toolbox.core.http.interceptor.CacheInterceptor;
 import com.android.toolbox.core.prefs.PreferenceHelperImpl;
 import com.android.toolbox.utils.CommonUtils;
-import com.android.toolbox.utils.RylaiGson;
+import com.android.toolbox.utils.DaterylaiGson;
 import com.android.toolbox.utils.StringUtils;
 import com.android.toolbox.utils.Utils;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -63,7 +65,8 @@ public class RetrofitClient {
     private RetrofitClient() {
         url = PreferenceHelperImpl.getInstance().getHostUrl();
         if(StringUtils.isEmpty(url)){
-            url ="http://172.16.61.223:30000";
+            //url ="https://cloud.assettag.vip/";
+            url ="http://172.16.61.223:30000/";
         }
         retrofit = createRetrofit(provideClient(), url);
 
@@ -130,7 +133,7 @@ public class RetrofitClient {
                 .client(client)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 //.addConverterFactory(GsonConverterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create(RylaiGson.getGson()))
+                .addConverterFactory(GsonConverterFactory.create(DaterylaiGson.getGson()))
                 .build();
     }
     /**

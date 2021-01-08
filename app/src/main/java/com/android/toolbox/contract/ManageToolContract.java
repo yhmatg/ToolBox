@@ -4,8 +4,7 @@ import com.android.toolbox.base.presenter.AbstractPresenter;
 import com.android.toolbox.base.view.AbstractView;
 import com.android.toolbox.core.bean.BaseResponse;
 import com.android.toolbox.core.bean.assist.AssetsListItemInfo;
-import com.android.toolbox.core.bean.terminal.AssetBackPara;
-import com.android.toolbox.core.bean.terminal.AssetBorrowPara;
+import com.android.toolbox.core.bean.terminal.NewBorrowBackPara;
 
 import java.util.List;
 
@@ -21,8 +20,8 @@ public interface ManageToolContract {
     interface Presenter extends AbstractPresenter<View> {
         void fetchAllAssetsInfos();
 
-        void borrowTools(AssetBorrowPara borrowPara);
+        void borrowTools(NewBorrowBackPara borrowPara);
 
-        void backTools(AssetBackPara backPara);
+        void backTools(NewBorrowBackPara backPara);
     }
 }

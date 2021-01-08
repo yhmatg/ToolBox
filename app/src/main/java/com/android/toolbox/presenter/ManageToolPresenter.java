@@ -5,8 +5,7 @@ import com.android.toolbox.contract.ManageToolContract;
 import com.android.toolbox.core.DataManager;
 import com.android.toolbox.core.bean.BaseResponse;
 import com.android.toolbox.core.bean.assist.AssetsListItemInfo;
-import com.android.toolbox.core.bean.terminal.AssetBackPara;
-import com.android.toolbox.core.bean.terminal.AssetBorrowPara;
+import com.android.toolbox.core.bean.terminal.NewBorrowBackPara;
 import com.android.toolbox.core.http.widget.BaseObserver;
 import com.android.toolbox.utils.RxUtils;
 
@@ -27,7 +26,7 @@ public class ManageToolPresenter extends BasePresenter<ManageToolContract.View> 
     }
 
     @Override
-    public void borrowTools(AssetBorrowPara borrowPara) {
+    public void borrowTools(NewBorrowBackPara borrowPara) {
         addSubscribe(DataManager.getInstance().borrowTools(borrowPara)
                 .compose(RxUtils.rxSchedulerHelper())
                 .subscribeWith(new BaseObserver<BaseResponse>(mView, false) {
@@ -39,7 +38,7 @@ public class ManageToolPresenter extends BasePresenter<ManageToolContract.View> 
     }
 
     @Override
-    public void backTools(AssetBackPara backPara) {
+    public void backTools(NewBorrowBackPara backPara) {
         addSubscribe(DataManager.getInstance().backTools(backPara)
         .compose(RxUtils.rxSchedulerHelper())
         .subscribeWith(new BaseObserver<BaseResponse>(mView, false) {

@@ -6,8 +6,7 @@ import com.android.toolbox.core.bean.assist.AssetsListPage;
 import com.android.toolbox.core.bean.assist.AssetsType;
 import com.android.toolbox.core.bean.assist.DepartmentBean;
 import com.android.toolbox.core.bean.assist.ManagerListPage;
-import com.android.toolbox.core.bean.terminal.AssetBackPara;
-import com.android.toolbox.core.bean.terminal.AssetBorrowPara;
+import com.android.toolbox.core.bean.terminal.NewBorrowBackPara;
 import com.android.toolbox.core.bean.terminal.TerminalInfo;
 import com.android.toolbox.core.bean.terminal.TerminalLoginPara;
 import com.android.toolbox.core.bean.user.UserInfo;
@@ -62,10 +61,10 @@ public interface GeeksApis {
     Observable<BaseResponse<List<AssetsListItemInfo>>> fetchAllAssetsInfos();
 
     //借用工具
-    @POST("assets-server/borrows/bymanager")
-    Observable<BaseResponse> borrowTools(@Body AssetBorrowPara borrowPara);
+    @POST("assets-server/general/bussiness/apply/BORROW")
+    Observable<BaseResponse> borrowTools(@Body NewBorrowBackPara borrowPara);
 
     //归还工具
-    @POST("assets-server/backs/byemp")
-    Observable<BaseResponse> backTools(@Body AssetBackPara backPara);
+    @POST("assets-server/general/bussiness/apply/BACK")
+    Observable<BaseResponse> backTools(@Body NewBorrowBackPara backPara);
 }

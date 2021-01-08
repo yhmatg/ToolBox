@@ -4,7 +4,9 @@ import com.android.toolbox.core.bean.BaseResponse;
 import com.android.toolbox.core.http.exception.OtherException;
 import com.android.toolbox.core.http.exception.ResultIsNullException;
 import com.android.toolbox.core.http.exception.TokenException;
+
 import org.reactivestreams.Publisher;
+
 import io.reactivex.Flowable;
 import io.reactivex.FlowableTransformer;
 import io.reactivex.Observable;
@@ -18,6 +20,7 @@ import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by chao.qu at 2017/10/20
+ *
  * @author yhm
  */
 
@@ -25,6 +28,7 @@ public class RxUtils {
 
     /**
      * 统一线程处理
+     *
      * @param <T> 指定的泛型类型
      * @return FlowableTransformer
      */
@@ -40,6 +44,7 @@ public class RxUtils {
 
     /**
      * 统一线程处理
+     *
      * @param <T> 指定的泛型类型
      * @return ObservableTransformer
      */
@@ -55,6 +60,7 @@ public class RxUtils {
 
     /**
      * 统一返回结果处理
+     *
      * @param <T> 指定的泛型类型
      * @return ObservableTransformer
      */
@@ -65,15 +71,14 @@ public class RxUtils {
                 return httpResponseObservable.flatMap(new Function<BaseResponse<T>, Observable<T>>() {
                     @Override
                     public Observable<T> apply(BaseResponse<T> baseResponse) throws Exception {
-                        if (baseResponse.isSuccess()
-                                && baseResponse.getResult() != null) {
+                        if (baseResponse.isSuccess() && baseResponse.getResult() != null) {
                             return createData(baseResponse.getResult());
                         } else {
-                            if("2000A0".equals(baseResponse.getCode())){
+                            if ("2000A0".equals(baseResponse.getCode())) {
                                 return Observable.error(new TokenException());
-                            }else if(baseResponse.getResult() == null){
+                            } else if (baseResponse.getResult() == null) {
                                 return Observable.error(new ResultIsNullException());
-                            }else{
+                            } else {
                                 return Observable.error(new OtherException());
                             }
                         }
@@ -85,18 +90,19 @@ public class RxUtils {
 
     /**
      * 统一返回结果处理(没有result)
+     *
      * @return ObservableTransformer
      */
-    public static  ObservableTransformer<BaseResponse, BaseResponse> handleBaseResponse() {
+    public static ObservableTransformer<BaseResponse, BaseResponse> handleBaseResponse() {
         return new ObservableTransformer<BaseResponse, BaseResponse>() {
             @Override
             public ObservableSource<BaseResponse> apply(Observable<BaseResponse> upstream) {
                 return upstream.flatMap(new Function<BaseResponse, ObservableSource<BaseResponse>>() {
                     @Override
                     public ObservableSource<BaseResponse> apply(BaseResponse baseResponse) throws Exception {
-                        if(CommonUtils.isNetworkConnected()){
+                        if (CommonUtils.isNetworkConnected()) {
                             return createData(baseResponse);
-                        }else {
+                        } else {
                             return Observable.error(new OtherException());
                         }
 
@@ -108,6 +114,7 @@ public class RxUtils {
 
     /**
      * 得到 Observable
+     *
      * @param <T> 指定的泛型类型
      * @return Observable
      */
