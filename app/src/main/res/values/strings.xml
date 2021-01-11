@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name">工具柜</string>
     <string name="http_error">网络异常！</string>
-    <string name="token_error">未登录或token过期,请重新登录!</string>
+    <string name="token_error">登录失效,请重新登录!</string>
     <string name="unKnown_error">未知错误！</string>
     <string name="socket_time_out_error">网络连接超时，请检查输入的服务器URL是否正确!</string>
+    <string name="url_error">请检查输入的服务器URL是否正确!</string>
     <string name="not_result_error">未获取到数据！</string>
     <string name="empty_page_text">没有数据</string>
     <string name="box_title">RFID智能工具管理柜</string>
@@ -28,4 +29,10 @@
     <string name="maintenance_str">维护结果</string>
     <string name="maintenance_result">您本次放入%1$d个工具，移出%2$d个工具</string>
     <string name="wrong_back_result">有%1$d个工具放置错误\n门已经自动打开，请重新放入!</string>
+    <string name="close_door_alert">提示</string>
+    <string name="go_home">前往首页</string>
+    <string name="auto_return">自动返回(%1$ds)</string>
+    <string name="auto_default_return">自动返回(10s)</string>
+    <string name="close_succ">柜门关闭成功!</string>
+    <string name="wrong_account_password">账号或密码不正确</string>
 </resources>

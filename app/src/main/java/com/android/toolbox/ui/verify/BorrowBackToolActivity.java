@@ -1,13 +1,22 @@
 package com.android.toolbox.ui.verify;
 
+import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.android.toolbox.HomeActivity;
 import com.android.toolbox.R;
 import com.android.toolbox.app.ToolBoxApplication;
 import com.android.toolbox.base.activity.BaseActivity;
@@ -33,6 +42,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -49,6 +60,8 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     RecyclerView inOutRecycleView;
     @BindView(R.id.tv_result)
     TextView tvResult;
+    @BindView(R.id.iv_loading)
+    ImageView waitView;
     private ServerThread serverThread;
     //工具箱中闲置的工具
     private HashMap<String, AssetsListItemInfo> epcToolMap = new HashMap<>();
@@ -61,6 +74,27 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     private UserInfo currentUser;
     private List<AssetsListItemInfo> wrongList = new ArrayList<>();
     private String locName = "二楼";
+    private Animation anim;
+    private MaterialDialog closeDoorDialog;
+    private int recLen = 10;
+    private TextView autoBack;
+    private Timer timer = new Timer();
+    TimerTask task = new TimerTask() {
+        @Override
+        public void run() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    recLen--;
+                    autoBack.setText(getString(R.string.auto_return, recLen));
+                    if (recLen < 1) {
+                        cancel();
+                        startActivity(new Intent(BorrowBackToolActivity.this, HomeActivity.class));
+                    }
+                }
+            });
+        }
+    };
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -80,7 +114,17 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         inOutRecycleView.setAdapter(adapter);
         mPresenter.fetchAllAssetsInfos();
         serverThread = ToolBoxApplication.getInstance().getServerThread();
+        initAnimation();
         //unlock();
+    }
+
+    private void initAnimation() {
+        anim = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        anim.setFillAfter(true); // 设置保持动画最后的状态
+        anim.setDuration(2000); // 设置动画时间
+        anim.setRepeatCount(Animation.INFINITE);//设置动画重复次数 无限循环
+        anim.setInterpolator(new LinearInterpolator());
+        anim.setRepeatMode(Animation.RESTART);
     }
 
     @Override
@@ -118,6 +162,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                             public void run() {
                                 openView.setVisibility(View.GONE);
                                 loadingView.setVisibility(View.VISIBLE);
+                                waitView.startAnimation(anim);
                                 startRfid();
                                 ToastUtils.showShort("OnCloseLock");
                             }
@@ -170,6 +215,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     @Override
     public void handleBorrowTools(BaseResponse borrowToolsResponse) {
         if ("200000".equals(borrowToolsResponse.getCode())) {
+            showCloseDoorDialog();
             ToastUtils.showShort("借用工具成功");
         }
     }
@@ -177,6 +223,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     @Override
     public void handleBackTools(BaseResponse backToolsResponse) {
         if ("200000".equals(backToolsResponse.getCode())) {
+            showCloseDoorDialog();
             ToastUtils.showShort("归还工具成功");
         }
     }
@@ -216,7 +263,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         ToastUtils.showShort("OnCloseLock");
         openView.setVisibility(View.GONE);
         loadingView.setVisibility(View.VISIBLE);
-        testOnGetAllTags();
+        waitView.startAnimation(anim);
     }
 
     public void testOnGetAllTags() {
@@ -230,7 +277,6 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         tags.tag_list.add(new Tags._tag("E22020123118399545780202"));
         tags.tag_list.add(new Tags._tag("E22020121626133698580202"));
         tags.tag_list.add(new Tags._tag("E22020121602221607040202"));
-
         handleAllTags(tags);
     }
 
@@ -291,22 +337,27 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
             if (assetBackPara.getAst_ids().size() > 0) {
                 String formData = assetBackPara.toString();
                 String title = currentUser.getUser_real_name() + "提交的归还申请";
-                mPresenter.backTools(new NewBorrowBackPara(formData,"[]",title) );
+                mPresenter.backTools(new NewBorrowBackPara(formData, "[]", title));
             }
             if (assetBorrowPara.getAstids().size() > 0) {
                 String formData = assetBorrowPara.toString();
                 String title = currentUser.getUser_real_name() + "提交的借用申请";
-                mPresenter.borrowTools(new NewBorrowBackPara(formData,"[]",title));
+                mPresenter.borrowTools(new NewBorrowBackPara(formData, "[]", title));
+            }
+            if(assetBackPara.getAst_ids().size() == 0 && assetBorrowPara.getAstids().size() == 0){
+                showCloseDoorDialog();
             }
         } else {
             toolList.clear();
             toolList.addAll(wrongList);
             //todo 开门动作
+            //unlock();
         }
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 loadingView.setVisibility(View.GONE);
+                waitView.clearAnimation();
                 resultView.setVisibility(View.VISIBLE);
                 if (wrongList.size() == 0) {
                     tvResult.setText(BorrowBackToolActivity.this.getString(R.string.maintenance_result, invEpcList.size(), tempEpcList.size()));
@@ -316,5 +367,30 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                 adapter.notifyDataSetChanged();
             }
         });
+    }
+
+    public void showCloseDoorDialog() {
+        if (closeDoorDialog != null && !closeDoorDialog.isShowing()) {
+            closeDoorDialog.show();
+            timer.schedule(task, 1000, 1000);
+        } else {
+            View contentView = LayoutInflater.from(this).inflate(R.layout.close_door_dialog, null);
+            View goHome = contentView.findViewById(R.id.tv_go_home);
+            autoBack = contentView.findViewById(R.id.tv_auto_back);
+            goHome.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    closeDoorDialog.dismiss();
+                    startActivity(new Intent(BorrowBackToolActivity.this, HomeActivity.class));
+                    finish();
+                }
+            });
+            MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
+                    .customView(contentView, false);
+            closeDoorDialog = builder.show();
+            timer.schedule(task, 1000, 1000);
+            Window window = closeDoorDialog.getWindow();
+            window.setBackgroundDrawableResource(android.R.color.transparent);
+        }
     }
 }

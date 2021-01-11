@@ -38,9 +38,11 @@ public class VerifyActivity extends BaseActivity {
                 break;
             case R.id.iv_face_verify:
                 startActivity(new Intent(this,FaceVerifyActivity.class));
+                finish();
                 break;
             case R.id.iv_code_verify:
                 startActivity(new Intent(this,CardVerifyActivity.class));
+                finish();
                 break;
         }
 

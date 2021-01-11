@@ -49,6 +49,7 @@ public class FaceVerifyActivity extends BaseActivity {
                 break;
             case R.id.bt_retry:
                 startActivity(new Intent(this, BorrowBackToolActivity.class));
+                finish();
                 break;
         }
 

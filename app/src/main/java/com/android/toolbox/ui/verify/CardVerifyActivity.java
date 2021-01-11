@@ -43,6 +43,7 @@ public class CardVerifyActivity extends BaseActivity {
                 break;
             case R.id.bt_retry:
                 startActivity(new Intent(this, BorrowBackToolActivity.class));
+                finish();
                 break;
 
         }

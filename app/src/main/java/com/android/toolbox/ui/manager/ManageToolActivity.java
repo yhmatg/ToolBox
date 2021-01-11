@@ -3,7 +3,11 @@ package com.android.toolbox.ui.manager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -47,6 +51,8 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     RecyclerView inOutRecycleView;
     @BindView(R.id.tv_result)
     TextView tvResult;
+    @BindView(R.id.iv_loading)
+    ImageView waitView;
     private ServerThread serverThread;
     //工具箱中闲置的工具
     private HashMap<String, AssetsListItemInfo> epcToolMap = new HashMap<>();
@@ -59,6 +65,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     private UserInfo currentUser;
     private List<AssetsListItemInfo> wrongList = new ArrayList<>();
     private String locName = "二楼";
+    private Animation anim;
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -73,8 +80,19 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         inOutRecycleView.setAdapter(adapter);
         mPresenter.fetchAllAssetsInfos();
         serverThread = ToolBoxApplication.getInstance().getServerThread();
+        initAnimation();
         //unlock();
     }
+
+    private void initAnimation() {
+        anim = new RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        anim.setFillAfter(true); // 设置保持动画最后的状态
+        anim.setDuration(2000); // 设置动画时间
+        anim.setRepeatCount(Animation.INFINITE);//设置动画重复次数 无限循环
+        anim.setInterpolator(new LinearInterpolator());
+        anim.setRepeatMode(Animation.RESTART);
+    }
+
 
     @Override
     protected int getLayoutId() {
@@ -111,6 +129,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                             public void run() {
                                 openView.setVisibility(View.GONE);
                                 loadingView.setVisibility(View.VISIBLE);
+                                waitView.startAnimation(anim);
                                 startRfid();
                                 ToastUtils.showShort("OnCloseLock");
                             }
@@ -203,12 +222,13 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                         } else {
                             toolList.clear();
                             toolList.addAll(wrongList);
-                            //todo 开门动作
+                            //todo 不需要开门动作
                         }
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 loadingView.setVisibility(View.GONE);
+                                waitView.clearAnimation();
                                 resultView.setVisibility(View.VISIBLE);
                                 if (wrongList.size() == 0) {
                                     tvResult.setText(ManageToolActivity.this.getString(R.string.maintenance_result, invEpcList.size(), tempEpcList.size()));

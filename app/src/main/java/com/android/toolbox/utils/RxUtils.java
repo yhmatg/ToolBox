@@ -1,9 +1,12 @@
 package com.android.toolbox.utils;
 
 import com.android.toolbox.core.bean.BaseResponse;
+import com.android.toolbox.core.http.exception.ExpiredExpection;
+import com.android.toolbox.core.http.exception.NoAssetInCreateInvException;
 import com.android.toolbox.core.http.exception.OtherException;
 import com.android.toolbox.core.http.exception.ResultIsNullException;
 import com.android.toolbox.core.http.exception.TokenException;
+import com.android.toolbox.core.http.exception.WrongAccountOrPassException;
 
 import org.reactivestreams.Publisher;
 
@@ -76,6 +79,12 @@ public class RxUtils {
                         } else {
                             if ("2000A0".equals(baseResponse.getCode())) {
                                 return Observable.error(new TokenException());
+                            }  else if ("909003".equals(baseResponse.getCode())) {//试用过期
+                                return Observable.error(new ExpiredExpection());
+                            } else if ("200001".equals(baseResponse.getCode())) {//密码账号错误
+                                return Observable.error(new WrongAccountOrPassException());
+                            } else if ("401704".equals(baseResponse.getCode())) {//新建盘点单中无附条件资产
+                                return Observable.error(new NoAssetInCreateInvException());
                             } else if (baseResponse.getResult() == null) {
                                 return Observable.error(new ResultIsNullException());
                             } else {
