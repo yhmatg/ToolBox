@@ -90,6 +90,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                     if (recLen < 1) {
                         cancel();
                         startActivity(new Intent(BorrowBackToolActivity.this, HomeActivity.class));
+                        finish();
                     }
                 }
             });
@@ -217,6 +218,8 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         if ("200000".equals(borrowToolsResponse.getCode())) {
             showCloseDoorDialog();
             ToastUtils.showShort("借用工具成功");
+        }else if("200002".equals(borrowToolsResponse.getCode())){
+            ToastUtils.showShort("请求参数异常");
         }
     }
 
@@ -225,6 +228,8 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         if ("200000".equals(backToolsResponse.getCode())) {
             showCloseDoorDialog();
             ToastUtils.showShort("归还工具成功");
+        }else if("200002".equals(backToolsResponse.getCode())){
+            ToastUtils.showShort("请求参数异常");
         }
     }
 
@@ -272,11 +277,11 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         Tags tags = new Tags();
         tags.tag_list = new ArrayList<>();
         //todo 添加测试epc
-        tags.tag_list.add(new Tags._tag("E22020123118399545740202"));
+       /* tags.tag_list.add(new Tags._tag("E22020123118399545740202"));
         tags.tag_list.add(new Tags._tag("E22020123118399545760202"));
         tags.tag_list.add(new Tags._tag("E22020123118399545780202"));
         tags.tag_list.add(new Tags._tag("E22020121626133698580202"));
-        tags.tag_list.add(new Tags._tag("E22020121602221607040202"));
+        tags.tag_list.add(new Tags._tag("E22020121602221607040202"));*/
         handleAllTags(tags);
     }
 

@@ -17,7 +17,7 @@
         android:layout_height="@dimen/dp_34"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="@dimen/dp_40"
-        android:layout_marginBottom="@dimen/dp_100"
+        android:layout_marginBottom="@dimen/dp_140"
         android:background="@drawable/change_face_verify" />
 
     <Button

@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/iv_return_home"
-        android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginStart="@dimen/dp_20"
         android:src="@drawable/tool_manage" />
 
 
@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/iv_manage_tool"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_20"
         android:src="@drawable/user_manage" />
 
     <ImageView
@@ -35,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="@dimen/dp_16"
+        android:layout_marginStart="@dimen/dp_20"
         android:layout_marginBottom="@dimen/dp_110"
         android:src="@drawable/launcher_home" />
 
@@ -46,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/iv_return_home"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/dp_16"
+        android:layout_marginEnd="@dimen/dp_20"
         android:src="@drawable/login_out" />
 
 </RelativeLayout>

@@ -258,12 +258,20 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
 
     @Override
     public void handleBorrowTools(BaseResponse borrowToolsResponse) {
-
+        if ("200000".equals(borrowToolsResponse.getCode())) {
+            ToastUtils.showShort("借用工具成功");
+        }else if("200002".equals(borrowToolsResponse.getCode())){
+            ToastUtils.showShort("请求参数异常");
+        }
     }
 
     @Override
     public void handleBackTools(BaseResponse backToolsResponse) {
-
+        if ("200000".equals(backToolsResponse.getCode())) {
+            ToastUtils.showShort("归还工具成功");
+        }else if("200002".equals(backToolsResponse.getCode())){
+            ToastUtils.showShort("请求参数异常");
+        }
     }
 
     @OnClick({R.id.titleLeft, R.id.bt_open_door, R.id.bt_know})

@@ -4,6 +4,7 @@ import com.android.toolbox.core.bean.BaseResponse;
 import com.android.toolbox.core.http.exception.ExpiredExpection;
 import com.android.toolbox.core.http.exception.NoAssetInCreateInvException;
 import com.android.toolbox.core.http.exception.OtherException;
+import com.android.toolbox.core.http.exception.ParameterException;
 import com.android.toolbox.core.http.exception.ResultIsNullException;
 import com.android.toolbox.core.http.exception.TokenException;
 import com.android.toolbox.core.http.exception.WrongAccountOrPassException;
@@ -83,7 +84,9 @@ public class RxUtils {
                                 return Observable.error(new ExpiredExpection());
                             } else if ("200001".equals(baseResponse.getCode())) {//密码账号错误
                                 return Observable.error(new WrongAccountOrPassException());
-                            } else if ("401704".equals(baseResponse.getCode())) {//新建盘点单中无附条件资产
+                            }else if ("200002".equals(baseResponse.getCode())) {//请求参数异常
+                                return Observable.error(new ParameterException());
+                            }  else if ("401704".equals(baseResponse.getCode())) {//新建盘点单中无附条件资产
                                 return Observable.error(new NoAssetInCreateInvException());
                             } else if (baseResponse.getResult() == null) {
                                 return Observable.error(new ResultIsNullException());

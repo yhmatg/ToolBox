@@ -41,7 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="@dimen/dp_13"
+        android:layout_marginStart="@dimen/dp_20"
         android:layout_marginBottom="@dimen/dp_76"
         android:src="@drawable/tool_in_out" />
 
@@ -52,7 +52,7 @@
         android:layout_below="@+id/tv_title"
         android:layout_alignTop="@+id/iv_inout_tool"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/dp_13"
+        android:layout_marginEnd="@dimen/dp_20"
         android:src="@drawable/tool_search" />
 
 
@@ -62,6 +62,6 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/iv_inout_tool"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/dp_13"
+        android:layout_marginEnd="@dimen/dp_20"
         android:src="@drawable/manager_power" />
 </RelativeLayout>

@@ -35,4 +35,5 @@
     <string name="auto_default_return">自动返回(10s)</string>
     <string name="close_succ">柜门关闭成功!</string>
     <string name="wrong_account_password">账号或密码不正确</string>
+    <string name="wrong_parameter">请求参数异常</string>
 </resources>

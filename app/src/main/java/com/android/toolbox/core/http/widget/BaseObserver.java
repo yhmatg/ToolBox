@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.android.toolbox.R;
 import com.android.toolbox.base.view.AbstractView;
+import com.android.toolbox.core.http.exception.ParameterException;
 import com.android.toolbox.core.http.exception.ResultIsNullException;
 import com.android.toolbox.core.http.exception.ServerException;
 import com.android.toolbox.core.http.exception.TokenException;
@@ -79,6 +80,8 @@ public abstract class BaseObserver<T> extends ResourceObserver<T> {
             ToastUtils.showShort(R.string.url_error);
         } else if (e instanceof WrongAccountOrPassException) {
             ToastUtils.showShort(R.string.wrong_account_password);
+        } else if (e instanceof ParameterException) {
+            ToastUtils.showShort(R.string.wrong_parameter);
         } else if (e instanceof ResultIsNullException) {
             ToastUtils.showShort(R.string.not_result_error);
         } else {

@@ -66,7 +66,8 @@ public class RetrofitClient {
         url = PreferenceHelperImpl.getInstance().getHostUrl();
         if(StringUtils.isEmpty(url)){
             //url ="https://cloud.assettag.vip/";
-            url ="http://172.16.61.223:30000/";
+            //url ="http://172.16.61.223:30000/";
+            url ="http://deve.esimtek.com:18618/";
         }
         retrofit = createRetrofit(provideClient(), url);
 
