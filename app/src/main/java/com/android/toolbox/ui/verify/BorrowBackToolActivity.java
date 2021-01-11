@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
@@ -36,6 +37,7 @@ import com.android.toolbox.skrfidbox.econst.ELock;
 import com.android.toolbox.skrfidbox.entity.MsgObjBase;
 import com.android.toolbox.skrfidbox.entity.Tags;
 import com.android.toolbox.ui.toolquery.AssetListAdapter;
+import com.android.toolbox.utils.ScreenSizeUtils;
 import com.android.toolbox.utils.ToastUtils;
 
 import java.util.ArrayList;
@@ -218,7 +220,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         if ("200000".equals(borrowToolsResponse.getCode())) {
             showCloseDoorDialog();
             ToastUtils.showShort("借用工具成功");
-        }else if("200002".equals(borrowToolsResponse.getCode())){
+        } else if ("200002".equals(borrowToolsResponse.getCode())) {
             ToastUtils.showShort("请求参数异常");
         }
     }
@@ -228,7 +230,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         if ("200000".equals(backToolsResponse.getCode())) {
             showCloseDoorDialog();
             ToastUtils.showShort("归还工具成功");
-        }else if("200002".equals(backToolsResponse.getCode())){
+        } else if ("200002".equals(backToolsResponse.getCode())) {
             ToastUtils.showShort("请求参数异常");
         }
     }
@@ -277,11 +279,11 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         Tags tags = new Tags();
         tags.tag_list = new ArrayList<>();
         //todo 添加测试epc
-       /* tags.tag_list.add(new Tags._tag("E22020123118399545740202"));
+        tags.tag_list.add(new Tags._tag("E22020123118399545740202"));
         tags.tag_list.add(new Tags._tag("E22020123118399545760202"));
         tags.tag_list.add(new Tags._tag("E22020123118399545780202"));
         tags.tag_list.add(new Tags._tag("E22020121626133698580202"));
-        tags.tag_list.add(new Tags._tag("E22020121602221607040202"));*/
+        tags.tag_list.add(new Tags._tag("E22020121602221607040202"));
         handleAllTags(tags);
     }
 
@@ -349,7 +351,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                 String title = currentUser.getUser_real_name() + "提交的借用申请";
                 mPresenter.borrowTools(new NewBorrowBackPara(formData, "[]", title));
             }
-            if(assetBackPara.getAst_ids().size() == 0 && assetBorrowPara.getAstids().size() == 0){
+            if (assetBackPara.getAst_ids().size() == 0 && assetBorrowPara.getAstids().size() == 0) {
                 showCloseDoorDialog();
             }
         } else {
@@ -392,10 +394,18 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
             });
             MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
                     .customView(contentView, false);
-            closeDoorDialog = builder.show();
+            closeDoorDialog = builder
+                    .canceledOnTouchOutside(false)
+                    .cancelable(false)
+                    .show();
             timer.schedule(task, 1000, 1000);
             Window window = closeDoorDialog.getWindow();
             window.setBackgroundDrawableResource(android.R.color.transparent);
+            // 设置宽度
+            WindowManager.LayoutParams layoutParams = window.getAttributes();
+            layoutParams.width = (int) (ScreenSizeUtils.getInstance(getApplication()).getScreenWidth() * 0.75f);
+            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            window.setAttributes(layoutParams);
         }
     }
 }
