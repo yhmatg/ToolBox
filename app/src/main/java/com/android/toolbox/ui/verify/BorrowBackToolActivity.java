@@ -13,6 +13,7 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -52,6 +53,7 @@ import butterknife.OnClick;
 
 public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> implements ManageToolContract.View {
     private static String TAG = "BorrowBackToolActivity";
+    private boolean isTest = false;
     @BindView(R.id.rv_result)
     RelativeLayout resultView;
     @BindView(R.id.open_layout)
@@ -64,6 +66,10 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     TextView tvResult;
     @BindView(R.id.iv_loading)
     ImageView waitView;
+    @BindView(R.id.test_layout)
+    LinearLayout testLayout;
+    @BindView(R.id.bottom_layout)
+    LinearLayout bottomLayout;
     private ServerThread serverThread;
     //工具箱中闲置的工具
     private HashMap<String, AssetsListItemInfo> epcToolMap = new HashMap<>();
@@ -106,6 +112,11 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
 
     @Override
     protected void initEventAndData() {
+        isTest = getResources().getBoolean(R.bool.is_test);
+        if (isTest) {
+            testLayout.setVisibility(View.VISIBLE);
+        }
+        bottomLayout.setVisibility(View.GONE);
         currentUser = ToolBoxApplication.getInstance().getCurrentUser();
         if (currentUser == null) {
             currentUser = new UserInfo();
@@ -118,7 +129,11 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         mPresenter.fetchAllAssetsInfos();
         serverThread = ToolBoxApplication.getInstance().getServerThread();
         initAnimation();
-        //unlock();
+        //todo 开门动作
+        if (!isTest) {
+            unlock();
+        }
+
     }
 
     private void initAnimation() {
@@ -358,7 +373,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
             toolList.clear();
             toolList.addAll(wrongList);
             //todo 开门动作
-            //unlock();
+            if (!isTest) {
+                unlock();
+            }
         }
         runOnUiThread(new Runnable() {
             @Override
