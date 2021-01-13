@@ -16,6 +16,9 @@ public class Tags {
     public static class _tag {
         public String epc;
 
+        public _tag() {
+
+        }
         public _tag(String epc) {
             this.epc = epc;
         }
@@ -25,4 +28,5 @@ public class Tags {
             return epc;
         }
     }
+
 }

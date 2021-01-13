@@ -120,8 +120,13 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         currentUser = ToolBoxApplication.getInstance().getCurrentUser();
         if (currentUser == null) {
             currentUser = new UserInfo();
+            UserInfo.DeptInfo deptInfo = new UserInfo.DeptInfo();
+            deptInfo.setId("ea722bc877854ac19e910ecfe85d03d6");
+            deptInfo.setOrg_name("admin0");
+            currentUser.setDeptInfo(deptInfo);
             currentUser.setId("85ddbc5649cb4131adfa1db222fd9d9b");
             currentUser.setUser_real_name("周");
+            currentUser.setUser_mobile("18408002925");
         }
         adapter = new AssetListAdapter(toolList, this, true);
         inOutRecycleView.setLayoutManager(new LinearLayoutManager(this));
@@ -308,6 +313,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         ToastUtils.showShort("handleAllTags");
         invEpcList.clear();
         wrongList.clear();
+        toolList.clear();
         for (Tags._tag tag : tags.tag_list) {
             invEpcList.add(tag.epc);
         }

@@ -265,6 +265,8 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         Logger.info("OnGetAllTags");
         Logger.info(tags);
         invEpcList.clear();
+        wrongList.clear();
+        toolList.clear();
         for (Tags._tag tag : tags.tag_list) {
             invEpcList.add(tag.epc);
         }
