@@ -33,6 +33,7 @@ import com.android.toolbox.skrfidbox.entity.MsgObjBase;
 import com.android.toolbox.skrfidbox.entity.Tags;
 import com.android.toolbox.ui.toolquery.AssetListAdapter;
 import com.android.toolbox.utils.ToastUtils;
+import com.xuexiang.xlog.XLog;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -171,6 +172,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
 
                     @Override
                     public void OnGetAllTags(Tags tags) {
+                        XLog.get().e("标签数目=======" + tags.tag_list.size() + "\n具体标签==" + tags.tag_list);
                         handleAllTags(tags);
                     }
                 });
