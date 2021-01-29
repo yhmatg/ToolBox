@@ -26,6 +26,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    sourceSets {
+       main {
+           jniLibs.srcDirs = ['libs']
+       }
+   }
 }
 
 configurations.all {
@@ -91,4 +96,5 @@ dependencies {
     implementation 'com.contrarywind:Android-PickerView:4.1.9'
     implementation 'com.github.zhangke3016:MultilevelTreeList:1.0.2'
     implementation 'com.alibaba:fastjson:1.2.68'
+    implementation files('libs/reader.jar')
 }
