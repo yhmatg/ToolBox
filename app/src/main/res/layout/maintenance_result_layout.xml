@@ -8,8 +8,8 @@
         android:id="@+id/head_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/dp_25"
-        android:background="@color/titele_color">
+        android:background="@color/titele_color"
+        android:paddingTop="@dimen/dp_25">
 
         <TextView
             android:id="@+id/tv_title"
@@ -51,25 +51,27 @@
     <LinearLayout
         android:id="@+id/bottom_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/dp_50"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/bt_open_door"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/titele_color"
             android:text="重新打开"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_18" />
 
         <Button
             android:id="@+id/bt_know"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="@color/white"
-            android:text="我知道了" />
+            android:text="我知道了"
+            android:textSize="@dimen/sp_18" />
     </LinearLayout>
 </RelativeLayout>
