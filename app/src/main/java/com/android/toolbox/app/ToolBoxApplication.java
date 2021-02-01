@@ -39,10 +39,12 @@ public class ToolBoxApplication extends Application {
     private RefWatcher refWatcher;
     private ArrayList<BaseActivity> activities = new ArrayList<>();
     private ServerThread serverThread;
+    public static boolean isClient;
 
     public static synchronized ToolBoxApplication getInstance() {
         return instance;
     }
+
     private UserInfo currentUser;
 
     public static RefWatcher getRefWatcher(Context context) {
@@ -107,15 +109,15 @@ public class ToolBoxApplication extends Application {
                 tag(getString(R.string.app_name)).build(getPackageName(), getString(R.string.app_name))));
     }
 
-    public void addActivity(BaseActivity activity){
+    public void addActivity(BaseActivity activity) {
         activities.add(activity);
     }
 
-    public void removeActivity(BaseActivity activity){
+    public void removeActivity(BaseActivity activity) {
         activities.remove(activity);
     }
 
-    public void exitActivitys(){
+    public void exitActivitys() {
         for (int i = 0; i < activities.size(); i++) {
             activities.get(i).finish();
         }

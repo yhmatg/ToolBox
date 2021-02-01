@@ -4,7 +4,10 @@ import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
@@ -17,6 +20,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.toolbox.HomeActivity;
 import com.android.toolbox.R;
+import com.android.toolbox.app.GlobalClient;
 import com.android.toolbox.app.ToolBoxApplication;
 import com.android.toolbox.base.activity.BaseActivity;
 import com.android.toolbox.contract.ManageToolContract;
@@ -35,7 +39,17 @@ import com.android.toolbox.skrfidbox.econst.ELock;
 import com.android.toolbox.skrfidbox.entity.MsgObjBase;
 import com.android.toolbox.skrfidbox.entity.Tags;
 import com.android.toolbox.ui.toolquery.AssetListAdapter;
+import com.android.toolbox.utils.ScreenSizeUtils;
 import com.android.toolbox.utils.ToastUtils;
+import com.gg.reader.api.dal.GClient;
+import com.gg.reader.api.dal.HandlerTagEpcLog;
+import com.gg.reader.api.dal.HandlerTagEpcOver;
+import com.gg.reader.api.protocol.gx.EnumG;
+import com.gg.reader.api.protocol.gx.LogBaseEpcInfo;
+import com.gg.reader.api.protocol.gx.LogBaseEpcOver;
+import com.gg.reader.api.protocol.gx.MsgBaseInventoryEpc;
+import com.gg.reader.api.protocol.gx.ParamEpcReadTid;
+import com.gg.reader.api.utils.ThreadPoolUtils;
 import com.xuexiang.xlog.XLog;
 
 import java.util.ArrayList;
@@ -67,7 +81,6 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     LinearLayout testLayout;
     @BindView(R.id.bottom_layout)
     LinearLayout bottomLayout;
-    private ServerThread serverThread;
     //工具箱中闲置的工具
     private HashMap<String, AssetsListItemInfo> epcToolMap = new HashMap<>();
     private List<String> epcList = new ArrayList<>();
@@ -101,6 +114,12 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
             });
         }
     };
+    private GClient client = GlobalClient.getClient();
+    private ParamEpcReadTid tidParam = null;
+    private boolean isReader = false;
+    private boolean isGetTid = false;
+    private boolean isSingleInv = true;
+    private List<String> invEpcs = new ArrayList<>();
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -129,7 +148,6 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         inOutRecycleView.setLayoutManager(new LinearLayoutManager(this));
         inOutRecycleView.setAdapter(adapter);
         mPresenter.fetchAllAssetsInfos();
-        serverThread = ToolBoxApplication.getInstance().getServerThread();
         initAnimation();
         //todo 开门动作
         if (!isTest) {
@@ -158,65 +176,11 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     }
 
     private void unlock() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                serverThread.getTaskThread().sendLockCmd(ELock.OpenLock, new ILockStatusCallback() {
-                    @Override
-                    public void OnOpenLock() {
-                        Logger.info("OnOpenLock");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                openView.setVisibility(View.VISIBLE);
-                                ToastUtils.showShort("OnOpenLock");
-                            }
-                        });
-                    }
 
-                    @Override
-                    public void OnCloseLock() {
-                        Logger.info("OnCloseLock");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                openView.setVisibility(View.GONE);
-                                loadingView.setVisibility(View.VISIBLE);
-                                waitView.startAnimation(anim);
-                                startRfid();
-                                ToastUtils.showShort("OnCloseLock");
-                            }
-                        });
-                    }
-                });
-            }
-        }).start();
     }
 
     private void startRfid() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                serverThread.getTaskThread().sendStartReadTagsCmd(5, new IRfidReadCallback() {
 
-                    @Override
-                    public void OnReceiveData(MsgObjBase msgObj) {
-
-                    }
-
-                    @Override
-                    public void OnNotifyReadData(Tags tags) {
-
-                    }
-
-                    @Override
-                    public void OnGetAllTags(Tags tags) {
-                        XLog.get().e("标签数目=======" + tags.tag_list.size() + "\n具体标签==" + tags.tag_list);
-                        handleAllTags(tags);
-                    }
-                });
-            }
-        }).start();
     }
 
     @Override
@@ -294,25 +258,117 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     public void testOnGetAllTags() {
         Log.e(TAG, "testOnGetAllTags");
         ToastUtils.showShort("testOnGetAllTags");
-        Tags tags = new Tags();
-        tags.tag_list = new ArrayList<>();
+        List<String> epcList = new ArrayList<>();
         //todo 添加测试epc
-        tags.tag_list.add(new Tags._tag("E22020123118399545740202"));
-        tags.tag_list.add(new Tags._tag("E22020123118399545760202"));
-        tags.tag_list.add(new Tags._tag("E22020123118399545780202"));
-        tags.tag_list.add(new Tags._tag("E22020121626133698580202"));
-        tags.tag_list.add(new Tags._tag("E22020121602221607040202"));
-        handleAllTags(tags);
+        epcList.add("E22020123118399545740202");
+        epcList.add("E22020123118399545760202");
+        epcList.add("E22020123118399545780202");
+        epcList.add("E22020121626133698580202");
+        epcList.add("E22020121602221607040202");
+        handleAllTags(epcList);
     }
 
-    public void handleAllTags(Tags tags) {
+    public void showCloseDoorDialog() {
+        if (isTest) {
+            return;
+        }
+        if (closeDoorDialog != null && !closeDoorDialog.isShowing()) {
+            closeDoorDialog.show();
+            timer.schedule(task, 1000, 1000);
+        } else {
+            View contentView = LayoutInflater.from(this).inflate(R.layout.close_door_dialog, null);
+            View goHome = contentView.findViewById(R.id.tv_go_home);
+            autoBack = contentView.findViewById(R.id.tv_auto_back);
+            goHome.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    closeDoorDialog.dismiss();
+                    startActivity(new Intent(BorrowBackToolActivity.this, HomeActivity.class));
+                    finish();
+                }
+            });
+            MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
+                    .customView(contentView, false);
+            closeDoorDialog = builder
+                    .canceledOnTouchOutside(false)
+                    .cancelable(false)
+                    .show();
+            timer.schedule(task, 1000, 1000);
+            Window window = closeDoorDialog.getWindow();
+            window.setBackgroundDrawableResource(android.R.color.transparent);
+            // 设置宽度
+            WindowManager.LayoutParams layoutParams = window.getAttributes();
+            layoutParams.width = (int) (ScreenSizeUtils.getInstance(getApplication()).getScreenWidth() * 0.75f);
+            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            window.setAttributes(layoutParams);
+        }
+    }
+
+    private void initClient() {
+        client.onTagEpcLog = new HandlerTagEpcLog() {
+            public void log(String readerName, LogBaseEpcInfo info) {
+                if (null != info && 0 == info.getResult()) {
+                    if (invEpcs.contains(info.getEpc())) {
+                        invEpcs.add(info.getEpc());
+                    }
+                }
+            }
+        };
+
+        client.onTagEpcOver = new HandlerTagEpcOver() {
+            public void log(String readerName, LogBaseEpcOver info) {
+                handleAllTags(invEpcs);
+            }
+        };
+    }
+
+    private void startInv() {
+        if (ToolBoxApplication.isClient && !isReader) {
+            MsgBaseInventoryEpc msg = new MsgBaseInventoryEpc();
+            msg.setAntennaEnable(getAnt());
+            if (isSingleInv) {
+                msg.setInventoryMode(EnumG.InventoryMode_Single);
+            } else {
+                msg.setInventoryMode(EnumG.InventoryMode_Inventory);
+            }
+            if (isGetTid) {
+                tidParam = new ParamEpcReadTid();
+                tidParam.setMode(EnumG.ParamTidMode_Auto);
+                tidParam.setLen(6);
+                msg.setReadTid(tidParam);
+            } else {
+                tidParam = null;
+            }
+            ThreadPoolUtils.run(new Runnable() {
+                @Override
+                public void run() {
+                    client.sendSynMsg(msg);
+                    //获取操作结果成功还失败
+                    if (0x00 == msg.getRtCode()) {
+                        //todo 操作成功
+                        isReader = true;
+                    } else {
+                        //todo 操作失败
+                        isReader = false;
+                    }
+                }
+            });
+        }
+    }
+
+    private long getAnt() {
+        StringBuffer buffer = new StringBuffer("11111111");
+        return Long.valueOf(buffer.reverse().toString(), 2);
+    }
+
+    public void handleAllTags(List<String> epcs) {
         Log.e(TAG, "handleAllTags");
-        Log.e(TAG, "tags====" + tags);
+        Log.e(TAG, "tags====" + epcs);
         invEpcList.clear();
         wrongList.clear();
         toolList.clear();
-        for (Tags._tag tag : tags.tag_list) {
-            invEpcList.add(tag.epc);
+        for (String epc : epcs) {
+            invEpcList.add(epc);
         }
         Date today = new Date();
         AssetBorrowPara assetBorrowPara = new AssetBorrowPara();
@@ -394,38 +450,5 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                 adapter.notifyDataSetChanged();
             }
         });
-    }
-
-    public void showCloseDoorDialog() {
-        /*if (closeDoorDialog != null && !closeDoorDialog.isShowing()) {
-            closeDoorDialog.show();
-            timer.schedule(task, 1000, 1000);
-        } else {
-            View contentView = LayoutInflater.from(this).inflate(R.layout.close_door_dialog, null);
-            View goHome = contentView.findViewById(R.id.tv_go_home);
-            autoBack = contentView.findViewById(R.id.tv_auto_back);
-            goHome.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    closeDoorDialog.dismiss();
-                    startActivity(new Intent(BorrowBackToolActivity.this, HomeActivity.class));
-                    finish();
-                }
-            });
-            MaterialDialog.Builder builder = new MaterialDialog.Builder(this)
-                    .customView(contentView, false);
-            closeDoorDialog = builder
-                    .canceledOnTouchOutside(false)
-                    .cancelable(false)
-                    .show();
-            timer.schedule(task, 1000, 1000);
-            Window window = closeDoorDialog.getWindow();
-            window.setBackgroundDrawableResource(android.R.color.transparent);
-            // 设置宽度
-            WindowManager.LayoutParams layoutParams = window.getAttributes();
-            layoutParams.width = (int) (ScreenSizeUtils.getInstance(getApplication()).getScreenWidth() * 0.75f);
-            layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
-            window.setAttributes(layoutParams);
-        }*/
     }
 }

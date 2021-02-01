@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -14,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.toolbox.R;
+import com.android.toolbox.app.GlobalClient;
 import com.android.toolbox.app.ToolBoxApplication;
 import com.android.toolbox.base.activity.BaseActivity;
 import com.android.toolbox.contract.ManageToolContract;
@@ -33,12 +35,22 @@ import com.android.toolbox.skrfidbox.entity.MsgObjBase;
 import com.android.toolbox.skrfidbox.entity.Tags;
 import com.android.toolbox.ui.toolquery.AssetListAdapter;
 import com.android.toolbox.utils.ToastUtils;
+import com.gg.reader.api.dal.GClient;
+import com.gg.reader.api.dal.HandlerTagEpcLog;
+import com.gg.reader.api.dal.HandlerTagEpcOver;
+import com.gg.reader.api.protocol.gx.EnumG;
+import com.gg.reader.api.protocol.gx.LogBaseEpcInfo;
+import com.gg.reader.api.protocol.gx.LogBaseEpcOver;
+import com.gg.reader.api.protocol.gx.MsgBaseInventoryEpc;
+import com.gg.reader.api.protocol.gx.ParamEpcReadTid;
+import com.gg.reader.api.utils.ThreadPoolUtils;
 import com.xuexiang.xlog.XLog;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -60,7 +72,6 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     ImageView waitView;
     @BindView(R.id.test_layout)
     LinearLayout testLayout;
-    private ServerThread serverThread;
     //工具箱中闲置的工具
     private HashMap<String, AssetsListItemInfo> epcToolMap = new HashMap<>();
     private List<String> epcList = new ArrayList<>();
@@ -73,6 +84,12 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     private List<AssetsListItemInfo> wrongList = new ArrayList<>();
     private String locName = "二楼";
     private Animation anim;
+    private GClient client = GlobalClient.getClient();
+    private ParamEpcReadTid tidParam = null;
+    private boolean isReader = false;
+    private boolean isGetTid = false;
+    private boolean isSingleInv = true;
+    private List<String> invEpcs = new ArrayList<>();
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -90,11 +107,13 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         inOutRecycleView.setLayoutManager(new LinearLayoutManager(this));
         inOutRecycleView.setAdapter(adapter);
         mPresenter.fetchAllAssetsInfos();
-        serverThread = ToolBoxApplication.getInstance().getServerThread();
         initAnimation();
         //todo 开门动作
         if (!isTest) {
             unlock();
+        }
+        if (ToolBoxApplication.isClient) {
+            initClient();
         }
     }
 
@@ -119,65 +138,11 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     }
 
     private void unlock() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                serverThread.getTaskThread().sendLockCmd(ELock.OpenLock, new ILockStatusCallback() {
-                    @Override
-                    public void OnOpenLock() {
-                        Logger.info("OnOpenLock");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                openView.setVisibility(View.VISIBLE);
-                                ToastUtils.showShort("OnOpenLock");
-                            }
-                        });
-                    }
 
-                    @Override
-                    public void OnCloseLock() {
-                        Logger.info("OnCloseLock");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                openView.setVisibility(View.GONE);
-                                loadingView.setVisibility(View.VISIBLE);
-                                waitView.startAnimation(anim);
-                                startRfid();
-                                ToastUtils.showShort("OnCloseLock");
-                            }
-                        });
-                    }
-                });
-            }
-        }).start();
     }
 
     private void startRfid() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                serverThread.getTaskThread().sendStartReadTagsCmd(5, new IRfidReadCallback() {
 
-                    @Override
-                    public void OnReceiveData(MsgObjBase msgObj) {
-
-                    }
-
-                    @Override
-                    public void OnNotifyReadData(Tags tags) {
-
-                    }
-
-                    @Override
-                    public void OnGetAllTags(Tags tags) {
-                        XLog.get().e("标签数目=======" + tags.tag_list.size() + "\n具体标签==" + tags.tag_list);
-                        handleAllTags(tags);
-                    }
-                });
-            }
-        }).start();
     }
 
     @Override
@@ -253,24 +218,81 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         Log.e(TAG, "testOnGetAllTags");
         ToastUtils.showShort("testOnGetAllTags");
         Tags tags = new Tags();
-        tags.tag_list = new ArrayList<>();
+        List<String> epcList = new ArrayList<>();
         //todo 添加测试epc
-        tags.tag_list.add(new Tags._tag("E22020123118399545740202"));
-        tags.tag_list.add(new Tags._tag("E22020123118399545760202"));
-        tags.tag_list.add(new Tags._tag("E22020123118399545780202"));
+        epcList.add("E22020123118399545740202");
+        epcList.add("E22020123118399545760202");
+        epcList.add("E22020123118399545780202");
         //tags.tag_list.add(new Tags._tag("E22020121626133698580202"));
         //tags.tag_list.add(new Tags._tag("E22020121602221607040202"));
-        handleAllTags(tags);
+        handleAllTags(epcList);
     }
 
-    public void handleAllTags(Tags tags) {
+    private void initClient() {
+        client.onTagEpcLog = new HandlerTagEpcLog() {
+            public void log(String readerName, LogBaseEpcInfo info) {
+                if (null != info && 0 == info.getResult()) {
+                    if(invEpcs.contains(info.getEpc())){
+                        invEpcs.add(info.getEpc());
+                    }
+                }
+            }
+        };
+
+        client.onTagEpcOver = new HandlerTagEpcOver() {
+            public void log(String readerName, LogBaseEpcOver info) {
+                handleAllTags(invEpcs);
+            }
+        };
+    }
+
+    private void startInv() {
+        if (ToolBoxApplication.isClient && !isReader) {
+            MsgBaseInventoryEpc msg = new MsgBaseInventoryEpc();
+            msg.setAntennaEnable(getAnt());
+            if (isSingleInv) {
+                msg.setInventoryMode(EnumG.InventoryMode_Single);
+            } else {
+                msg.setInventoryMode(EnumG.InventoryMode_Inventory);
+            }
+            if (isGetTid) {
+                tidParam = new ParamEpcReadTid();
+                tidParam.setMode(EnumG.ParamTidMode_Auto);
+                tidParam.setLen(6);
+                msg.setReadTid(tidParam);
+            } else {
+                tidParam = null;
+            }
+            ThreadPoolUtils.run(new Runnable() {
+                @Override
+                public void run() {
+                    client.sendSynMsg(msg);
+                    //获取操作结果成功还失败
+                    if (0x00 == msg.getRtCode()) {
+                        //todo 操作成功
+                        isReader = true;
+                    } else {
+                        //todo 操作失败
+                        isReader = false;
+                    }
+                }
+            });
+        }
+    }
+
+    private long getAnt() {
+        StringBuffer buffer = new StringBuffer("11111111");
+        return Long.valueOf(buffer.reverse().toString(), 2);
+    }
+
+    public void handleAllTags(List<String> epcs) {
         Logger.info("OnGetAllTags");
-        Logger.info(tags);
+        Logger.info(epcs);
         invEpcList.clear();
         wrongList.clear();
         toolList.clear();
-        for (Tags._tag tag : tags.tag_list) {
-            invEpcList.add(tag.epc);
+        for (String epc : epcs) {
+            invEpcList.add(epc);
         }
         Date today = new Date();
         AssetBorrowPara assetBorrowPara = new AssetBorrowPara();
@@ -347,4 +369,5 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
             }
         });
     }
+
 }
