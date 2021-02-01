@@ -38,7 +38,6 @@ public class ToolBoxApplication extends Application {
     private static ToolBoxApplication instance;
     private RefWatcher refWatcher;
     private ArrayList<BaseActivity> activities = new ArrayList<>();
-    private ServerThread serverThread;
     public static boolean isClient;
 
     public static synchronized ToolBoxApplication getInstance() {
@@ -77,8 +76,6 @@ public class ToolBoxApplication extends Application {
                 "xlogTool", "xlog", LogLevel.ERROR, LogLevel.DEBUG
         );
         LoggerFactory.getSimpleDiskLogger("DiskLogger", diskLogStrategy, 0);
-        serverThread = new ServerThread(5460, 3 * 100000);
-        serverThread.start();
 
     }
 
@@ -129,9 +126,5 @@ public class ToolBoxApplication extends Application {
 
     public void setCurrentUser(UserInfo currentUser) {
         this.currentUser = currentUser;
-    }
-
-    public ServerThread getServerThread() {
-        return serverThread;
     }
 }

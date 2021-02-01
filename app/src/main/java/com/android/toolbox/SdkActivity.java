@@ -1,8 +1,13 @@
 package com.android.toolbox;
 
+import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.toolbox.app.GlobalClient;
 import com.android.toolbox.app.ToolBoxApplication;
 import com.android.toolbox.base.activity.BaseActivity;
 import com.android.toolbox.base.presenter.AbstractPresenter;
@@ -14,15 +19,67 @@ import com.android.toolbox.skrfidbox.econst.ELock;
 import com.android.toolbox.skrfidbox.entity.MsgObjBase;
 import com.android.toolbox.skrfidbox.entity.Tags;
 import com.android.toolbox.utils.ToastUtils;
+import com.gg.reader.api.dal.GClient;
+import com.gg.reader.api.dal.HandlerGpiStart;
+import com.gg.reader.api.dal.HandlerTagEpcLog;
+import com.gg.reader.api.dal.HandlerTagEpcOver;
+import com.gg.reader.api.protocol.gx.EnumG;
+import com.gg.reader.api.protocol.gx.LogAppGpiStart;
+import com.gg.reader.api.protocol.gx.LogBaseEpcInfo;
+import com.gg.reader.api.protocol.gx.LogBaseEpcOver;
+import com.gg.reader.api.protocol.gx.MsgBaseInventoryEpc;
+import com.gg.reader.api.protocol.gx.MsgBaseStop;
+import com.gg.reader.api.protocol.gx.ParamEpcReadTid;
+import com.gg.reader.api.utils.HexUtils;
+import com.gg.reader.api.utils.ThreadPoolUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
 public class SdkActivity extends BaseActivity {
-
-    private ServerThread serverThread;
+    private static String TAG = "SdkActivity";
     @BindView(R.id.tv_tags)
     TextView tvTags;
+    @BindView(R.id.door1)
+    CheckBox door1;
+    @BindView(R.id.door1Text)
+    EditText door1Text;
+    @BindView(R.id.door2)
+    CheckBox door2;
+    @BindView(R.id.door2Text)
+    EditText door2Text;
+    @BindView(R.id.door3)
+    CheckBox door3;
+    @BindView(R.id.door3Text)
+    EditText door3Text;
+    @BindView(R.id.door4)
+    CheckBox door4;
+    @BindView(R.id.door4Text)
+    EditText door4Text;
+    @BindView(R.id.door5)
+    CheckBox door5;
+    @BindView(R.id.door5Text)
+    EditText door5Text;
+    @BindView(R.id.door6)
+    CheckBox door6;
+    @BindView(R.id.door6Text)
+    EditText door6Text;
+    @BindView(R.id.door7)
+    CheckBox door7;
+    @BindView(R.id.door7Text)
+    EditText door7Text;
+    @BindView(R.id.door8)
+    CheckBox door8;
+    @BindView(R.id.door8Text)
+    EditText door8Text;
+    private GClient client = GlobalClient.getClient();
+    private List<String> invEpcs = new ArrayList<>();
+    private boolean isReader = false;
+    private ParamEpcReadTid tidParam = null;
+    private boolean isAllSelect;
 
     @Override
     protected int getLayoutId() {
@@ -41,165 +98,212 @@ public class SdkActivity extends BaseActivity {
 
     @Override
     protected void initEventAndData() {
-        serverThread = ToolBoxApplication.getInstance().getServerThread();
-        //serverThread.start();
+        initLock();
+        initClient();
+        initToolCarInventory();
     }
 
-    @OnClick({R.id.bt_unlock, R.id.bt_inv, R.id.bt_open_light, R.id.bt_close_light, R.id.bt_open_alarm, R.id.bt_close_alarm})
+    @OnClick({R.id.bt_unlock, R.id.bt_inv, R.id.bt_single_inv, R.id.selectAll})
     public void performClick(View view) {
         switch (view.getId()) {
-           case R.id.bt_unlock:
+            case R.id.bt_unlock:
                 unlock();
                 ToastUtils.showShort("开锁");
                 break;
             case R.id.bt_inv:
-                startRfid();
+                invEpcs.clear();
                 ToastUtils.showShort("盘点");
+                startInv(false, false);
                 break;
-            case R.id.bt_open_light:
-                sendLightLedOpen();
-                ToastUtils.showShort("打开照明");
+            case R.id.bt_single_inv:
+                invEpcs.clear();
+                ToastUtils.showShort("单次盘点");
+                startInv(true, false);
                 break;
-            case R.id.bt_close_light:
-                sendLightLedClose();
-                ToastUtils.showShort("关闭照明");
+            case R.id.bt_stop_inv:
+                stopInv();
+                ToastUtils.showShort("停止盘点");
                 break;
-            case R.id.bt_open_alarm:
-                sendAlarmLedOpen();
-                ToastUtils.showShort("打开警报");
-                break;
-            case R.id.bt_close_alarm:
-                sendAlarmLedClose();
-                ToastUtils.showShort("关闭警报");
+            case R.id.selectAll:
+                selectAll();
                 break;
         }
     }
 
+    private void initLock() {
+        if (client.openAndroidSerial("/dev/ttyXRUSB1:115200", 0)) {
+            ToastUtils.showShort("串口连接成功");
+        } else {
+            ToastUtils.showShort("串口连接失败");
+        }
+    }
+
     private void unlock() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                serverThread.getTaskThread().sendLockCmd(ELock.OpenLock, new ILockStatusCallback() {
-                    @Override
-                    public void OnOpenLock() {
-                        Logger.info("OnOpenLock");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ToastUtils.showShort("OnOpenLock");
-                            }
-                        });
-                    }
+        if (door1.isChecked()) {
+            client.sendUnsynMsg(HexUtils.hexString2Bytes(door1Text.getText().toString().trim()));
+        }
 
-                    @Override
-                    public void OnCloseLock() {
-                        Logger.info("OnCloseLock");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ToastUtils.showShort("OnCloseLock");
-                            }
-                        });
-                    }
-                });
-            }
-        }).start();
+        if (door2.isChecked()) {
+            client.sendUnsynMsg(HexUtils.hexString2Bytes(door2Text.getText().toString().trim()));
+        }
+
+        if (door3.isChecked()) {
+            client.sendUnsynMsg(HexUtils.hexString2Bytes(door3Text.getText().toString().trim()));
+        }
+
+        if (door4.isChecked()) {
+            client.sendUnsynMsg(HexUtils.hexString2Bytes(door4Text.getText().toString().trim()));
+        }
+
+        if (door5.isChecked()) {
+            client.sendUnsynMsg(HexUtils.hexString2Bytes(door5Text.getText().toString().trim()));
+        }
+
+        if (door6.isChecked()) {
+            client.sendUnsynMsg(HexUtils.hexString2Bytes(door6Text.getText().toString().trim()));
+        }
+
+        if (door7.isChecked()) {
+            client.sendUnsynMsg(HexUtils.hexString2Bytes(door7Text.getText().toString().trim()));
+        }
+
+        if (door8.isChecked()) {
+            client.sendUnsynMsg(HexUtils.hexString2Bytes(door8Text.getText().toString().trim()));
+        }
 
     }
 
-    private void startRfid() {
-        new Thread(new Runnable() {
+    private void initToolCarInventory() {
+        ThreadPoolUtils.run(new Runnable() {//此线程池为jar内封装工具类，高版本tcp开发可用此工具类
             @Override
             public void run() {
-                serverThread.getTaskThread().sendStartReadTagsCmd(5, new IRfidReadCallback() {
+                if (client.openTcp("127.0.0.1:8160", 0)) {
+                    isReader = true;
+                    ToolBoxApplication.isClient = true;
+                    Log.e(TAG,"rfid连接成功");
+                } else {
+                    isReader = false;
+                    ToolBoxApplication.isClient = false;
+                    Log.e(TAG,"rfid连接失败");
+                }
+            }
+        });
+    }
 
-                    @Override
-                    public void OnReceiveData(MsgObjBase msgObj) {
-
+    private void initClient() {
+        client.onTagEpcLog = new HandlerTagEpcLog() {
+            public void log(String readerName, LogBaseEpcInfo info) {
+                if (null != info && 0 == info.getResult()) {
+                    if (invEpcs.contains(info.getEpc())) {
+                        invEpcs.add(info.getEpc());
                     }
+                }
+            }
+        };
 
-                    @Override
-                    public void OnNotifyReadData(Tags tags) {
-                        Logger.info("OnNotifyReadData");
-                        Logger.info(tags);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                               /* ToastUtils.showShort("OnNotifyReadData add====" + tags.add_tag_list);
-                                ToastUtils.showShort("OnNotifyReadData loss====" + tags.loss_tag_list);
-                                ToastUtils.showShort("OnNotifyReadData all====" + tags.tag_list);
-                                tvTags.setText("OnNotifyReadData\n"
-                                        + "add====" + tags.add_tag_list + "\n"
-                                        + " loss====" + tags.loss_tag_list + "\n"
-                                        + "tags====" + tags.tag_list);*/
-                            }
-                        });
+        client.onTagEpcOver = new HandlerTagEpcOver() {
+            public void log(String readerName, LogBaseEpcOver info) {
+                tvTags.setText("数量：" + invEpcs.size() + "\n" + invEpcs.toString());
+            }
+        };
+
+        client.onGpiStart = new HandlerGpiStart() {
+            @Override
+            public void log(String readerName, LogAppGpiStart info) {
+
+            }
+        };
+    }
+
+    private void startInv(boolean isSingleInv, boolean isGetTid) {
+        if (ToolBoxApplication.isClient && !isReader) {
+            MsgBaseInventoryEpc msg = new MsgBaseInventoryEpc();
+            msg.setAntennaEnable(getAnt());
+            if (isSingleInv) {
+                msg.setInventoryMode(EnumG.InventoryMode_Single);
+            } else {
+                msg.setInventoryMode(EnumG.InventoryMode_Inventory);
+            }
+            if (isGetTid) {
+                tidParam = new ParamEpcReadTid();
+                tidParam.setMode(EnumG.ParamTidMode_Auto);
+                tidParam.setLen(6);
+                msg.setReadTid(tidParam);
+            } else {
+                tidParam = null;
+            }
+            ThreadPoolUtils.run(new Runnable() {
+                @Override
+                public void run() {
+                    client.sendSynMsg(msg);
+                    //获取操作结果成功还失败
+                    if (0x00 == msg.getRtCode()) {
+                        //todo 操作成功
+                        isReader = true;
+                    } else {
+                        //todo 操作失败
+                        isReader = false;
                     }
+                }
+            });
+        }
+    }
 
-                    @Override
-                    public void OnGetAllTags(Tags tags) {
-                        Logger.info("OnGetAllTags");
-                        Logger.info(tags);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                ToastUtils.showShort("OnGetAllTags add====" + tags.add_tag_list);
-                                ToastUtils.showShort("OnGetAllTags loss====" + tags.loss_tag_list);
-                                ToastUtils.showShort("OnGetAllTags tags====" + tags.tag_list);
-                                tvTags.setText("OnGetAllTags\n"
-                                        + "add====" + tags.add_tag_list + "\n"
-                                        + " loss====" + tags.loss_tag_list + "\n"
-                                        + "tags====" + tags.tag_list.size());
-                            }
-                        });
+    private long getAnt() {
+        StringBuffer buffer = new StringBuffer("11111111");
+        return Long.valueOf(buffer.reverse().toString(), 2);
+    }
+
+    public void stopInv() {
+        if (ToolBoxApplication.isClient) {
+            MsgBaseStop msgStop = new MsgBaseStop();
+            ThreadPoolUtils.run(new Runnable() {
+                @Override
+                public void run() {
+                    client.sendSynMsg(msgStop);
+                    if (0x00 == msgStop.getRtCode()) {
+                        isReader = false;
+                        ToastUtils.showShort("停止成功");
+                    } else {
+                        ToastUtils.showShort("停止失败");
                     }
-                });
-            }
-        }).start();
+                }
+            });
+        } else {
+            ToastUtils.showShort("Rfid未连接");
+        }
     }
 
-    public void sendLightLedOpen() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                serverThread.getTaskThread().sendLightLedOpen();
-            }
-        }).start();
+    private void selectAll(){
+        if(!isAllSelect){
+            door1.setChecked(true);
+            door2.setChecked(true);
+            door3.setChecked(true);
+            door4.setChecked(true);
+            door5.setChecked(true);
+            door6.setChecked(true);
+            door7.setChecked(true);
+            door8.setChecked(true);
+            isAllSelect = true;
+        }else {
+            door1.setChecked(false);
+            door2.setChecked(false);
+            door3.setChecked(false);
+            door4.setChecked(false);
+            door5.setChecked(false);
+            door6.setChecked(false);
+            door7.setChecked(false);
+            door8.setChecked(false);
+            isAllSelect = false;
+        }
+
     }
 
-    /**
-     * 发送关闭照明指令
-     */
-    public void sendLightLedClose() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                serverThread.getTaskThread().sendLightLedClose();
-            }
-        }).start();
-    }
-
-    /**
-     * 发送打开报警指令
-     */
-    public void sendAlarmLedOpen() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                serverThread.getTaskThread().sendAlarmLedOpen();
-            }
-        }).start();
-    }
-
-    /**
-     * 发送关闭报警指令
-     */
-    public void sendAlarmLedClose() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                serverThread.getTaskThread().sendAlarmLedClose();
-            }
-        }).start();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(ToolBoxApplication.isClient){
+            client.close();
+        }
     }
 }

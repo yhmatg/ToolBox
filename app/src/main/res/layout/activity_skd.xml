@@ -16,10 +16,22 @@
         android:textSize="@dimen/sp_14" />
 
     <Button
-        android:id="@+id/bt_inv"
+        android:id="@+id/selectAll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/bt_unlock"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/bt_background_two"
+        android:padding="@dimen/dp_5"
+        android:text="全选"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_14" />
+
+    <Button
+        android:id="@+id/bt_inv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/selectAll"
         android:layout_marginTop="@dimen/dp_10"
         android:background="@drawable/bt_background_two"
         android:padding="@dimen/dp_5"
@@ -28,52 +40,205 @@
         android:textSize="@dimen/sp_14" />
 
     <Button
-        android:id="@+id/bt_open_light"
+        android:id="@+id/bt_single_inv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/bt_inv"
         android:layout_marginTop="@dimen/dp_10"
         android:background="@drawable/bt_background_two"
         android:padding="@dimen/dp_5"
-        android:text="打开照明"
+        android:text="单次盘点"
         android:textColor="@color/white"
         android:textSize="@dimen/sp_14" />
 
     <Button
-        android:id="@+id/bt_close_light"
+        android:id="@+id/bt_stop_inv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/bt_open_light"
+        android:layout_below="@+id/bt_inv"
         android:layout_marginTop="@dimen/dp_10"
         android:background="@drawable/bt_background_two"
         android:padding="@dimen/dp_5"
-        android:text="关闭照明"
+        android:text="停止盘点"
         android:textColor="@color/white"
         android:textSize="@dimen/sp_14" />
 
-    <Button
-        android:id="@+id/bt_open_alarm"
+    <LinearLayout
+        android:layout_marginTop="@dimen/dp_10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/bt_close_light"
-        android:layout_marginTop="@dimen/dp_10"
-        android:background="@drawable/bt_background_two"
-        android:padding="@dimen/dp_5"
-        android:text="打开警报"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sp_14" />
+        android:layout_below="@+id/bt_stop_inv"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/bt_close_alarm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/bt_open_alarm"
-        android:layout_marginTop="@dimen/dp_10"
-        android:background="@drawable/bt_background_two"
-        android:padding="@dimen/dp_5"
-        android:text="关闭警报"
-        android:textColor="@color/white"
-        android:textSize="@dimen/sp_14" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/door1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1号门"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/door1Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5A0801010001530D"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/door2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2号门"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/door2Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5A0801010002500D"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/door3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3号门"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/door3Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5A0801010004560D"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/door4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4号门"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/door4Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5A08010100085A0D"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/door5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5号门"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/door5Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5A0801010010420D"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/door6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="6号门"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/door6Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5A0801010020720D"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/door7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="7号门"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/door7Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5A0801010040120D"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/door8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="8号门"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/door8Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5A0801010080D20D"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/tv_tags"
@@ -84,4 +249,6 @@
         android:gravity="center"
         android:hint="状态"
         android:textSize="@dimen/sp_18" />
+
+
 </RelativeLayout>
