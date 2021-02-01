@@ -42,13 +42,16 @@ import com.android.toolbox.ui.toolquery.AssetListAdapter;
 import com.android.toolbox.utils.ScreenSizeUtils;
 import com.android.toolbox.utils.ToastUtils;
 import com.gg.reader.api.dal.GClient;
+import com.gg.reader.api.dal.HandlerGpiStart;
 import com.gg.reader.api.dal.HandlerTagEpcLog;
 import com.gg.reader.api.dal.HandlerTagEpcOver;
 import com.gg.reader.api.protocol.gx.EnumG;
+import com.gg.reader.api.protocol.gx.LogAppGpiStart;
 import com.gg.reader.api.protocol.gx.LogBaseEpcInfo;
 import com.gg.reader.api.protocol.gx.LogBaseEpcOver;
 import com.gg.reader.api.protocol.gx.MsgBaseInventoryEpc;
 import com.gg.reader.api.protocol.gx.ParamEpcReadTid;
+import com.gg.reader.api.utils.HexUtils;
 import com.gg.reader.api.utils.ThreadPoolUtils;
 import com.xuexiang.xlog.XLog;
 
@@ -176,11 +179,15 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     }
 
     private void unlock() {
-
-    }
-
-    private void startRfid() {
-
+        initLock();
+        client.sendUnsynMsg(HexUtils.hexString2Bytes("5A0801010001530D"));
+        client.sendUnsynMsg(HexUtils.hexString2Bytes("5A0801010002500D"));
+        client.sendUnsynMsg(HexUtils.hexString2Bytes("5A0801010004560D"));
+        client.sendUnsynMsg(HexUtils.hexString2Bytes("5A08010100085A0D"));
+        client.sendUnsynMsg(HexUtils.hexString2Bytes("5A0801010010420D"));
+        client.sendUnsynMsg(HexUtils.hexString2Bytes("5A0801010020720D"));
+        client.sendUnsynMsg(HexUtils.hexString2Bytes("5A0801010040120D"));
+        client.sendUnsynMsg(HexUtils.hexString2Bytes("5A0801010080D20D"));
     }
 
     @Override
@@ -320,9 +327,17 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                 handleAllTags(invEpcs);
             }
         };
+
+        client.onGpiStart = new HandlerGpiStart() {
+            @Override
+            public void log(String readerName, LogAppGpiStart info) {
+
+            }
+        };
     }
 
     private void startInv() {
+        initRfid();
         if (ToolBoxApplication.isClient && !isReader) {
             MsgBaseInventoryEpc msg = new MsgBaseInventoryEpc();
             msg.setAntennaEnable(getAnt());
@@ -450,5 +465,30 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                 adapter.notifyDataSetChanged();
             }
         });
+    }
+
+    private void initRfid() {
+        ThreadPoolUtils.run(new Runnable() {//此线程池为jar内封装工具类，高版本tcp开发可用此工具类
+            @Override
+            public void run() {
+                if (client.openTcp("127.0.0.1:8160", 0)) {
+                    isReader = true;
+                    ToolBoxApplication.isClient = true;
+                    Log.e(TAG, "rfid连接成功");
+                } else {
+                    isReader = false;
+                    ToolBoxApplication.isClient = false;
+                    Log.e(TAG, "rfid连接失败");
+                }
+            }
+        });
+    }
+
+    private void initLock() {
+        if (client.openAndroidSerial("/dev/ttyXRUSB1:115200", 0)) {
+            ToastUtils.showShort("串口连接成功");
+        } else {
+            ToastUtils.showShort("串口连接失败");
+        }
     }
 }

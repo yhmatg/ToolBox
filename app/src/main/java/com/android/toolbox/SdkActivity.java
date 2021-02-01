@@ -98,24 +98,75 @@ public class SdkActivity extends BaseActivity {
 
     @Override
     protected void initEventAndData() {
-        initLock();
         initClient();
-        initToolCarInventory();
+    }
+
+    private void initLock() {
+        if (client.openAndroidSerial("/dev/ttyXRUSB1:115200", 0)) {
+            ToastUtils.showShort("串口连接成功");
+        } else {
+            ToastUtils.showShort("串口连接失败");
+        }
+    }
+
+    private void initClient() {
+        client.onTagEpcLog = new HandlerTagEpcLog() {
+            public void log(String readerName, LogBaseEpcInfo info) {
+                if (null != info && 0 == info.getResult()) {
+                    if (invEpcs.contains(info.getEpc())) {
+                        invEpcs.add(info.getEpc());
+                    }
+                }
+            }
+        };
+
+        client.onTagEpcOver = new HandlerTagEpcOver() {
+            public void log(String readerName, LogBaseEpcOver info) {
+                tvTags.setText("数量：" + invEpcs.size() + "\n" + invEpcs.toString());
+            }
+        };
+
+        client.onGpiStart = new HandlerGpiStart() {
+            @Override
+            public void log(String readerName, LogAppGpiStart info) {
+
+            }
+        };
+    }
+
+    private void initRfid() {
+        ThreadPoolUtils.run(new Runnable() {//此线程池为jar内封装工具类，高版本tcp开发可用此工具类
+            @Override
+            public void run() {
+                if (client.openTcp("127.0.0.1:8160", 0)) {
+                    isReader = true;
+                    ToolBoxApplication.isClient = true;
+                    Log.e(TAG,"rfid连接成功");
+                } else {
+                    isReader = false;
+                    ToolBoxApplication.isClient = false;
+                    Log.e(TAG,"rfid连接失败");
+                }
+            }
+        });
     }
 
     @OnClick({R.id.bt_unlock, R.id.bt_inv, R.id.bt_single_inv, R.id.selectAll})
     public void performClick(View view) {
         switch (view.getId()) {
             case R.id.bt_unlock:
+                initLock();
                 unlock();
                 ToastUtils.showShort("开锁");
                 break;
             case R.id.bt_inv:
+                initRfid();
                 invEpcs.clear();
                 ToastUtils.showShort("盘点");
                 startInv(false, false);
                 break;
             case R.id.bt_single_inv:
+                initRfid();
                 invEpcs.clear();
                 ToastUtils.showShort("单次盘点");
                 startInv(true, false);
@@ -130,13 +181,6 @@ public class SdkActivity extends BaseActivity {
         }
     }
 
-    private void initLock() {
-        if (client.openAndroidSerial("/dev/ttyXRUSB1:115200", 0)) {
-            ToastUtils.showShort("串口连接成功");
-        } else {
-            ToastUtils.showShort("串口连接失败");
-        }
-    }
 
     private void unlock() {
         if (door1.isChecked()) {
@@ -171,48 +215,6 @@ public class SdkActivity extends BaseActivity {
             client.sendUnsynMsg(HexUtils.hexString2Bytes(door8Text.getText().toString().trim()));
         }
 
-    }
-
-    private void initToolCarInventory() {
-        ThreadPoolUtils.run(new Runnable() {//此线程池为jar内封装工具类，高版本tcp开发可用此工具类
-            @Override
-            public void run() {
-                if (client.openTcp("127.0.0.1:8160", 0)) {
-                    isReader = true;
-                    ToolBoxApplication.isClient = true;
-                    Log.e(TAG,"rfid连接成功");
-                } else {
-                    isReader = false;
-                    ToolBoxApplication.isClient = false;
-                    Log.e(TAG,"rfid连接失败");
-                }
-            }
-        });
-    }
-
-    private void initClient() {
-        client.onTagEpcLog = new HandlerTagEpcLog() {
-            public void log(String readerName, LogBaseEpcInfo info) {
-                if (null != info && 0 == info.getResult()) {
-                    if (invEpcs.contains(info.getEpc())) {
-                        invEpcs.add(info.getEpc());
-                    }
-                }
-            }
-        };
-
-        client.onTagEpcOver = new HandlerTagEpcOver() {
-            public void log(String readerName, LogBaseEpcOver info) {
-                tvTags.setText("数量：" + invEpcs.size() + "\n" + invEpcs.toString());
-            }
-        };
-
-        client.onGpiStart = new HandlerGpiStart() {
-            @Override
-            public void log(String readerName, LogAppGpiStart info) {
-
-            }
-        };
     }
 
     private void startInv(boolean isSingleInv, boolean isGetTid) {
