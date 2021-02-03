@@ -55,7 +55,7 @@
         android:id="@+id/bt_stop_inv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/bt_inv"
+        android:layout_below="@+id/bt_single_inv"
         android:layout_marginTop="@dimen/dp_10"
         android:background="@drawable/bt_background_two"
         android:padding="@dimen/dp_5"

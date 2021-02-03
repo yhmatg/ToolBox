@@ -20,26 +20,35 @@ import com.android.toolbox.skrfidbox.entity.MsgObjBase;
 import com.android.toolbox.skrfidbox.entity.Tags;
 import com.android.toolbox.utils.ToastUtils;
 import com.gg.reader.api.dal.GClient;
+import com.gg.reader.api.dal.HandlerCacheDataOver;
+import com.gg.reader.api.dal.HandlerDebugLog;
+import com.gg.reader.api.dal.HandlerGpiOver;
 import com.gg.reader.api.dal.HandlerGpiStart;
 import com.gg.reader.api.dal.HandlerTagEpcLog;
 import com.gg.reader.api.dal.HandlerTagEpcOver;
+import com.gg.reader.api.dal.communication.AndroidSerialClient;
 import com.gg.reader.api.protocol.gx.EnumG;
+import com.gg.reader.api.protocol.gx.LogAppGpiOver;
 import com.gg.reader.api.protocol.gx.LogAppGpiStart;
 import com.gg.reader.api.protocol.gx.LogBaseEpcInfo;
 import com.gg.reader.api.protocol.gx.LogBaseEpcOver;
+import com.gg.reader.api.protocol.gx.MsgAppGetCacheTagData;
 import com.gg.reader.api.protocol.gx.MsgBaseInventoryEpc;
 import com.gg.reader.api.protocol.gx.MsgBaseStop;
 import com.gg.reader.api.protocol.gx.ParamEpcReadTid;
 import com.gg.reader.api.utils.HexUtils;
 import com.gg.reader.api.utils.ThreadPoolUtils;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class SdkActivity extends BaseActivity {
+public class SdkActivity extends BaseActivity implements SerialPortUtil.OnLockStatusChangeListener {
     private static String TAG = "SdkActivity";
     @BindView(R.id.tv_tags)
     TextView tvTags;
@@ -80,6 +89,7 @@ public class SdkActivity extends BaseActivity {
     private boolean isReader = false;
     private ParamEpcReadTid tidParam = null;
     private boolean isAllSelect;
+    private SerialPortUtil serialPortUtil;
 
     @Override
     protected int getLayoutId() {
@@ -99,21 +109,22 @@ public class SdkActivity extends BaseActivity {
     @Override
     protected void initEventAndData() {
         initClient();
+        initRfid();
     }
 
     private void initLock() {
-        if (client.openAndroidSerial("/dev/ttyXRUSB1:115200", 0)) {
-            ToastUtils.showShort("串口连接成功");
-        } else {
-            ToastUtils.showShort("串口连接失败");
-        }
+        serialPortUtil = SerialPortUtil.getInstance();
+        serialPortUtil.openSrialPort("/dev/ttyXRUSB1",9600);
+        serialPortUtil.setLockListener(this);
+
     }
 
     private void initClient() {
         client.onTagEpcLog = new HandlerTagEpcLog() {
             public void log(String readerName, LogBaseEpcInfo info) {
                 if (null != info && 0 == info.getResult()) {
-                    if (invEpcs.contains(info.getEpc())) {
+                    Log.e(TAG, "EPC-===i" + info.getEpc());
+                    if (!invEpcs.contains(info.getEpc())) {
                         invEpcs.add(info.getEpc());
                     }
                 }
@@ -122,14 +133,40 @@ public class SdkActivity extends BaseActivity {
 
         client.onTagEpcOver = new HandlerTagEpcOver() {
             public void log(String readerName, LogBaseEpcOver info) {
-                tvTags.setText("数量：" + invEpcs.size() + "\n" + invEpcs.toString());
+                Log.e(TAG, "onTagEpcOver=============" + readerName);
+                Log.e(TAG, "size=============" + invEpcs.size());
             }
         };
 
         client.onGpiStart = new HandlerGpiStart() {
             @Override
             public void log(String readerName, LogAppGpiStart info) {
+                Log.e(TAG, "onGpiStart=============" + readerName);
+            }
+        };
+        client.onGpiOver = new HandlerGpiOver() {
+            @Override
+            public void log(String s, LogAppGpiOver logAppGpiOver) {
+                Log.e(TAG, "onGpiOver======" + logAppGpiOver.getRtMsg());
+            }
+        };
 
+        client.debugLog = new HandlerDebugLog() {
+            @Override
+            public void sendDebugLog(String s) {
+                Log.e(TAG, "sendDebugLog======" + s);
+            }
+
+            @Override
+            public void receiveDebugLog(String s) {
+                Log.e(TAG, "receiveDebugLog======" + s);
+            }
+        };
+
+        client.cacheDataOver = new HandlerCacheDataOver() {
+            @Override
+            public void log(String s, MsgAppGetCacheTagData msgAppGetCacheTagData) {
+                Log.e(TAG, "log======" + s);
             }
         };
     }
@@ -138,38 +175,35 @@ public class SdkActivity extends BaseActivity {
         ThreadPoolUtils.run(new Runnable() {//此线程池为jar内封装工具类，高版本tcp开发可用此工具类
             @Override
             public void run() {
-                if (client.openTcp("127.0.0.1:8160", 0)) {
+                if (client.openAndroidSerial("/dev/ttyXRUSB2:115200", 1000)) {
                     isReader = true;
                     ToolBoxApplication.isClient = true;
-                    Log.e(TAG,"rfid连接成功");
+                    Log.e(TAG, "rfid连接成功");
                 } else {
                     isReader = false;
                     ToolBoxApplication.isClient = false;
-                    Log.e(TAG,"rfid连接失败");
+                    Log.e(TAG, "rfid连接失败");
                 }
             }
         });
     }
 
-    @OnClick({R.id.bt_unlock, R.id.bt_inv, R.id.bt_single_inv, R.id.selectAll})
+    @OnClick({R.id.bt_unlock, R.id.bt_inv, R.id.bt_single_inv, R.id.selectAll, R.id.bt_stop_inv})
     public void performClick(View view) {
         switch (view.getId()) {
             case R.id.bt_unlock:
-                initLock();
                 unlock();
                 ToastUtils.showShort("开锁");
                 break;
             case R.id.bt_inv:
-                initRfid();
                 invEpcs.clear();
-                ToastUtils.showShort("盘点");
                 startInv(false, false);
+                ToastUtils.showShort("盘点");
                 break;
             case R.id.bt_single_inv:
-                initRfid();
                 invEpcs.clear();
-                ToastUtils.showShort("单次盘点");
                 startInv(true, false);
+                ToastUtils.showShort("单次盘点");
                 break;
             case R.id.bt_stop_inv:
                 stopInv();
@@ -184,41 +218,41 @@ public class SdkActivity extends BaseActivity {
 
     private void unlock() {
         if (door1.isChecked()) {
-            client.sendUnsynMsg(HexUtils.hexString2Bytes(door1Text.getText().toString().trim()));
+            serialPortUtil.sendSerialPort(door1Text.getText().toString().trim());
         }
 
         if (door2.isChecked()) {
-            client.sendUnsynMsg(HexUtils.hexString2Bytes(door2Text.getText().toString().trim()));
+            serialPortUtil.sendSerialPort(door2Text.getText().toString().trim());
         }
 
         if (door3.isChecked()) {
-            client.sendUnsynMsg(HexUtils.hexString2Bytes(door3Text.getText().toString().trim()));
+            serialPortUtil.sendSerialPort(door3Text.getText().toString().trim());
         }
 
         if (door4.isChecked()) {
-            client.sendUnsynMsg(HexUtils.hexString2Bytes(door4Text.getText().toString().trim()));
+            serialPortUtil.sendSerialPort(door4Text.getText().toString().trim());
         }
 
         if (door5.isChecked()) {
-            client.sendUnsynMsg(HexUtils.hexString2Bytes(door5Text.getText().toString().trim()));
+            serialPortUtil.sendSerialPort(door5Text.getText().toString().trim());
         }
 
         if (door6.isChecked()) {
-            client.sendUnsynMsg(HexUtils.hexString2Bytes(door6Text.getText().toString().trim()));
+            serialPortUtil.sendSerialPort(door6Text.getText().toString().trim());
         }
 
         if (door7.isChecked()) {
-            client.sendUnsynMsg(HexUtils.hexString2Bytes(door7Text.getText().toString().trim()));
+            serialPortUtil.sendSerialPort(door7Text.getText().toString().trim());
         }
 
         if (door8.isChecked()) {
-            client.sendUnsynMsg(HexUtils.hexString2Bytes(door8Text.getText().toString().trim()));
+            serialPortUtil.sendSerialPort(door8Text.getText().toString().trim());
         }
-
+        serialPortUtil.receiveSerialPort();
     }
 
     private void startInv(boolean isSingleInv, boolean isGetTid) {
-        if (ToolBoxApplication.isClient && !isReader) {
+        if (ToolBoxApplication.isClient && isReader) {
             MsgBaseInventoryEpc msg = new MsgBaseInventoryEpc();
             msg.setAntennaEnable(getAnt());
             if (isSingleInv) {
@@ -265,9 +299,10 @@ public class SdkActivity extends BaseActivity {
                     client.sendSynMsg(msgStop);
                     if (0x00 == msgStop.getRtCode()) {
                         isReader = false;
-                        ToastUtils.showShort("停止成功");
+                        Log.e(TAG, "停止成功");
                     } else {
-                        ToastUtils.showShort("停止失败");
+                        Log.e(TAG, "停止失败");
+
                     }
                 }
             });
@@ -276,8 +311,8 @@ public class SdkActivity extends BaseActivity {
         }
     }
 
-    private void selectAll(){
-        if(!isAllSelect){
+    private void selectAll() {
+        if (!isAllSelect) {
             door1.setChecked(true);
             door2.setChecked(true);
             door3.setChecked(true);
@@ -287,7 +322,7 @@ public class SdkActivity extends BaseActivity {
             door7.setChecked(true);
             door8.setChecked(true);
             isAllSelect = true;
-        }else {
+        } else {
             door1.setChecked(false);
             door2.setChecked(false);
             door3.setChecked(false);
@@ -304,8 +339,17 @@ public class SdkActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(ToolBoxApplication.isClient){
-            client.close();
-        }
+        client.close();
+        serialPortUtil.closeSerialPort();
+    }
+
+    @Override
+    public void onLock() {
+
+    }
+
+    @Override
+    public void onUnlock() {
+
     }
 }
