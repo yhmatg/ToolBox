@@ -23,8 +23,9 @@ import com.gg.reader.api.utils.ThreadPoolUtils;
 import butterknife.OnClick;
 
 public class HomeActivity extends BaseActivity<HomePresenter> implements HomeContract.View {
+    private static String TAG = "HomeActivity";
     private GClient client = GlobalClient.getClient();
-    private boolean isClient = false;
+    private SerialPortUtil serialPortUtil;
 
     @Override
     protected int getLayoutId() {
@@ -43,7 +44,7 @@ public class HomeActivity extends BaseActivity<HomePresenter> implements HomeCon
 
     @Override
     protected void initEventAndData() {
-        initToolCarInventory();
+        initLockAndRfid();
     }
 
     @OnClick({R.id.iv_inout_tool, R.id.iv_query_tool, R.id.iv_manager})
@@ -69,29 +70,27 @@ public class HomeActivity extends BaseActivity<HomePresenter> implements HomeCon
         }
     }
 
-    private void initToolCarInventory() {
-        ThreadPoolUtils.run(new Runnable() {//此线程池为jar内封装工具类，高版本tcp开发可用此工具类
-            @Override
-            public void run() {
-                if (client.openTcp("127.0.0.1:8160", 0)) {
-                    isClient = true;
-                    ToolBoxApplication.isClient = true;
-                    ToastUtils.showShort("连接成功");
-                } else {
-                    isClient = false;
-                    ToolBoxApplication.isClient = false;
-                    ToastUtils.showShort("连接失败");
-                }
-            }
-        });
+    private void initLockAndRfid() {
+        //初始化锁
+        serialPortUtil = SerialPortUtil.getInstance();
+        serialPortUtil.openSrialPort("/dev/ttyXRUSB1", 9600);
+        //初始化rfid
+        if (client.openAndroidSerial("/dev/ttyXRUSB2:115200", 500)) {
+            ToolBoxApplication.isClient = true;
+            Log.e(TAG, "rfid连接成功");
+        } else {
+            ToolBoxApplication.isClient = false;
+            Log.e(TAG, "rfid连接失败");
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (isClient) {
+        if (ToolBoxApplication.isClient) {
             Log.e("退出应用", "断开连接");
             client.close();
+            serialPortUtil.closeSerialPort();
         }
     }
 }

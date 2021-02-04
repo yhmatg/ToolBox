@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.toolbox.R;
+import com.android.toolbox.SerialPortUtil;
 import com.android.toolbox.app.GlobalClient;
 import com.android.toolbox.app.ToolBoxApplication;
 import com.android.toolbox.base.activity.BaseActivity;
@@ -27,27 +28,20 @@ import com.android.toolbox.core.bean.terminal.NewBorrowBackPara;
 import com.android.toolbox.core.bean.user.UserInfo;
 import com.android.toolbox.presenter.ManageToolPresenter;
 import com.android.toolbox.skrfidbox.Logger;
-import com.android.toolbox.skrfidbox.ServerThread;
-import com.android.toolbox.skrfidbox.callback.ILockStatusCallback;
-import com.android.toolbox.skrfidbox.callback.IRfidReadCallback;
-import com.android.toolbox.skrfidbox.econst.ELock;
-import com.android.toolbox.skrfidbox.entity.MsgObjBase;
 import com.android.toolbox.skrfidbox.entity.Tags;
 import com.android.toolbox.ui.toolquery.AssetListAdapter;
 import com.android.toolbox.utils.ToastUtils;
 import com.gg.reader.api.dal.GClient;
-import com.gg.reader.api.dal.HandlerGpiStart;
 import com.gg.reader.api.dal.HandlerTagEpcLog;
 import com.gg.reader.api.dal.HandlerTagEpcOver;
 import com.gg.reader.api.protocol.gx.EnumG;
-import com.gg.reader.api.protocol.gx.LogAppGpiStart;
 import com.gg.reader.api.protocol.gx.LogBaseEpcInfo;
 import com.gg.reader.api.protocol.gx.LogBaseEpcOver;
 import com.gg.reader.api.protocol.gx.MsgBaseInventoryEpc;
 import com.gg.reader.api.protocol.gx.ParamEpcReadTid;
-import com.gg.reader.api.utils.HexUtils;
 import com.gg.reader.api.utils.ThreadPoolUtils;
-import com.xuexiang.xlog.XLog;
+
+import org.apache.commons.lang3.ThreadUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -90,9 +84,9 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     private GClient client = GlobalClient.getClient();
     private ParamEpcReadTid tidParam = null;
     private boolean isReader = false;
-    private boolean isGetTid = false;
-    private boolean isSingleInv = true;
     private List<String> invEpcs = new ArrayList<>();
+    private SerialPortUtil serialPortUtil = SerialPortUtil.getInstance();
+    private boolean autoGetLockStatus;
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -111,13 +105,11 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         inOutRecycleView.setAdapter(adapter);
         mPresenter.fetchAllAssetsInfos();
         initAnimation();
-        //todo 开门动作
         if (!isTest) {
             unlock();
         }
-        if (ToolBoxApplication.isClient) {
-            initClient();
-        }
+        initClient();
+        serialPortUtil.receiveSerialPort();
     }
 
     private void initAnimation() {
@@ -141,16 +133,39 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     }
 
     private void unlock() {
-        initLock();
-        client.sendUnsynMsg(HexUtils.hexString2Bytes("5A0801010001530D"));
-        client.sendUnsynMsg(HexUtils.hexString2Bytes("5A0801010002500D"));
-        client.sendUnsynMsg(HexUtils.hexString2Bytes("5A0801010004560D"));
-        client.sendUnsynMsg(HexUtils.hexString2Bytes("5A08010100085A0D"));
-        client.sendUnsynMsg(HexUtils.hexString2Bytes("5A0801010010420D"));
-        client.sendUnsynMsg(HexUtils.hexString2Bytes("5A0801010020720D"));
-        client.sendUnsynMsg(HexUtils.hexString2Bytes("5A0801010040120D"));
-        client.sendUnsynMsg(HexUtils.hexString2Bytes("5A0801010080D20D"));
+        serialPortUtil.sendSerialPort("5A0801010001530D");
+        serialPortUtil.sendSerialPort("5A0801010002500D");
+        serialPortUtil.sendSerialPort("5A0801010004560D");
+        serialPortUtil.sendSerialPort("5A08010100085A0D");
+        serialPortUtil.sendSerialPort("5A0801010010420D");
+        serialPortUtil.sendSerialPort("5A0801010020720D");
+        serialPortUtil.sendSerialPort("5A0801010040120D");
+        serialPortUtil.sendSerialPort("5A0801010080D20D");
     }
+
+    private void autoGetLockStatus() {
+        ThreadPoolUtils.run(new Runnable() {
+            @Override
+            public void run() {
+                while (autoGetLockStatus) {
+                    serialPortUtil.sendSerialPort("5A0801030001530D");
+                    serialPortUtil.sendSerialPort("5A0801030002500D");
+                    serialPortUtil.sendSerialPort("5A0801030004560D");
+                    serialPortUtil.sendSerialPort("5A08010300085A0D");
+                    serialPortUtil.sendSerialPort("5A0801030010420D");
+                    serialPortUtil.sendSerialPort("5A0801030020720D");
+                    serialPortUtil.sendSerialPort("5A0801030040120D");
+                    serialPortUtil.sendSerialPort("5A0801030080D20D");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
 
     @Override
     public void handleFetchAllAssetsInfos(List<AssetsListItemInfo> assetsListItemInfos) {
@@ -239,7 +254,8 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         client.onTagEpcLog = new HandlerTagEpcLog() {
             public void log(String readerName, LogBaseEpcInfo info) {
                 if (null != info && 0 == info.getResult()) {
-                    if (invEpcs.contains(info.getEpc())) {
+                    Log.e(TAG, "Epc=====" + info.getEpc());
+                    if (!invEpcs.contains(info.getEpc())) {
                         invEpcs.add(info.getEpc());
                     }
                 }
@@ -248,21 +264,43 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
 
         client.onTagEpcOver = new HandlerTagEpcOver() {
             public void log(String readerName, LogBaseEpcOver info) {
+                Log.e(TAG, "数量：" + invEpcs.size());
                 handleAllTags(invEpcs);
             }
         };
 
-        client.onGpiStart = new HandlerGpiStart() {
+        serialPortUtil.setLockListener(new SerialPortUtil.OnLockStatusChangeListener() {
             @Override
-            public void log(String readerName, LogAppGpiStart info) {
-
+            public void onLock() {
+                Log.e(TAG, "onLock");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        openView.setVisibility(View.GONE);
+                        loadingView.setVisibility(View.VISIBLE);
+                        waitView.startAnimation(anim);
+                        startInv(false, false);
+                        ToastUtils.showShort("OnCloseLock");
+                    }
+                });
             }
-        };
+
+            @Override
+            public void onUnlock() {
+                Log.e(TAG, "onUnlock");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        openView.setVisibility(View.VISIBLE);
+                        ToastUtils.showShort("OnOpenLock");
+                    }
+                });
+            }
+        });
     }
 
-    private void startInv() {
-        initRfid();
-        if (ToolBoxApplication.isClient && !isReader) {
+    private void startInv(boolean isSingleInv, boolean isGetTid) {
+        if (ToolBoxApplication.isClient && isReader) {
             MsgBaseInventoryEpc msg = new MsgBaseInventoryEpc();
             msg.setAntennaEnable(getAnt());
             if (isSingleInv) {
@@ -385,28 +423,15 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         });
     }
 
-    private void initRfid() {
-        ThreadPoolUtils.run(new Runnable() {//此线程池为jar内封装工具类，高版本tcp开发可用此工具类
-            @Override
-            public void run() {
-                if (client.openTcp("127.0.0.1:8160", 0)) {
-                    isReader = true;
-                    ToolBoxApplication.isClient = true;
-                    Log.e(TAG, "rfid连接成功");
-                } else {
-                    isReader = false;
-                    ToolBoxApplication.isClient = false;
-                    Log.e(TAG, "rfid连接失败");
-                }
-            }
-        });
+    @Override
+    protected void onResume() {
+        super.onResume();
+        autoGetLockStatus = true;
     }
 
-    private void initLock() {
-        if (client.openAndroidSerial("/dev/ttyXRUSB1:115200", 0)) {
-            ToastUtils.showShort("串口连接成功");
-        } else {
-            ToastUtils.showShort("串口连接失败");
-        }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        autoGetLockStatus = false;
     }
 }

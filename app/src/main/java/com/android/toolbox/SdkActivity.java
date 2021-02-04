@@ -114,7 +114,7 @@ public class SdkActivity extends BaseActivity implements SerialPortUtil.OnLockSt
 
     private void initLock() {
         serialPortUtil = SerialPortUtil.getInstance();
-        serialPortUtil.openSrialPort("/dev/ttyXRUSB1",9600);
+        serialPortUtil.openSrialPort("/dev/ttyXRUSB1", 9600);
         serialPortUtil.setLockListener(this);
 
     }
@@ -172,20 +172,15 @@ public class SdkActivity extends BaseActivity implements SerialPortUtil.OnLockSt
     }
 
     private void initRfid() {
-        ThreadPoolUtils.run(new Runnable() {//此线程池为jar内封装工具类，高版本tcp开发可用此工具类
-            @Override
-            public void run() {
-                if (client.openAndroidSerial("/dev/ttyXRUSB2:115200", 1000)) {
-                    isReader = true;
-                    ToolBoxApplication.isClient = true;
-                    Log.e(TAG, "rfid连接成功");
-                } else {
-                    isReader = false;
-                    ToolBoxApplication.isClient = false;
-                    Log.e(TAG, "rfid连接失败");
-                }
-            }
-        });
+        if (client.openAndroidSerial("/dev/ttyXRUSB2:115200", 1000)) {
+            isReader = true;
+            ToolBoxApplication.isClient = true;
+            Log.e(TAG, "rfid连接成功");
+        } else {
+            isReader = false;
+            ToolBoxApplication.isClient = false;
+            Log.e(TAG, "rfid连接失败");
+        }
     }
 
     @OnClick({R.id.bt_unlock, R.id.bt_inv, R.id.bt_single_inv, R.id.selectAll, R.id.bt_stop_inv})

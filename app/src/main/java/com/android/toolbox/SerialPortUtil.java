@@ -45,7 +45,7 @@ public class SerialPortUtil {
     }
 
     public void openSrialPort(String pathName, int baudRate) {
-        Log.i("test", "打开串口");
+        Log.i(TAG, "打开串口");
         try {
             SerialPort serialPort = new SerialPort(new File(pathName), baudRate, 0);
             //获取打开的串口中的输入输出流，以便于串口数据的收发
@@ -62,7 +62,7 @@ public class SerialPortUtil {
      * 然后将flag的值设为flag，终止接收数据线程
      */
     public void closeSerialPort() {
-        Log.i("test", "关闭串口");
+        Log.i(TAG, "关闭串口");
         try {
             if (inputStream != null) {
                 inputStream.close();
@@ -83,16 +83,16 @@ public class SerialPortUtil {
      * @param data 要发送的数据
      */
     public void sendSerialPort(String data) {
-        Log.i("test", "发送串口数据");
+        Log.i(TAG, "发送串口数据");
         try {
             //byte[] sendData = data.getBytes();
             byte[] sendData = HexUtils.hexString2Bytes(data.trim());
             outputStream.write(sendData);
             outputStream.flush();
-            Log.i("test", "串口数据发送成功");
+            Log.i(TAG, "串口数据发送成功");
         } catch (IOException e) {
             e.printStackTrace();
-            Log.i("test", "串口数据发送失败");
+            Log.i(TAG, "串口数据发送失败");
         }
     }
 
@@ -100,7 +100,7 @@ public class SerialPortUtil {
      * 接收串口数据的方法
      */
     public void receiveSerialPort() {
-        Log.e(TAG, "接收串口数据");
+        Log.i(TAG, "接收串口数据");
         isStart = true;
         openLocks.clear();
         closeLocks.clear();
@@ -116,7 +116,7 @@ public class SerialPortUtil {
                         int size = inputStream.read(readData);
                         if (size > 0 && isStart) {
                             serialData = HexUtils.bytes2HexString(readData, 0, size);
-                            Log.i("SerialPortUtil", "接收到串口数据:" + HexUtils.bytes2HexString(readData, 0, size));
+                            Log.i(TAG, "接收到串口数据:" + HexUtils.bytes2HexString(readData, 0, size));
                             if (lockListener != null) {
                                 if (closeData.contains(serialData)) {
                                     closeLocks.add(serialData);
@@ -149,7 +149,7 @@ public class SerialPortUtil {
 
     private OnLockStatusChangeListener lockListener;
 
-    interface OnLockStatusChangeListener {
+    public interface OnLockStatusChangeListener {
         void onLock();
 
         void onUnlock();
