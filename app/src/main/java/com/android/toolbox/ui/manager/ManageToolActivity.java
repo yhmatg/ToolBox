@@ -106,10 +106,12 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         mPresenter.fetchAllAssetsInfos();
         initAnimation();
         if (!isTest) {
+            initClient();
+            autoGetLockStatus();
+            serialPortUtil.receiveSerialPort();
             unlock();
         }
-        initClient();
-        serialPortUtil.receiveSerialPort();
+
     }
 
     private void initAnimation() {
@@ -157,7 +159,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                     serialPortUtil.sendSerialPort("5A0801030040120D");
                     serialPortUtil.sendSerialPort("5A0801030080D20D");
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -271,8 +273,8 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
 
         serialPortUtil.setLockListener(new SerialPortUtil.OnLockStatusChangeListener() {
             @Override
-            public void onLock() {
-                Log.e(TAG, "onLock");
+            public void onCloseLock() {
+                Log.e(TAG, "onCloseLock");
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -286,8 +288,8 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
             }
 
             @Override
-            public void onUnlock() {
-                Log.e(TAG, "onUnlock");
+            public void onOpenLock() {
+                Log.e(TAG, "onOpenLock");
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

@@ -121,19 +121,19 @@ public class SerialPortUtil {
                                 if (closeData.contains(serialData)) {
                                     closeLocks.add(serialData);
                                     if (!isLock && isAllOpen(closeLocks)) {
-                                        lockListener.onLock();
+                                        lockListener.onCloseLock();
                                         isLock = true;
                                         isStart = false;
                                     }
                                 } else if (openData.contains(serialData)) {
                                     openLocks.add(serialData);
                                     if (isLock && isAllClose(openLocks)) {
-                                        lockListener.onUnlock();
+                                        lockListener.onOpenLock();
                                         isLock = false;
                                     }
                                 }
                             }
-                            Thread.sleep(1000);
+                            Thread.sleep(500);
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -150,9 +150,9 @@ public class SerialPortUtil {
     private OnLockStatusChangeListener lockListener;
 
     public interface OnLockStatusChangeListener {
-        void onLock();
+        void onCloseLock();
 
-        void onUnlock();
+        void onOpenLock();
     }
 
     public void setLockListener(OnLockStatusChangeListener lockListener) {
