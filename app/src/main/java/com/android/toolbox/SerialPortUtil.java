@@ -147,6 +147,30 @@ public class SerialPortUtil {
         receiveThread.start();
     }
 
+    //测试接收数据的方法
+    public void testReceiveSerialPort() {
+        Log.i(TAG, "测试接收串口数据");
+        receiveThread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    byte[] readData = new byte[1024];
+                    if (inputStream == null) {
+                        return;
+                    }
+                    int size = inputStream.read(readData);
+                    if (size > 0) {
+                        serialData = HexUtils.bytes2HexString(readData, 0, size);
+                        Log.i(TAG, "测试接收到串口数据:" + HexUtils.bytes2HexString(readData, 0, size));
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        receiveThread.start();
+    }
+
     private OnLockStatusChangeListener lockListener;
 
     public interface OnLockStatusChangeListener {

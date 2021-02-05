@@ -63,6 +63,18 @@
         android:textColor="@color/white"
         android:textSize="@dimen/sp_14" />
 
+    <Button
+        android:id="@+id/bt_lock_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bt_stop_inv"
+        android:layout_marginTop="@dimen/dp_10"
+        android:background="@drawable/bt_background_two"
+        android:padding="@dimen/dp_5"
+        android:text="锁状态"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sp_14" />
+
     <LinearLayout
         android:layout_marginTop="@dimen/dp_10"
         android:layout_width="match_parent"

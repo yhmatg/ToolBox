@@ -278,7 +278,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     }
 
     public void testCloseClock() {
-        Log.e(TAG, "OnCloseLock");
+        Log.e(TAG, "testOnCloseLock");
         ToastUtils.showShort("OnCloseLock");
         openView.setVisibility(View.GONE);
         loadingView.setVisibility(View.VISIBLE);

@@ -183,7 +183,7 @@ public class SdkActivity extends BaseActivity implements SerialPortUtil.OnLockSt
         }
     }
 
-    @OnClick({R.id.bt_unlock, R.id.bt_inv, R.id.bt_single_inv, R.id.selectAll, R.id.bt_stop_inv})
+    @OnClick({R.id.bt_unlock, R.id.bt_inv, R.id.bt_single_inv, R.id.selectAll, R.id.bt_stop_inv,R.id.bt_lock_status})
     public void performClick(View view) {
         switch (view.getId()) {
             case R.id.bt_unlock:
@@ -206,6 +206,9 @@ public class SdkActivity extends BaseActivity implements SerialPortUtil.OnLockSt
                 break;
             case R.id.selectAll:
                 selectAll();
+                break;
+            case R.id.bt_lock_status:
+                serialPortUtil.testReceiveSerialPort();
                 break;
         }
     }
