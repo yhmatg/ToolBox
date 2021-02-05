@@ -53,6 +53,8 @@ public class SerialPortUtil {
             outputStream = serialPort.getOutputStream();
         } catch (IOException e) {
             e.printStackTrace();
+        }catch (SecurityException e){
+            e.printStackTrace();
         }
     }
 
