@@ -47,16 +47,16 @@ public class HomeActivity extends BaseActivity<HomePresenter> implements HomeCon
         initLockAndRfid();
     }
 
-    @OnClick({R.id.iv_inout_tool, R.id.iv_query_tool, R.id.iv_manager})
+    @OnClick({R.id.ll_tool_inout, R.id.ll_tool_query, R.id.tool_manage})
     public void performClick(View view) {
         switch (view.getId()) {
-            case R.id.iv_inout_tool:
+            case R.id.ll_tool_inout:
                 startActivity(new Intent(this, VerifyActivity.class));
                 break;
-            case R.id.iv_query_tool:
+            case R.id.ll_tool_query:
                 mPresenter.terminalLogin(new TerminalLoginPara("rfidbox", "123456"));
                 break;
-            case R.id.iv_manager:
+            case R.id.tool_manage:
                 startActivity(new Intent(this, ManagerLoginActivity.class));
                 break;
         }
