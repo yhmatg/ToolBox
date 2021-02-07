@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/titele_color"
-    android:paddingTop="@dimen/dp_25"
+    android:paddingTop="@dimen/dp_12"
     android:paddingBottom="@dimen/dp_5">
 
     <TextView

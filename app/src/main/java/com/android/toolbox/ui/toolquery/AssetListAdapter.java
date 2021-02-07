@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -35,7 +36,7 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.View
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View contentView = LayoutInflater.from(context).inflate(R.layout.ast_list_item, viewGroup, false);
+        View contentView = LayoutInflater.from(context).inflate(R.layout.ast_hor_item, viewGroup, false);
         return new ViewHolder(contentView);
     }
 
@@ -56,21 +57,21 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.View
         if (isManager) {
             if (0 == astStatus) {
                 viewHolder.astStatus.setText("放入");
-                viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.inuse_status_back));
+                viewHolder.astStatus.setTextColor(context.getColor(R.color.in_use_color));
             } else if (6 == astStatus) {
                 viewHolder.astStatus.setText("移出");
-                viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.free_status_back));
+                viewHolder.astStatus.setTextColor(context.getColor(R.color.free_color));
             }else if( -1 == astStatus){
                 viewHolder.astStatus.setText("位置错误");
-                viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.inuse_status_back));
+                viewHolder.astStatus.setTextColor(context.getColor(R.color.in_use_color));
             }
         } else {
             String statusName = TextUtils.isEmpty(AssetsUseStatus.getName(astStatus)) ? "" : AssetsUseStatus.getName(astStatus);
             viewHolder.astStatus.setText(statusName);
             if ("闲置".equals(statusName)) {
-                viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.free_status_back));
+                viewHolder.astStatus.setTextColor(context.getColor(R.color.free_color));
             } else {
-                viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.inuse_status_back));
+                viewHolder.astStatus.setTextColor(context.getColor(R.color.in_use_color));
             }
         }
 
@@ -102,7 +103,7 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.View
         @BindView(R.id.ast_status)
         TextView astStatus;
         @BindView(R.id.item_detail)
-        RelativeLayout itemLayout;
+        LinearLayout itemLayout;
 
         public ViewHolder(@NonNull View view) {
             super(view);
