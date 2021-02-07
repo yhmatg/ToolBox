@@ -79,7 +79,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     private AssetListAdapter adapter;
     private UserInfo currentUser;
     private List<AssetsListItemInfo> wrongList = new ArrayList<>();
-    private String locName = "二楼";
+    private String locName = "上海金桥";
     private Animation anim;
     private GClient client = GlobalClient.getClient();
     private ParamEpcReadTid tidParam = null;
@@ -243,12 +243,12 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         ToastUtils.showShort("testOnGetAllTags");
         Tags tags = new Tags();
         List<String> epcList = new ArrayList<>();
-        //todo 添加测试epc
-        epcList.add("E22020123118399545740202");
-        epcList.add("E22020123118399545760202");
-        epcList.add("E22020123118399545780202");
-        //tags.tag_list.add(new Tags._tag("E22020121626133698580202"));
-        //tags.tag_list.add(new Tags._tag("E22020121602221607040202"));
+        //todo 添加测试epc admi01
+        epcList.add("E22020121736617084270202");
+        epcList.add("E20160126016982779250202");
+        epcList.add("E20160126016982138320202");
+        //epcList.add("E20160126016978166770202");
+        //epcList.add("E20160126016977618060202");
         handleAllTags(epcList);
     }
 
@@ -361,7 +361,9 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         assetBorrowPara.setBor_user_name(currentUser.getUser_real_name());
 
         AssetBackPara assetBackPara = new AssetBackPara();
-        assetBackPara.setBelong_dept_id(currentUser.getDeptInfo().getId());
+        if(currentUser.getDeptInfo() != null){
+            assetBackPara.setBelong_dept_id(currentUser.getDeptInfo().getId());
+        }
         assetBackPara.setRev_user_id(currentUser.getId());
         assetBackPara.setRev_user_name(currentUser.getUser_real_name());
         assetBackPara.setActual_rever_date(today);
