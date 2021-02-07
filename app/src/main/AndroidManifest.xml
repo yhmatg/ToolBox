@@ -14,10 +14,10 @@
             android:name="com.android.toolbox.HomeActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
-             <intent-filter>
-                 <action android:name="android.intent.action.MAIN" />
-                 <category android:name="android.intent.category.LAUNCHER" />
-             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".ui.verify.VerifyActivity"
@@ -46,7 +46,8 @@
         <activity
             android:name=".ui.manager.ManagerLoginActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan"></activity>
         <activity
             android:name=".ui.manager.ManagerHomeActivity"
             android:launchMode="singleTop"
@@ -60,10 +61,10 @@
             android:name=".SdkActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
-           <!-- <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+            <!-- <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
+                 <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>-->
         </activity>
         <activity
             android:name=".ui.manager.ManageToolActivity"
