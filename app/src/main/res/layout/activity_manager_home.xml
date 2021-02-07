@@ -1,52 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/manger_home_back">
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/ll_head"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_120"
+        android:background="@drawable/manger_home_back"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_142"
+            android:layout_marginTop="@dimen/dp_53"
+            android:text="管理员权限"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_24" />
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/title_back"
-        android:layout_width="@dimen/dp_40"
-        android:layout_height="@dimen/dp_40"
+        android:layout_width="@dimen/dp_30"
+        android:layout_height="@dimen/dp_30"
         android:layout_marginTop="@dimen/dp_16"
         android:padding="@dimen/dp_12"
         android:src="@drawable/left_arrow" />
 
-    <ImageView
-        android:id="@+id/iv_manage_tool"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/iv_return_home"
+    <LinearLayout
+        android:id="@+id/ll_manage_tool"
+        android:layout_width="@dimen/dp_130"
+        android:layout_height="@dimen/dp_168"
+        android:layout_below="@+id/ll_head"
         android:layout_marginStart="@dimen/dp_20"
-        android:src="@drawable/tool_manage" />
+        android:layout_marginTop="@dimen/dp_30"
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_manage_tool"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_35"
+            android:src="@drawable/tool_manage" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_30"
+            android:text="工具借还"
+            android:textSize="@dimen/sp_18" />
+    </LinearLayout>
 
 
-    <ImageView
-        android:id="@+id/iv_manager_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/iv_manage_tool"
+    <LinearLayout
+        android:id="@+id/ll_manager_user"
+        android:layout_width="@dimen/dp_130"
+        android:layout_height="@dimen/dp_168"
+        android:layout_below="@+id/ll_head"
+        android:layout_marginStart="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_30"
+        android:layout_toEndOf="@+id/ll_manage_tool"
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_manager_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_35"
+            android:src="@drawable/user_manage" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_30"
+            android:text="员工管理"
+            android:textSize="@dimen/sp_18" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_return_home"
+        android:layout_width="@dimen/dp_130"
+        android:layout_height="@dimen/dp_168"
+        android:layout_below="@+id/ll_head"
+        android:layout_marginTop="@dimen/dp_30"
+        android:layout_toStartOf="@+id/ll_login_out"
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_return_home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_35"
+            android:src="@drawable/launcher_home" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_30"
+            android:text="返回桌面"
+            android:textSize="@dimen/sp_18" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ll_login_out"
+        android:layout_width="@dimen/dp_130"
+        android:layout_height="@dimen/dp_168"
+        android:layout_below="@+id/ll_head"
         android:layout_alignParentEnd="true"
+        android:layout_marginStart="@dimen/dp_10"
+        android:layout_marginTop="@dimen/dp_30"
         android:layout_marginEnd="@dimen/dp_20"
-        android:src="@drawable/user_manage" />
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/iv_return_home"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="@dimen/dp_20"
-        android:layout_marginBottom="@dimen/dp_110"
-        android:src="@drawable/launcher_home" />
+        <ImageView
+            android:id="@+id/iv_login_out"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_35"
+            android:src="@drawable/login_out" />
 
-
-    <ImageView
-        android:id="@+id/iv_login_out"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/iv_return_home"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/dp_20"
-        android:src="@drawable/login_out" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_30"
+            android:text="退出登录"
+            android:textSize="@dimen/sp_18" />
+    </LinearLayout>
 
 </RelativeLayout>

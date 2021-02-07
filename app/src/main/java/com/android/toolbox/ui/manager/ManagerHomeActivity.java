@@ -31,19 +31,19 @@ public class ManagerHomeActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.title_back, R.id.iv_manage_tool, R.id.iv_manager_user, R.id.iv_return_home, R.id.iv_login_out})
+    @OnClick({R.id.title_back, R.id.ll_manage_tool, R.id.ll_manager_user, R.id.ll_return_home, R.id.ll_login_out})
     void performClick(View v) {
         switch (v.getId()) {
             case R.id.title_back:
                 finish();
                 break;
-            case R.id.iv_manage_tool:
+            case R.id.ll_manage_tool:
                 startActivity(new Intent(this,ManageToolActivity.class));
                 break;
-            case R.id.iv_manager_user:
+            case R.id.ll_manager_user:
                 startActivity(new Intent(this,StaffManageActivity.class));
                 break;
-            case R.id.iv_return_home:
+            case R.id.ll_login_out:
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_HOME);
