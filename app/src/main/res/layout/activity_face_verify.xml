@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/face_verify_back">
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_123"
+        android:background="@drawable/head_back" />
+
     <ImageView
         android:id="@+id/title_back"
         android:layout_width="@dimen/dp_40"
@@ -13,20 +18,24 @@
 
     <Button
         android:id="@+id/bt_change_card"
-        android:layout_width="@dimen/dp_110"
-        android:layout_height="@dimen/dp_34"
+        android:layout_width="@dimen/dp_130"
+        android:layout_height="@dimen/dp_40"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="@dimen/dp_40"
-        android:layout_marginBottom="@dimen/dp_140"
-        android:background="@drawable/change_card_verify" />
+        android:layout_marginStart="@dimen/dp_140"
+        android:layout_marginBottom="@dimen/dp_30"
+        android:background="@drawable/verify_bk"
+        android:text="切换学号登录"
+        android:textSize="@dimen/sp_12" />
 
     <Button
         android:id="@+id/bt_retry"
-        android:layout_width="@dimen/dp_110"
-        android:layout_height="@dimen/dp_34"
+        android:layout_width="@dimen/dp_130"
+        android:layout_height="@dimen/dp_40"
         android:layout_alignTop="@+id/bt_change_card"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/dp_40"
-        android:layout_marginBottom="@dimen/dp_60"
-        android:background="@drawable/retry_verify" />
+        android:layout_marginEnd="@dimen/dp_140"
+        android:layout_marginBottom="@dimen/dp_30"
+        android:background="@drawable/retory_verify_bk"
+        android:text="确认登录"
+        android:textSize="@dimen/sp_12" />
 </RelativeLayout>

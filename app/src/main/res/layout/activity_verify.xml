@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/verify_back">
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/ll_head"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_123"
+        android:background="@drawable/verify_back"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_155"
+            android:layout_marginTop="@dimen/dp_56"
+            android:text="身份验证"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_24" />
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/title_back"
@@ -12,20 +28,56 @@
         android:padding="@dimen/dp_12"
         android:src="@drawable/left_arrow" />
 
-    <ImageView
-        android:id="@+id/iv_face_verify"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/dp_260"
-        android:src="@drawable/face_verify" />
+    <LinearLayout
+        android:id="@+id/ll_face_verify"
+        android:layout_width="@dimen/dp_170"
+        android:layout_height="@dimen/dp_194"
+        android:layout_below="@+id/ll_head"
+        android:layout_marginStart="@dimen/dp_100"
+        android:layout_marginTop="@dimen/dp_30"
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
 
+        <ImageView
+            android:id="@+id/iv_face_verify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_35"
+            android:src="@drawable/face_verify" />
 
-    <ImageView
-        android:id="@+id/iv_code_verify"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/iv_face_verify"
-        android:layout_centerHorizontal="true"
-        android:src="@drawable/card_verify" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_40"
+            android:text="人脸识别"
+            android:textSize="@dimen/sp_18" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_code_verify"
+        android:layout_width="@dimen/dp_170"
+        android:layout_height="@dimen/dp_194"
+        android:layout_below="@+id/ll_head"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/dp_30"
+        android:layout_marginEnd="@dimen/dp_100"
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_code_verify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_35"
+            android:src="@drawable/card_verify" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_40"
+            android:text="学号登录"
+            android:textSize="@dimen/sp_18" />
+    </LinearLayout>
 </RelativeLayout>

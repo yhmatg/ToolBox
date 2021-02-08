@@ -63,7 +63,7 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.View
                 viewHolder.astStatus.setTextColor(context.getColor(R.color.free_color));
             }else if( -1 == astStatus){
                 viewHolder.astStatus.setText("位置错误");
-                viewHolder.astStatus.setTextColor(context.getColor(R.color.in_use_color));
+                viewHolder.astStatus.setTextColor(context.getColor(R.color.red_color));
             }
         } else {
             String statusName = TextUtils.isEmpty(AssetsUseStatus.getName(astStatus)) ? "" : AssetsUseStatus.getName(astStatus);

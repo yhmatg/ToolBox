@@ -30,17 +30,17 @@ public class VerifyActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.title_back,R.id.iv_face_verify,R.id.iv_code_verify})
+    @OnClick({R.id.title_back,R.id.ll_face_verify,R.id.ll_code_verify})
     public void performClick(View view){
         switch (view.getId()){
             case R.id.title_back:
                 finish();
                 break;
-            case R.id.iv_face_verify:
+            case R.id.ll_face_verify:
                 startActivity(new Intent(this,FaceVerifyActivity.class));
                 finish();
                 break;
-            case R.id.iv_code_verify:
+            case R.id.ll_code_verify:
                 startActivity(new Intent(this,CardVerifyActivity.class));
                 finish();
                 break;

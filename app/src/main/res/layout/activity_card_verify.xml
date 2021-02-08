@@ -1,8 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/card_verify_back">
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/ll_head"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp_120"
+        android:background="@drawable/manager_login_back"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dp_142"
+            android:layout_marginTop="@dimen/dp_53"
+            android:text="学号登录"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_24" />
+    </LinearLayout>
+
     <ImageView
         android:id="@+id/title_back"
         android:layout_width="@dimen/dp_40"
@@ -12,11 +29,12 @@
         android:src="@drawable/left_arrow" />
 
     <LinearLayout
+        android:layout_below="@+id/ll_head"
         android:id="@+id/account_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/dp_26"
-        android:layout_marginTop="@dimen/dp_260"
+        android:layout_marginTop="@dimen/dp_40"
         android:layout_marginEnd="@dimen/dp_26"
         android:background="@drawable/bg_search"
         android:orientation="vertical">
@@ -27,9 +45,9 @@
             android:layout_height="@dimen/dp_48"
             android:background="@null"
             android:drawablePadding="9.5dp"
-            android:paddingStart="@dimen/dp_20"
             android:hint="@string/login_hint"
             android:inputType="textNoSuggestions"
+            android:paddingStart="@dimen/dp_20"
             android:textSize="@dimen/sp_14" />
 
     </LinearLayout>
@@ -56,12 +74,12 @@
                 android:id="@+id/edit_password"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/dp_48"
-                android:paddingStart="@dimen/dp_20"
                 android:layout_weight="1"
                 android:background="@null"
                 android:drawablePadding="9.5dp"
                 android:hint="@string/user_passward"
                 android:inputType="textPassword"
+                android:paddingStart="@dimen/dp_20"
                 android:textSize="@dimen/sp_14" />
 
             <ImageView
@@ -77,9 +95,9 @@
         android:id="@+id/bt_change_card"
         android:layout_width="@dimen/dp_120"
         android:layout_height="@dimen/dp_34"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="@dimen/dp_40"
-        android:layout_marginBottom="@dimen/dp_140"
+        android:layout_marginStart="@dimen/dp_140"
+        android:layout_marginTop="@dimen/dp_30"
+        android:layout_below="@+id/password_layout"
         android:background="@drawable/change_face_verify" />
 
     <Button
@@ -88,8 +106,8 @@
         android:layout_height="@dimen/dp_34"
         android:layout_alignTop="@+id/bt_change_card"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/dp_40"
-        android:layout_marginBottom="@dimen/dp_60"
-        android:text="@string/login"
-        android:background="@drawable/login_bt_shape"/>
+        android:layout_below="@+id/password_layout"
+        android:layout_marginEnd="@dimen/dp_140"
+        android:background="@drawable/login_bt_shape"
+        android:text="@string/login" />
 </RelativeLayout>

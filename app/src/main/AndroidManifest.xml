@@ -74,7 +74,8 @@
         <activity
             android:name=".ui.verify.CardVerifyActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustPan"></activity>
 
         <activity
             android:name=".ui.verify.BorrowBackToolActivity"
