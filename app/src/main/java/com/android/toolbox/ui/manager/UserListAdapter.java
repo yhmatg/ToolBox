@@ -30,7 +30,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View contentView = LayoutInflater.from(context).inflate(R.layout.user_list_item, viewGroup, false);
+        View contentView = LayoutInflater.from(context).inflate(R.layout.user_hor_item, viewGroup, false);
         return new ViewHolder(contentView);
     }
 
@@ -60,8 +60,6 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         TextView depName;
         @BindView(R.id.bt_input_face)
         Button inputFace;
-        @BindView(R.id.bt_input_code)
-        Button inputCode;
 
         public ViewHolder(@NonNull View view) {
             super(view);

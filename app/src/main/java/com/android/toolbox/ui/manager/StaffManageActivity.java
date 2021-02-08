@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.toolbox.R;
@@ -51,6 +52,8 @@ public class StaffManageActivity extends BaseActivity<StaffManagePresenter> impl
     RecyclerView recyclerView;
     @BindView(R.id.refresh_layout)
     SmartRefreshLayout mRefreshLayout;
+    @BindView(R.id.type_layout)
+    LinearLayout mTypeLayout;
     private UserListAdapter adapter;
     private List<MangerUser> mData = new ArrayList<>();
     List<Node> mAssetsDepts = new ArrayList<>();
@@ -76,6 +79,8 @@ public class StaffManageActivity extends BaseActivity<StaffManagePresenter> impl
     @Override
     protected void initEventAndData() {
         titleContent.setText("员工信息管理");
+        mTypeLayout.setVisibility(View.GONE);
+        search.setHint(R.string.staff_title);
         currentUser = ToolBoxApplication.getInstance().getCurrentUser();
         adapter = new UserListAdapter( mData,this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

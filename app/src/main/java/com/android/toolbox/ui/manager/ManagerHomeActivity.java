@@ -43,13 +43,13 @@ public class ManagerHomeActivity extends BaseActivity {
             case R.id.ll_manager_user:
                 startActivity(new Intent(this,StaffManageActivity.class));
                 break;
-            case R.id.ll_login_out:
+            case R.id.ll_return_home:
                 Intent intent = new Intent();
                 intent.setAction(Intent.ACTION_MAIN);
                 intent.addCategory(Intent.CATEGORY_HOME);
                 startActivity(intent);
                 break;
-            case R.id.iv_login_out:
+            case R.id.ll_login_out:
                 finish();
                 break;
 
