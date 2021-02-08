@@ -97,7 +97,7 @@
     <Button
         android:id="@+id/btn_login"
         android:layout_width="@dimen/dp_320"
-        android:layout_height="@dimen/dp_43"
+        android:layout_height="@dimen/dp_40"
         android:layout_below="@+id/password_layout"
         android:layout_alignStart="@+id/password_layout"
         android:layout_alignEnd="@+id/password_layout"

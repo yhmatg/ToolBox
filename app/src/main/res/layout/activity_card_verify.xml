@@ -29,12 +29,13 @@
         android:src="@drawable/left_arrow" />
 
     <LinearLayout
-        android:layout_below="@+id/ll_head"
         android:id="@+id/account_layout"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/dp_320"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_head"
+        android:layout_centerHorizontal="true"
         android:layout_marginStart="@dimen/dp_26"
-        android:layout_marginTop="@dimen/dp_40"
+        android:layout_marginTop="@dimen/dp_30"
         android:layout_marginEnd="@dimen/dp_26"
         android:background="@drawable/bg_search"
         android:orientation="vertical">
@@ -54,9 +55,10 @@
 
     <LinearLayout
         android:id="@+id/password_layout"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/dp_320"
         android:layout_height="wrap_content"
         android:layout_below="@+id/account_layout"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:layout_marginStart="@dimen/dp_26"
         android:layout_marginTop="@dimen/dp_15"
@@ -95,19 +97,21 @@
         android:id="@+id/bt_change_card"
         android:layout_width="@dimen/dp_120"
         android:layout_height="@dimen/dp_34"
-        android:layout_marginStart="@dimen/dp_140"
-        android:layout_marginTop="@dimen/dp_30"
         android:layout_below="@+id/password_layout"
-        android:background="@drawable/change_face_verify" />
+        android:layout_alignStart="@+id/password_layout"
+        android:layout_marginTop="@dimen/dp_26"
+        android:background="@drawable/login_bt_shape"
+        android:text="@string/change_face_login"
+        android:textSize="@dimen/sp_12" />
 
     <Button
         android:id="@+id/btn_login"
         android:layout_width="@dimen/dp_120"
         android:layout_height="@dimen/dp_34"
-        android:layout_alignTop="@+id/bt_change_card"
-        android:layout_alignParentEnd="true"
         android:layout_below="@+id/password_layout"
-        android:layout_marginEnd="@dimen/dp_140"
+        android:layout_alignTop="@+id/bt_change_card"
+        android:layout_alignEnd="@+id/password_layout"
         android:background="@drawable/login_bt_shape"
-        android:text="@string/login" />
+        android:text="@string/login"
+        android:textSize="@dimen/sp_12" />
 </RelativeLayout>
