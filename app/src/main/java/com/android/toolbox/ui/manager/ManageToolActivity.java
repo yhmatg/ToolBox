@@ -73,6 +73,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     private List<AssetsListItemInfo> wrongList = new ArrayList<>();
     private String locName = "二楼";
     private Animation anim;
+    private boolean isDestroy;
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -129,6 +130,9 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                if (isDestroy){
+                                    return;
+                                }
                                 openView.setVisibility(View.VISIBLE);
                                 ToastUtils.showShort("OnOpenLock");
                             }
@@ -141,6 +145,9 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                if (isDestroy){
+                                    return;
+                                }
                                 openView.setVisibility(View.GONE);
                                 loadingView.setVisibility(View.VISIBLE);
                                 waitView.startAnimation(anim);
@@ -335,6 +342,9 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (isDestroy){
+                    return;
+                }
                 loadingView.setVisibility(View.GONE);
                 waitView.clearAnimation();
                 resultView.setVisibility(View.VISIBLE);
@@ -346,5 +356,11 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                 adapter.notifyDataSetChanged();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isDestroy = true;
     }
 }

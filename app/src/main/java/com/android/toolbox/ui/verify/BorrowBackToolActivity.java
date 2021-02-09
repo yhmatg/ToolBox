@@ -4,7 +4,10 @@ import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
@@ -35,6 +38,7 @@ import com.android.toolbox.skrfidbox.econst.ELock;
 import com.android.toolbox.skrfidbox.entity.MsgObjBase;
 import com.android.toolbox.skrfidbox.entity.Tags;
 import com.android.toolbox.ui.toolquery.AssetListAdapter;
+import com.android.toolbox.utils.ScreenSizeUtils;
 import com.android.toolbox.utils.ToastUtils;
 import com.xuexiang.xlog.XLog;
 
@@ -90,6 +94,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    if (isDestroy) {
+                        return;
+                    }
                     recLen--;
                     autoBack.setText(getString(R.string.auto_return, recLen));
                     if (recLen < 1) {
@@ -101,6 +108,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
             });
         }
     };
+    private boolean isDestroy;
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -168,6 +176,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                if (isDestroy) {
+                                    return;
+                                }
                                 openView.setVisibility(View.VISIBLE);
                                 ToastUtils.showShort("OnOpenLock");
                             }
@@ -180,6 +191,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                if (isDestroy) {
+                                    return;
+                                }
                                 openView.setVisibility(View.GONE);
                                 loadingView.setVisibility(View.VISIBLE);
                                 waitView.startAnimation(anim);
@@ -383,6 +397,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (isDestroy) {
+                    return;
+                }
                 loadingView.setVisibility(View.GONE);
                 waitView.clearAnimation();
                 resultView.setVisibility(View.VISIBLE);
@@ -397,7 +414,10 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     }
 
     public void showCloseDoorDialog() {
-        /*if (closeDoorDialog != null && !closeDoorDialog.isShowing()) {
+        if (isTest) {
+            return;
+        }
+        if (closeDoorDialog != null && !closeDoorDialog.isShowing()) {
             closeDoorDialog.show();
             timer.schedule(task, 1000, 1000);
         } else {
@@ -426,6 +446,12 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
             layoutParams.width = (int) (ScreenSizeUtils.getInstance(getApplication()).getScreenWidth() * 0.75f);
             layoutParams.height = WindowManager.LayoutParams.WRAP_CONTENT;
             window.setAttributes(layoutParams);
-        }*/
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isDestroy = true;
     }
 }
