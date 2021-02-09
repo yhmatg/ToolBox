@@ -107,6 +107,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    if (isDestroy){
+                        return;
+                    }
                     recLen--;
                     autoBack.setText(getString(R.string.auto_return, recLen));
                     if (recLen < 1) {
@@ -124,6 +127,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     private List<String> invEpcs = new ArrayList<>();
     private SerialPortUtil serialPortUtil = SerialPortUtil.getInstance();
     private boolean autoGetLockStatus;
+    private boolean isDestroy;
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -213,6 +217,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
             }
         });
     }
+
     @Override
     public void handleFetchAllAssetsInfos(List<AssetsListItemInfo> assetsListItemInfos) {
         epcToolMap.clear();
@@ -360,10 +365,13 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if (isDestroy){
+                            return;
+                        }
                         openView.setVisibility(View.GONE);
                         loadingView.setVisibility(View.VISIBLE);
                         waitView.startAnimation(anim);
-                        startInv(false,false);
+                        startInv(false, false);
                         ToastUtils.showShort("OnCloseLock");
                     }
                 });
@@ -375,6 +383,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if (isDestroy){
+                            return;
+                        }
                         openView.setVisibility(View.VISIBLE);
                         ToastUtils.showShort("OnOpenLock");
                     }
@@ -443,7 +454,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         assetBorrowPara.setBor_user_name(currentUser.getUser_real_name());
 
         AssetBackPara assetBackPara = new AssetBackPara();
-        if(currentUser.getDeptInfo() != null){
+        if (currentUser.getDeptInfo() != null) {
             assetBackPara.setBelong_dept_id(currentUser.getDeptInfo().getId());
         }
         assetBackPara.setRev_user_id(currentUser.getId());
@@ -502,6 +513,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (isDestroy){
+                    return;
+                }
                 loadingView.setVisibility(View.GONE);
                 waitView.clearAnimation();
                 resultView.setVisibility(View.VISIBLE);
@@ -525,5 +539,11 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     protected void onPause() {
         super.onPause();
         autoGetLockStatus = false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isDestroy = true;
     }
 }

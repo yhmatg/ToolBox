@@ -87,6 +87,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     private List<String> invEpcs = new ArrayList<>();
     private SerialPortUtil serialPortUtil = SerialPortUtil.getInstance();
     private boolean autoGetLockStatus;
+    private boolean isDestroy;
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -278,6 +279,9 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if (isDestroy){
+                            return;
+                        }
                         openView.setVisibility(View.GONE);
                         loadingView.setVisibility(View.VISIBLE);
                         waitView.startAnimation(anim);
@@ -293,6 +297,9 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        if (isDestroy){
+                            return;
+                        }
                         openView.setVisibility(View.VISIBLE);
                         ToastUtils.showShort("OnOpenLock");
                     }
@@ -361,7 +368,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         assetBorrowPara.setBor_user_name(currentUser.getUser_real_name());
 
         AssetBackPara assetBackPara = new AssetBackPara();
-        if(currentUser.getDeptInfo() != null){
+        if (currentUser.getDeptInfo() != null) {
             assetBackPara.setBelong_dept_id(currentUser.getDeptInfo().getId());
         }
         assetBackPara.setRev_user_id(currentUser.getId());
@@ -414,6 +421,9 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                if (isDestroy){
+                    return;
+                }
                 loadingView.setVisibility(View.GONE);
                 waitView.clearAnimation();
                 resultView.setVisibility(View.VISIBLE);
@@ -437,5 +447,11 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     protected void onPause() {
         super.onPause();
         autoGetLockStatus = false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isDestroy = true;
     }
 }
