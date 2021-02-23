@@ -343,11 +343,11 @@ public class SdkActivity extends BaseActivity implements SerialPortUtil.OnLockSt
 
     @Override
     public void onCloseLock() {
-
+        Log.e(TAG,"onCloseLock");
     }
 
     @Override
     public void onOpenLock() {
-
+        Log.e(TAG,"onOpenLock");
     }
 }
