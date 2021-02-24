@@ -74,7 +74,7 @@ public class CardVerifyActivity extends BaseActivity<ManagerLoginPresenter> impl
 
     }
 
-    @OnClick({R.id.title_back, R.id.btn_login})
+    @OnClick({R.id.title_back, R.id.btn_login, R.id.bt_change_face})
     public void performClick(View view) {
         switch (view.getId()) {
             case R.id.title_back:
@@ -82,8 +82,10 @@ public class CardVerifyActivity extends BaseActivity<ManagerLoginPresenter> impl
                 break;
             case R.id.btn_login:
                 login();
-               /* startActivity(new Intent(this, BorrowBackToolActivity.class));
-                finish();*/
+                break;
+            case R.id.bt_change_face:
+                startActivity(new Intent(this, FaceVerifyActivity.class));
+                finish();
                 break;
         }
     }

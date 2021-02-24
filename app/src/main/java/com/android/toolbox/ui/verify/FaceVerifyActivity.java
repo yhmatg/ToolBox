@@ -41,7 +41,7 @@ public class FaceVerifyActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.title_back, R.id.bt_retry})
+    @OnClick({R.id.title_back, R.id.bt_retry, R.id.bt_change_card})
     public void performClick(View view) {
         switch (view.getId()) {
             case R.id.title_back:
@@ -49,6 +49,10 @@ public class FaceVerifyActivity extends BaseActivity {
                 break;
             case R.id.bt_retry:
                 startActivity(new Intent(this, BorrowBackToolActivity.class));
+                finish();
+                break;
+            case R.id.bt_change_card:
+                startActivity(new Intent(this, CardVerifyActivity.class));
                 finish();
                 break;
         }

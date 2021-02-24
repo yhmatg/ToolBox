@@ -50,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_30"
-            android:text="工具借还"
+            android:text="工具管理"
             android:textSize="@dimen/sp_18" />
     </LinearLayout>
 

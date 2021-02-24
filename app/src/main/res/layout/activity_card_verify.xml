@@ -94,7 +94,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/bt_change_card"
+        android:id="@+id/bt_change_face"
         android:layout_width="@dimen/dp_120"
         android:layout_height="@dimen/dp_34"
         android:layout_below="@+id/password_layout"
@@ -109,7 +109,7 @@
         android:layout_width="@dimen/dp_120"
         android:layout_height="@dimen/dp_34"
         android:layout_below="@+id/password_layout"
-        android:layout_alignTop="@+id/bt_change_card"
+        android:layout_alignTop="@+id/bt_change_face"
         android:layout_alignEnd="@+id/password_layout"
         android:background="@drawable/login_bt_shape"
         android:text="@string/login"
