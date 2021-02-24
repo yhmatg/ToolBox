@@ -38,4 +38,7 @@
     <string name="wrong_account_password">账号或密码不正确</string>
     <string name="wrong_parameter">请求参数异常</string>
     <string name="change_face_login">切换人脸登录</string>
+    <string name="login_out_str">返回上一级会退出本次登录，是否继续？</string>
+    <string name="no_str">否</string>
+    <string name="yes_str">是</string>
 </resources>
