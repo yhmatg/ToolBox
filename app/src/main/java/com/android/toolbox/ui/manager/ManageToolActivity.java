@@ -210,7 +210,11 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                 break;
             case R.id.bt_open_door:
                 resultView.setVisibility(View.GONE);
-                unlock();
+                if (!isTest) {
+                    unlock();
+                } else {
+                    testOpenClock();
+                }
                 break;
             case R.id.bt_know:
                 finish();
@@ -279,7 +283,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (isDestroy){
+                        if (isDestroy) {
                             return;
                         }
                         openView.setVisibility(View.GONE);
@@ -297,7 +301,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (isDestroy){
+                        if (isDestroy) {
                             return;
                         }
                         openView.setVisibility(View.VISIBLE);
@@ -421,7 +425,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (isDestroy){
+                if (isDestroy) {
                     return;
                 }
                 loadingView.setVisibility(View.GONE);
