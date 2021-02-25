@@ -1,4 +1,5 @@
 package com.android.toolbox.skrfidbox.entity;
+
 import com.android.toolbox.skrfidbox.DataConverts;
 import com.android.toolbox.skrfidbox.econst.EByteBase;
 import com.android.toolbox.skrfidbox.econst.ECmdType;
@@ -118,7 +119,7 @@ public class MsgObjBase {
         serialNum = new byte[]{0, 0, 0, 0};//序列号
     }
 
-    public EByteBase getCmdTag(ECmdType cmdType, byte code) {
+    public static EByteBase getCmdTag(ECmdType cmdType, byte code) {
         EByteBase result = ERfid.StartReadTags;
         switch (cmdType) {
             case RFID:
@@ -140,10 +141,10 @@ public class MsgObjBase {
         return result;
     }
 
+    public int flag = 0;;
     public MsgObjBase(byte[] receivedData) //接收数据
     {
         frameData = receivedData;//帧数据
-        int flag = 0;
         headFlag = new byte[]{receivedData[flag], receivedData[flag + 1]};
         flag += 2;
         addressNum = receivedData[flag++];
