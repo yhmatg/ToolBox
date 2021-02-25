@@ -109,6 +109,7 @@ public class SdkActivity extends BaseActivity implements SerialPortUtil.OnLockSt
     @Override
     protected void initEventAndData() {
         initClient();
+        initLock();
         initRfid();
     }
 
@@ -135,38 +136,6 @@ public class SdkActivity extends BaseActivity implements SerialPortUtil.OnLockSt
             public void log(String readerName, LogBaseEpcOver info) {
                 Log.e(TAG, "onTagEpcOver=============" + readerName);
                 Log.e(TAG, "size=============" + invEpcs.size());
-            }
-        };
-
-        client.onGpiStart = new HandlerGpiStart() {
-            @Override
-            public void log(String readerName, LogAppGpiStart info) {
-                Log.e(TAG, "onGpiStart=============" + readerName);
-            }
-        };
-        client.onGpiOver = new HandlerGpiOver() {
-            @Override
-            public void log(String s, LogAppGpiOver logAppGpiOver) {
-                Log.e(TAG, "onGpiOver======" + logAppGpiOver.getRtMsg());
-            }
-        };
-
-        client.debugLog = new HandlerDebugLog() {
-            @Override
-            public void sendDebugLog(String s) {
-                Log.e(TAG, "sendDebugLog======" + s);
-            }
-
-            @Override
-            public void receiveDebugLog(String s) {
-                Log.e(TAG, "receiveDebugLog======" + s);
-            }
-        };
-
-        client.cacheDataOver = new HandlerCacheDataOver() {
-            @Override
-            public void log(String s, MsgAppGetCacheTagData msgAppGetCacheTagData) {
-                Log.e(TAG, "log======" + s);
             }
         };
     }
