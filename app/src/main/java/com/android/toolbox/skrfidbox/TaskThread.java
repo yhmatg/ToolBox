@@ -163,6 +163,7 @@ public class TaskThread extends Thread {
     }
 
     private List<Byte> pollDataList = new ArrayList<Byte>();
+
     public void run() {
         final int readTimeout = this.readTimeout;
         final List<Byte> pollDataList = this.pollDataList;
@@ -187,8 +188,9 @@ public class TaskThread extends Thread {
                         synchronized (TaskThread.class) {
                             //todo 错误待修改
                             byte[] dataBytes = Arrays.copyOf(data, totalSize);
-                            final Collection bytes = Collections.singleton(dataBytes);
-                            pollDataList.addAll(bytes);
+                            for (int i = 0; i < dataBytes.length; i++) {
+                                pollDataList.add(dataBytes[i]);
+                            }
                             data = new byte[cacheSize];
                         }
                     }
@@ -289,11 +291,9 @@ public class TaskThread extends Thread {
 
     private byte[] toPrimitives(Byte[] oBytes) {
         byte[] bytes = new byte[oBytes.length];
-
         for (int i = 0; i < oBytes.length; i++) {
             bytes[i] = oBytes[i];
         }
-
         return bytes;
     }
 }

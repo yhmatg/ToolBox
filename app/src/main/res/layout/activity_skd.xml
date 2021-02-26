@@ -35,7 +35,7 @@
         android:layout_marginTop="@dimen/dp_10"
         android:background="@drawable/bt_background_two"
         android:padding="@dimen/dp_5"
-        android:text="打开照明"
+        android:text="单次盘点"
         android:textColor="@color/white"
         android:textSize="@dimen/sp_14" />
 
@@ -47,7 +47,7 @@
         android:layout_marginTop="@dimen/dp_10"
         android:background="@drawable/bt_background_two"
         android:padding="@dimen/dp_5"
-        android:text="关闭照明"
+        android:text="停止单次盘点"
         android:textColor="@color/white"
         android:textSize="@dimen/sp_14" />
 
