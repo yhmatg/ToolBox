@@ -53,7 +53,7 @@ public class SerialPortUtil {
             outputStream = serialPort.getOutputStream();
         } catch (IOException e) {
             e.printStackTrace();
-        }catch (SecurityException e){
+        } catch (SecurityException e) {
             e.printStackTrace();
         }
     }
@@ -149,9 +149,56 @@ public class SerialPortUtil {
         receiveThread.start();
     }
 
+    public void totalReceiveSerialPort() {
+        Log.i(TAG, "接收串口数据");
+        isStart = true;
+        openLocks.clear();
+        closeLocks.clear();
+        receiveThread = new Thread() {
+            @Override
+            public void run() {
+                while (isStart) {
+                    try {
+                        byte[] readData = new byte[1024];
+                        if (inputStream == null) {
+                            return;
+                        }
+                        int size = inputStream.read(readData);
+                        if (size > 0 && isStart) {
+                            serialData = HexUtils.bytes2HexString(readData, 0, size);
+                            Log.e(TAG, "接收到串口数据:" + HexUtils.bytes2HexString(readData, 0, size));
+                            if (lockListener != null) {
+                                if ("5A0801030000500D".equals(serialData)) {
+                                    if (!isLock) {
+                                        lockListener.onCloseLock();
+                                        isLock = true;
+                                        isStart = false;
+                                    }
+                                } else if ("5A080102000F5E0D".equals(serialData)) {
+                                    if (isLock) {
+                                        lockListener.onOpenLock();
+                                        isLock = false;
+                                    }
+                                }
+                            }
+                            Thread.sleep(1000);
+                            sendSerialPort("5A0801030007570D");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        //启动接收线程
+        receiveThread.start();
+    }
+
     //测试接收数据的方法
     public void testReceiveSerialPort() {
-        Log.i(TAG, "测试接收串口数据");
+        Log.e(TAG, "测试接收串口数据");
         receiveThread = new Thread() {
             @Override
             public void run() {
@@ -163,7 +210,7 @@ public class SerialPortUtil {
                     int size = inputStream.read(readData);
                     if (size > 0) {
                         serialData = HexUtils.bytes2HexString(readData, 0, size);
-                        Log.i(TAG, "测试接收到串口数据:" + HexUtils.bytes2HexString(readData, 0, size));
+                        Log.e(TAG, "测试接收到串口数据:" + HexUtils.bytes2HexString(readData, 0, size));
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

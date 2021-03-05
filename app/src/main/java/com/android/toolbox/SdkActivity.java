@@ -152,11 +152,16 @@ public class SdkActivity extends BaseActivity implements SerialPortUtil.OnLockSt
         }
     }
 
-    @OnClick({R.id.bt_unlock, R.id.bt_inv, R.id.bt_single_inv, R.id.selectAll, R.id.bt_stop_inv,R.id.bt_lock_status})
+    @OnClick({R.id.bt_unlock, R.id.bt_inv, R.id.bt_single_inv, R.id.selectAll, R.id.bt_stop_inv, R.id.bt_lock_status})
     public void performClick(View view) {
         switch (view.getId()) {
             case R.id.bt_unlock:
-                unlock();
+                //unlock();
+                //测试一次开四把锁
+                serialPortUtil.sendSerialPort("5A080101000F5D0D");
+                //测试一次开八把锁
+                //serialPortUtil.sendSerialPort("5A080101000F530D");
+                serialPortUtil.totalReceiveSerialPort();
                 ToastUtils.showShort("开锁");
                 break;
             case R.id.bt_inv:
@@ -177,7 +182,7 @@ public class SdkActivity extends BaseActivity implements SerialPortUtil.OnLockSt
                 selectAll();
                 break;
             case R.id.bt_lock_status:
-                serialPortUtil.testReceiveSerialPort();
+                serialPortUtil.sendSerialPort("5A080103000F5F0D");
                 break;
         }
     }
@@ -312,11 +317,11 @@ public class SdkActivity extends BaseActivity implements SerialPortUtil.OnLockSt
 
     @Override
     public void onCloseLock() {
-        Log.e(TAG,"onCloseLock");
+        Log.e(TAG, "onCloseLock");
     }
 
     @Override
     public void onOpenLock() {
-        Log.e(TAG,"onOpenLock");
+        Log.e(TAG, "onOpenLock");
     }
 }
