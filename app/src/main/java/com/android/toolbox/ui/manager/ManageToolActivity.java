@@ -79,7 +79,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     private AssetListAdapter adapter;
     private UserInfo currentUser;
     private List<AssetsListItemInfo> wrongList = new ArrayList<>();
-    private String locName = "二楼";
+    private String locName = "一楼工具车";
     private Animation anim;
     private GClient client = GlobalClient.getClient();
     private ParamEpcReadTid tidParam = null;
@@ -230,13 +230,11 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         ToastUtils.showShort("testOnGetAllTags");
         Tags tags = new Tags();
         List<String> epcList = new ArrayList<>();
-        //todo 添加测试epc admi01
-        epcList.add("E22020123118399545760202");
-        epcList.add("E22020121626133698580202");
-        epcList.add("E22020123118399545780202");
-        epcList.add("E22020121602221607040202");
-        epcList.add("E22020123118399545740202");
-        epcList.add("E20161517378114522420202");
+        //todo 添加测试epc admin01
+        /*epcList.add("E22021022060197121060202");
+        epcList.add("E22021022060197121070202");
+        epcList.add("E22021022060197121080202");
+        epcList.add("E22021022060197121100202");*/
         handleAllTags(epcList);
     }
 
