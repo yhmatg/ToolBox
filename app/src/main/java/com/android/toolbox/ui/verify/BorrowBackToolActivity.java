@@ -26,6 +26,7 @@ import com.android.toolbox.app.ToolBoxApplication;
 import com.android.toolbox.base.activity.BaseActivity;
 import com.android.toolbox.contract.ManageToolContract;
 import com.android.toolbox.core.bean.BaseResponse;
+import com.android.toolbox.core.bean.assist.AssetFilterParameter;
 import com.android.toolbox.core.bean.assist.AssetsListItemInfo;
 import com.android.toolbox.core.bean.terminal.AssetBackPara;
 import com.android.toolbox.core.bean.terminal.AssetBorrowPara;
@@ -54,6 +55,7 @@ import com.gg.reader.api.protocol.gx.MsgBaseInventoryEpc;
 import com.gg.reader.api.protocol.gx.ParamEpcReadTid;
 import com.gg.reader.api.utils.HexUtils;
 import com.gg.reader.api.utils.ThreadPoolUtils;
+import com.multilevel.treelist.Node;
 import com.xuexiang.xlog.XLog;
 
 import java.util.ArrayList;
@@ -63,10 +65,11 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> implements ManageToolContract.View{
+public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> implements ManageToolContract.View {
     private static String TAG = "BorrowBackToolActivity";
     private boolean isTest = false;
     @BindView(R.id.rv_result)
@@ -85,6 +88,10 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     LinearLayout testLayout;
     @BindView(R.id.bottom_layout)
     LinearLayout bottomLayout;
+    @BindString(R.string.loc_id)
+    String locId;
+    @BindString(R.string.loc_name)
+    String locNa;
     //工具箱中闲置的工具
     private HashMap<String, AssetsListItemInfo> epcToolMap = new HashMap<>();
     private List<String> epcList = new ArrayList<>();
@@ -107,7 +114,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (isDestroy){
+                    if (isDestroy) {
                         return;
                     }
                     recLen--;
@@ -127,6 +134,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     private List<String> invEpcs = new ArrayList<>();
     private SerialPortUtil serialPortUtil = SerialPortUtil.getInstance();
     private boolean isDestroy;
+    private int currentPage = 1;
+    private int pageSize = 500;
+    private AssetFilterParameter conditions = new AssetFilterParameter();
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -135,6 +145,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
 
     @Override
     protected void initEventAndData() {
+        List<Node> mSelectAssetsLocations = new ArrayList<>();
+        mSelectAssetsLocations.add(new Node(locId, "-1", locNa));
+        conditions.setmSelectAssetsLocations(mSelectAssetsLocations);
         isTest = getResources().getBoolean(R.bool.is_test);
         if (isTest) {
             testLayout.setVisibility(View.VISIBLE);
@@ -154,7 +167,8 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         adapter = new AssetListAdapter(toolList, this, true);
         inOutRecycleView.setLayoutManager(new LinearLayoutManager(this));
         inOutRecycleView.setAdapter(adapter);
-        mPresenter.fetchAllAssetsInfos();
+        //mPresenter.fetchAllAssetsInfos();
+        mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);
         initAnimation();
         if (!isTest) {
             initClient();
@@ -188,6 +202,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
 
     @Override
     public void handleFetchAllAssetsInfos(List<AssetsListItemInfo> assetsListItemInfos) {
+        Log.e(TAG, "all资产数量是=====" + assetsListItemInfos.size());
         epcToolMap.clear();
         epcList.clear();
         for (AssetsListItemInfo tool : assetsListItemInfos) {
@@ -217,6 +232,21 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
             ToastUtils.showShort("归还工具成功");
         } else if ("200002".equals(backToolsResponse.getCode())) {
             ToastUtils.showShort("请求参数异常");
+        }
+    }
+
+    @Override
+    public void handlefetchPageAssetsInfos(List<AssetsListItemInfo> assetsInfos) {
+        Log.e(TAG, "page资产数量是=====" + assetsInfos.size());
+        epcToolMap.clear();
+        epcList.clear();
+        for (AssetsListItemInfo tool : assetsInfos) {
+            if (tool.getAst_used_status() == 0 && locName.equals(tool.getLoc_name())) {
+                epcList.add(tool.getAst_epc_code());
+            }
+            if (locName.equals(tool.getLoc_name())) {
+                epcToolMap.put(tool.getAst_epc_code(), tool);
+            }
         }
     }
 
@@ -332,7 +362,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (isDestroy){
+                        if (isDestroy) {
                             return;
                         }
                         openView.setVisibility(View.GONE);
@@ -350,7 +380,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (isDestroy){
+                        if (isDestroy) {
                             return;
                         }
                         openView.setVisibility(View.VISIBLE);
@@ -480,7 +510,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (isDestroy){
+                if (isDestroy) {
                     return;
                 }
                 loadingView.setVisibility(View.GONE);

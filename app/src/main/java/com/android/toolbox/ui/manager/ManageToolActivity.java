@@ -21,6 +21,7 @@ import com.android.toolbox.app.ToolBoxApplication;
 import com.android.toolbox.base.activity.BaseActivity;
 import com.android.toolbox.contract.ManageToolContract;
 import com.android.toolbox.core.bean.BaseResponse;
+import com.android.toolbox.core.bean.assist.AssetFilterParameter;
 import com.android.toolbox.core.bean.assist.AssetsListItemInfo;
 import com.android.toolbox.core.bean.terminal.AssetBackPara;
 import com.android.toolbox.core.bean.terminal.AssetBorrowPara;
@@ -40,6 +41,7 @@ import com.gg.reader.api.protocol.gx.LogBaseEpcOver;
 import com.gg.reader.api.protocol.gx.MsgBaseInventoryEpc;
 import com.gg.reader.api.protocol.gx.ParamEpcReadTid;
 import com.gg.reader.api.utils.ThreadPoolUtils;
+import com.multilevel.treelist.Node;
 
 import org.apache.commons.lang3.ThreadUtils;
 
@@ -49,6 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -69,6 +72,10 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     ImageView waitView;
     @BindView(R.id.test_layout)
     LinearLayout testLayout;
+    @BindString(R.string.loc_id)
+    String locId;
+    @BindString(R.string.loc_name)
+    String locNa;
     //工具箱中闲置的工具
     private HashMap<String, AssetsListItemInfo> epcToolMap = new HashMap<>();
     private List<String> epcList = new ArrayList<>();
@@ -87,6 +94,9 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     private List<String> invEpcs = new ArrayList<>();
     private SerialPortUtil serialPortUtil = SerialPortUtil.getInstance();
     private boolean isDestroy;
+    private int currentPage = 1;
+    private int pageSize = 500;
+    private AssetFilterParameter conditions = new AssetFilterParameter();
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -95,6 +105,9 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
 
     @Override
     protected void initEventAndData() {
+        List<Node> mSelectAssetsLocations = new ArrayList<>();
+        mSelectAssetsLocations.add(new Node(locId, "-1", locNa));
+        conditions.setmSelectAssetsLocations(mSelectAssetsLocations);
         isTest = getResources().getBoolean(R.bool.is_test);
         if (isTest) {
             testLayout.setVisibility(View.VISIBLE);
@@ -103,7 +116,8 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         adapter = new AssetListAdapter(toolList, this, true);
         inOutRecycleView.setLayoutManager(new LinearLayoutManager(this));
         inOutRecycleView.setAdapter(adapter);
-        mPresenter.fetchAllAssetsInfos();
+        //mPresenter.fetchAllAssetsInfos();
+        mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);
         initAnimation();
         if (!isTest) {
             initClient();
@@ -139,7 +153,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
 
     @Override
     public void handleFetchAllAssetsInfos(List<AssetsListItemInfo> assetsListItemInfos) {
-        Log.e(TAG, "资产数量是=====" + assetsListItemInfos.size());
+        Log.e(TAG, "all资产数量是=====" + assetsListItemInfos.size());
         epcToolMap.clear();
         epcList.clear();
         for (AssetsListItemInfo tool : assetsListItemInfos) {
@@ -174,6 +188,22 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         }
     }
 
+    @Override
+    public void handlefetchPageAssetsInfos(List<AssetsListItemInfo> assetsInfos) {
+        Log.e(TAG, "page资产数量是=====" + assetsInfos.size());
+        epcToolMap.clear();
+        epcList.clear();
+        for (AssetsListItemInfo tool : assetsInfos) {
+            if (locName.equals(tool.getLoc_name())) {
+                epcToolMap.put(tool.getAst_epc_code(), tool);
+                if (tool.getAst_used_status() == 0) {
+                    epcList.add(tool.getAst_epc_code());
+                }
+            }
+        }
+
+    }
+
     @OnClick({R.id.titleLeft, R.id.bt_open_door, R.id.bt_know, R.id.bt_close, R.id.bt_open, R.id.bt_get_tag})
     public void performClick(View view) {
         switch (view.getId()) {
@@ -183,7 +213,8 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
             case R.id.bt_open_door:
                 resultView.setVisibility(View.GONE);
                 if (!isTest) {
-                    mPresenter.fetchAllAssetsInfos();
+                    //mPresenter.fetchAllAssetsInfos();
+                    mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);
                     invEpcList.clear();
                     wrongList.clear();
                     toolList.clear();
@@ -210,7 +241,8 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     public void testOpenClock() {
         openView.setVisibility(View.VISIBLE);
         ToastUtils.showShort("OnOpenLock");
-        mPresenter.fetchAllAssetsInfos();
+        //mPresenter.fetchAllAssetsInfos();
+        mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);
         invEpcList.clear();
         wrongList.clear();
         toolList.clear();
