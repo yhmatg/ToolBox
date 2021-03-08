@@ -66,7 +66,7 @@ import java.util.TimerTask;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> implements ManageToolContract.View {
+public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> implements ManageToolContract.View{
     private static String TAG = "BorrowBackToolActivity";
     private boolean isTest = false;
     @BindView(R.id.rv_result)
@@ -95,7 +95,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     private AssetListAdapter adapter;
     private UserInfo currentUser;
     private List<AssetsListItemInfo> wrongList = new ArrayList<>();
-    private String locName = "上海金桥";
+    private String locName = "二楼";
     private Animation anim;
     private MaterialDialog closeDoorDialog;
     private int recLen = 10;
@@ -126,7 +126,6 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     private boolean isReader = false;
     private List<String> invEpcs = new ArrayList<>();
     private SerialPortUtil serialPortUtil = SerialPortUtil.getInstance();
-    private boolean autoGetLockStatus;
     private boolean isDestroy;
 
     @Override
@@ -159,8 +158,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         initAnimation();
         if (!isTest) {
             initClient();
-            autoGetLockStatus();
-            serialPortUtil.receiveSerialPort();
+            serialPortUtil.totalReceiveSerialPort();
             unlock();
         }
     }
@@ -185,37 +183,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     }
 
     private void unlock() {
-        serialPortUtil.sendSerialPort("5A0801010001530D");
-        serialPortUtil.sendSerialPort("5A0801010002500D");
-        serialPortUtil.sendSerialPort("5A0801010004560D");
-        serialPortUtil.sendSerialPort("5A08010100085A0D");
-        serialPortUtil.sendSerialPort("5A0801010010420D");
-        serialPortUtil.sendSerialPort("5A0801010020720D");
-        serialPortUtil.sendSerialPort("5A0801010040120D");
-        serialPortUtil.sendSerialPort("5A0801010080D20D");
-    }
-
-    private void autoGetLockStatus() {
-        ThreadPoolUtils.run(new Runnable() {
-            @Override
-            public void run() {
-                while (autoGetLockStatus) {
-                    serialPortUtil.sendSerialPort("5A0801030001530D");
-                    serialPortUtil.sendSerialPort("5A0801030002500D");
-                    serialPortUtil.sendSerialPort("5A0801030004560D");
-                    serialPortUtil.sendSerialPort("5A08010300085A0D");
-                    serialPortUtil.sendSerialPort("5A0801030010420D");
-                    serialPortUtil.sendSerialPort("5A0801030020720D");
-                    serialPortUtil.sendSerialPort("5A0801030040120D");
-                    serialPortUtil.sendSerialPort("5A0801030080D20D");
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
+        serialPortUtil.sendSerialPort("5A080101000F5D0D");
     }
 
     @Override
@@ -295,11 +263,11 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         ToastUtils.showShort("testOnGetAllTags");
         List<String> epcList = new ArrayList<>();
         //todo 添加测试epc
-        epcList.add("E22020121736617084270202");
-        epcList.add("E20160126016982779250202");
-        epcList.add("E20160126016982138320202");
-        epcList.add("E20160126016978166770202");
-        epcList.add("E20160126016977618060202");
+        epcList.add("E22020123118399545760202");
+        epcList.add("E22020121626133698580202");
+        epcList.add("E22020123118399545780202");
+        epcList.add("E22020121602221607040202");
+        epcList.add("E22020123118399545740202");
         handleAllTags(epcList);
     }
 
@@ -532,18 +500,17 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     @Override
     protected void onResume() {
         super.onResume();
-        autoGetLockStatus = true;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        autoGetLockStatus = false;
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         isDestroy = true;
+        serialPortUtil.setStart(false);
     }
 }

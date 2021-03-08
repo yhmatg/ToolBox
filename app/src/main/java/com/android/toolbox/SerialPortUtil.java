@@ -249,4 +249,8 @@ public class SerialPortUtil {
         }
         return true;
     }
+
+    public void setStart(boolean start) {
+        isStart = start;
+    }
 }
