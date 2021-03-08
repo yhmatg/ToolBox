@@ -139,6 +139,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
 
     @Override
     public void handleFetchAllAssetsInfos(List<AssetsListItemInfo> assetsListItemInfos) {
+        Log.e(TAG, "资产数量是=====" + assetsListItemInfos.size());
         epcToolMap.clear();
         epcList.clear();
         for (AssetsListItemInfo tool : assetsListItemInfos) {
@@ -157,6 +158,8 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
             ToastUtils.showShort("借用工具成功");
         } else if ("200002".equals(borrowToolsResponse.getCode())) {
             ToastUtils.showShort("请求参数异常");
+        } else {
+            ToastUtils.showShort("借用失败==" + borrowToolsResponse.getCode());
         }
     }
 
@@ -166,6 +169,8 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
             ToastUtils.showShort("归还工具成功");
         } else if ("200002".equals(backToolsResponse.getCode())) {
             ToastUtils.showShort("请求参数异常");
+        } else {
+            ToastUtils.showShort("归还失败");
         }
     }
 
@@ -178,6 +183,11 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
             case R.id.bt_open_door:
                 resultView.setVisibility(View.GONE);
                 if (!isTest) {
+                    mPresenter.fetchAllAssetsInfos();
+                    invEpcList.clear();
+                    wrongList.clear();
+                    toolList.clear();
+                    adapter.notifyDataSetChanged();
                     unlock();
                 } else {
                     testOpenClock();
@@ -200,6 +210,11 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     public void testOpenClock() {
         openView.setVisibility(View.VISIBLE);
         ToastUtils.showShort("OnOpenLock");
+        mPresenter.fetchAllAssetsInfos();
+        invEpcList.clear();
+        wrongList.clear();
+        toolList.clear();
+        adapter.notifyDataSetChanged();
     }
 
     public void testCloseClock() {
@@ -219,8 +234,9 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         epcList.add("E22020123118399545760202");
         epcList.add("E22020121626133698580202");
         epcList.add("E22020123118399545780202");
-        //epcList.add("E22020121602221607040202");
-        //epcList.add("E22020123118399545740202");
+        epcList.add("E22020121602221607040202");
+        epcList.add("E22020123118399545740202");
+        epcList.add("E20161517378114522420202");
         handleAllTags(epcList);
     }
 

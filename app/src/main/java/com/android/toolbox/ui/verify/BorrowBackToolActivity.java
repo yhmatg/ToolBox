@@ -268,6 +268,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         epcList.add("E22020123118399545780202");
         epcList.add("E22020121602221607040202");
         epcList.add("E22020123118399545740202");
+        epcList.add("E20161517378114522420202");
         handleAllTags(epcList);
     }
 
