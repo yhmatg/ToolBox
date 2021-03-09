@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -76,6 +77,8 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     String locId;
     @BindString(R.string.loc_name)
     String locNa;
+    @BindView(R.id.bt_open_door)
+    Button reOpenBt;
     //工具箱中闲置的工具
     private HashMap<String, AssetsListItemInfo> epcToolMap = new HashMap<>();
     private List<String> epcList = new ArrayList<>();
@@ -214,10 +217,12 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                 resultView.setVisibility(View.GONE);
                 if (!isTest) {
                     //mPresenter.fetchAllAssetsInfos();
+                    serialPortUtil.totalReceiveSerialPort();
                     mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);
                     invEpcList.clear();
                     wrongList.clear();
                     toolList.clear();
+                    invEpcs.clear();
                     adapter.notifyDataSetChanged();
                     unlock();
                 } else {
@@ -299,6 +304,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                         if (isDestroy) {
                             return;
                         }
+                        reOpenBt.setEnabled(true);
                         openView.setVisibility(View.GONE);
                         loadingView.setVisibility(View.VISIBLE);
                         waitView.startAnimation(anim);
@@ -317,6 +323,9 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                         if (isDestroy) {
                             return;
                         }
+                        reOpenBt.setEnabled(false);
+                        loadingView.setVisibility(View.GONE);
+                        resultView.setVisibility(View.GONE);
                         openView.setVisibility(View.VISIBLE);
                         ToastUtils.showShort("OnOpenLock");
                     }
@@ -326,7 +335,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     }
 
     private void startInv(boolean isSingleInv, boolean isGetTid) {
-        if (ToolBoxApplication.isClient && !isReader) {
+        if (ToolBoxApplication.isClient) {
             MsgBaseInventoryEpc msg = new MsgBaseInventoryEpc();
             msg.setAntennaEnable(getAnt());
             if (isSingleInv) {
