@@ -263,10 +263,10 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         Tags tags = new Tags();
         List<String> epcList = new ArrayList<>();
         //todo 添加测试epc admin01
-        /*epcList.add("E22021022060197121060202");
+        epcList.add("E22021022060197121060202");
         epcList.add("E22021022060197121070202");
         epcList.add("E22021022060197121080202");
-        epcList.add("E22021022060197121100202");*/
+        epcList.add("E22021022060197121100202");
         handleAllTags(epcList);
     }
 
