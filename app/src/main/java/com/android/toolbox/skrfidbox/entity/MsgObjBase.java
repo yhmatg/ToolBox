@@ -119,7 +119,7 @@ public class MsgObjBase {
         serialNum = new byte[]{0, 0, 0, 0};//序列号
     }
 
-    public static EByteBase getCmdTag(ECmdType cmdType, byte code) {
+    public EByteBase getCmdTag(ECmdType cmdType, byte code) {
         EByteBase result = ERfid.StartReadTags;
         switch (cmdType) {
             case RFID:
@@ -141,10 +141,10 @@ public class MsgObjBase {
         return result;
     }
 
-    public int flag = 0;;
     public MsgObjBase(byte[] receivedData) //接收数据
     {
         frameData = receivedData;//帧数据
+        int flag = 0;
         headFlag = new byte[]{receivedData[flag], receivedData[flag + 1]};
         flag += 2;
         addressNum = receivedData[flag++];
@@ -159,12 +159,16 @@ public class MsgObjBase {
         if (len > 0) {
             cmdData = new byte[len];
             for (int i = 0; i < len; i++) {
-                cmdData[i] = receivedData[flag + i];
+                if(flag + i < receivedData.length) {
+                    cmdData[i] = receivedData[flag + i];
+                }
             }
         } else
             cmdData = null;
         flag += len;
-        crc = new byte[]{receivedData[flag], receivedData[flag + 1]};
+        if(flag + 1 < receivedData.length) {
+            crc = new byte[]{receivedData[flag], receivedData[flag + 1]};
+        }
     }
 
     /**

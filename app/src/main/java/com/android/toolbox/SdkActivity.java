@@ -62,40 +62,6 @@ public class SdkActivity extends BaseActivity {
     @Override
     protected void initEventAndData() {
         serverThread = ToolBoxApplication.getInstance().getServerThread();
-        //serverThread.start();
-        initRfid();
-        initClient();
-    }
-
-    private void initRfid() {
-        //初始化rfid
-        if (client.openAndroidSerial("/dev/ttyXRUSB2:115200", 500)) {
-            isInited = true;
-            Log.e(TAG, "rfid连接成功");
-        } else {
-            isInited = false;
-            Log.e(TAG, "rfid连接失败");
-        }
-    }
-
-    private void initClient() {
-        client.onTagEpcLog = new HandlerTagEpcLog() {
-            public void log(String readerName, LogBaseEpcInfo info) {
-                if (null != info && 0 == info.getResult()) {
-                    Log.e(TAG, "EPC-===i" + info.getEpc());
-                    if (!invEpcs.contains(info.getEpc())) {
-                        invEpcs.add(info.getEpc());
-                    }
-                }
-            }
-        };
-
-        client.onTagEpcOver = new HandlerTagEpcOver() {
-            public void log(String readerName, LogBaseEpcOver info) {
-                Log.e(TAG, "onTagEpcOver=============" + readerName);
-                Log.e(TAG, "size=============" + invEpcs.size());
-            }
-        };
     }
 
     @OnClick({R.id.bt_unlock, R.id.bt_inv, R.id.bt_open_light, R.id.bt_close_light, R.id.bt_open_alarm, R.id.bt_close_alarm})
@@ -110,17 +76,12 @@ public class SdkActivity extends BaseActivity {
                 ToastUtils.showShort("盘点");
                 break;
             case R.id.bt_open_light:
-                /*sendLightLedOpen();
-                ToastUtils.showShort("打开照明");*/
-                invEpcs.clear();
-                startInv(true, false);
-                ToastUtils.showShort("单次盘点");
+                sendLightLedOpen();
+                ToastUtils.showShort("打开照明");
                 break;
             case R.id.bt_close_light:
-               /* sendLightLedClose();
-                ToastUtils.showShort("关闭照明");*/
-                stopInv();
-                ToastUtils.showShort("停止盘点");
+                sendLightLedClose();
+                ToastUtils.showShort("关闭照明");
                 break;
             case R.id.bt_open_alarm:
                 sendAlarmLedOpen();
@@ -260,67 +221,6 @@ public class SdkActivity extends BaseActivity {
             }
         }).start();
     }
-
-    private void startInv(boolean isSingleInv, boolean isGetTid) {
-        if (isInited && !isInvStarted) {
-            MsgBaseInventoryEpc msg = new MsgBaseInventoryEpc();
-            msg.setAntennaEnable(getAnt());
-            if (isSingleInv) {
-                msg.setInventoryMode(EnumG.InventoryMode_Single);
-            } else {
-                msg.setInventoryMode(EnumG.InventoryMode_Inventory);
-            }
-            if (isGetTid) {
-                tidParam = new ParamEpcReadTid();
-                tidParam.setMode(EnumG.ParamTidMode_Auto);
-                tidParam.setLen(6);
-                msg.setReadTid(tidParam);
-            } else {
-                tidParam = null;
-            }
-            ThreadPoolUtils.run(new Runnable() {
-                @Override
-                public void run() {
-                    client.sendSynMsg(msg);
-                    //获取操作结果成功还失败
-                    if (0x00 == msg.getRtCode()) {
-                        //todo 操作成功
-                        isInvStarted = true;
-                    } else {
-                        //todo 操作失败
-                        isInvStarted = false;
-                    }
-                }
-            });
-        }
-    }
-
-    public void stopInv() {
-        if (isInited) {
-            MsgBaseStop msgStop = new MsgBaseStop();
-            ThreadPoolUtils.run(new Runnable() {
-                @Override
-                public void run() {
-                    client.sendSynMsg(msgStop);
-                    if (0x00 == msgStop.getRtCode()) {
-                        isInvStarted = false;
-                        Log.e(TAG, "停止成功");
-                    } else {
-                        Log.e(TAG, "停止失败");
-
-                    }
-                }
-            });
-        } else {
-            ToastUtils.showShort("Rfid未连接");
-        }
-    }
-
-    private long getAnt() {
-        StringBuffer buffer = new StringBuffer("11111111");
-        return Long.valueOf(buffer.reverse().toString(), 2);
-    }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();

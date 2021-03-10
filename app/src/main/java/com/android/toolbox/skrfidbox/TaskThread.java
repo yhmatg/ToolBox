@@ -1,5 +1,6 @@
 package com.android.toolbox.skrfidbox;
 
+import android.util.Log;
 import android.widget.Adapter;
 
 import com.alibaba.fastjson.JSON;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class TaskThread extends Thread {
+    private static String TAG = "TaskThread";
     private Socket socket;
     private List<MsgObjBase> cmdList = new LinkedList<MsgObjBase>();
     private int readTimeout = 0;
@@ -161,139 +163,110 @@ public class TaskThread extends Thread {
         }
         return true;
     }
-
-    private List<Byte> pollDataList = new ArrayList<Byte>();
-
+    ;
+    byte[] longDataOne;
     public void run() {
-        final int readTimeout = this.readTimeout;
-        final List<Byte> pollDataList = this.pollDataList;
-        //线程负责写数据到pollDataList 中
-        Thread readThread = new Thread(new Runnable() {
-            public void run() {
-                InputStream inputStream = null;
-                DataInputStream dis = null;
-                if (!checkAvailable()) {
-                    return;
+        InputStream inputStream = null;
+        DataInputStream dis = null;
+        if (!checkAvailable()) {
+            return;
+        }
+        try {
+            //必须设置线程超时时长，否则会导致cup过高或者连接通道无法关闭等问题
+            socket.setSoTimeout(this.readTimeout);
+            // 获取输入流，并读取客户端信息
+            inputStream = socket.getInputStream();
+            dis = new DataInputStream(inputStream);
+            int cacheSize = 1460;
+            byte[] data = new byte[cacheSize];
+            int totalSize = -1;
+            while ((totalSize = dis.read(data)) > 0) {
+                byte[] dataBytes = Arrays.copyOf(data, totalSize);
+                if (totalSize >= 1460) {
+                    longDataOne = Arrays.copyOf(data, totalSize);
+                    continue;
                 }
-                try {
-                    //必须设置线程超时时长，否则会导致cup过高或者连接通道无法关闭等问题
-                    socket.setSoTimeout(readTimeout);
-                    // 获取输入流，并读取客户端信息
-                    inputStream = socket.getInputStream();
-                    dis = new DataInputStream(inputStream);
-                    int cacheSize = 1024 * 1024 * 20;
-                    byte[] data = new byte[cacheSize];
-                    int totalSize = -1;
-                    while ((totalSize = dis.read(data)) > 0) {
-                        synchronized (TaskThread.class) {
-                            //todo 错误待修改
-                            byte[] dataBytes = Arrays.copyOf(data, totalSize);
-                            for (int i = 0; i < dataBytes.length; i++) {
-                                pollDataList.add(dataBytes[i]);
-                            }
-                            data = new byte[cacheSize];
+                if(longDataOne != null){
+                    byte[] allData = Arrays.copyOf(longDataOne,longDataOne.length + data.length);
+                    System.arraycopy(data, 0, allData, longDataOne.length, data.length);
+                    dataBytes = allData;
+                    longDataOne = null;
+                }
+                Log.e(TAG, "dataBytes=======" + dataBytes.length);
+                final MsgObjBase msgObjBase = new MsgObjBase(dataBytes);
+                if (this.rfidReadCallback != null) {
+                    this.rfidReadCallback.OnReceiveData(msgObjBase);
+                }
+                if (msgObjBase.getCmdType() == ECmdType.Online) {
+                    serialNum = msgObjBase.getSerialNum();
+                    addressNum = msgObjBase.getAddressNum();
+                }
+                //回复心跳包
+                if (msgObjBase.getCmdType() == ECmdType.HartBeat) {
+                    MsgObj_HeartBeat msgObj_heartBeat = new MsgObj_HeartBeat();
+                    sendCmd(msgObj_heartBeat);
+                }
+                if (msgObjBase.getCmdType() == ECmdType.RFID) {
+                    if (msgObjBase.getCmdData() != null) {
+                        Tags tags = null;
+                        switch ((ERfid) msgObjBase.getCmdTag()) {
+                            case NotifyReadData:
+                                sendGetAllTagsCmd();
+                               /* String jsonStr = DataConverts.Bytes_To_ASCII(msgObjBase.getCmdData());
+                                XLog.get().e("NotifyReadData222====" + jsonStr);
+                                Log.e(TAG,"jsonStr=======" + jsonStr);
+                                tags = (Tags) JSON.parseObject(jsonStr, Tags.class);
+                                if (this.rfidReadCallback != null) {
+                                    this.rfidReadCallback.OnNotifyReadData(tags);
+                                }*/
+                                break;
+                            case GetAllTags:
+                                String jsonStr2 = DataConverts.Bytes_To_ASCII(msgObjBase.getCmdData());
+                                XLog.get().e("GetAllTags222====" + jsonStr2);
+                                Log.e(TAG,"jsonStr2=========" +jsonStr2);
+                                tags = (Tags) JSON.parseObject(jsonStr2, Tags.class);
+                                if (this.rfidReadCallback != null) {
+                                    this.rfidReadCallback.OnGetAllTags(tags);
+                                }
+                                break;
                         }
                     }
-                    socket.shutdownInput();// 关闭输入流
-                    // 获取输出流，响应客户端的请求
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    // 关闭资源
-                    try {
-                        if (inputStream != null)
-                            inputStream.close();
-                        if (socket != null)
-                            socket.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                }
+                Logger.info("状态码=======" + msgObjBase.getCmdType().name());
+                if (msgObjBase.getCmdType() == ECmdType.Lock) {
+                    if (this.lockStatusCallback != null) {
+                        if (msgObjBase.getCmdTag() == ELock.OpenLock) {
+                            this.lockStatusCallback.OnOpenLock();
+                        }
+                        if (msgObjBase.getCmdTag() == ELock.CloseLock) {
+                            this.lockStatusCallback.OnCloseLock();
+                        }
                     }
                 }
-            }
-        });
-        readThread.start();
-        while (!readThread.isInterrupted()) {
-            synchronized (TaskThread.class) {
-                if (this.pollDataList.size() > 0) {
-                    Byte[] data = new Byte[this.pollDataList.size()];
-                    this.pollDataList.toArray(data);
-                    final MsgObjBase msgObjBase = new MsgObjBase(toPrimitives(data));
-                    int dataLength = msgObjBase.flag + 1;
-                    if (dataLength > 0 && dataLength <= this.pollDataList.size()) {
-                        processMsgObj(msgObjBase);
-                        this.pollDataList = this.pollDataList.subList(dataLength, this.pollDataList.size());
+                if (cmdList.size() > 0) {
+                    for (int i = 0; i < cmdList.size(); i++) {
+                        Logger.info("执行一条命令");
+                        Logger.info(cmdList.get(i));
+                        sendCmd(cmdList.get(i));
                     }
+                    cmdList.clear();
                 }
+                data = new byte[cacheSize];
+            }
+            socket.shutdownInput();// 关闭输入流
+            // 获取输出流，响应客户端的请求
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            // 关闭资源
+            try {
+                if (inputStream != null)
+                    inputStream.close();
+                if (socket != null)
+                    socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-    }
-
-    private void processMsgObj(MsgObjBase msgObjBase) {
-        if (this.rfidReadCallback != null) {
-            this.rfidReadCallback.OnReceiveData(msgObjBase);
-        }
-        if (msgObjBase.getCmdType() == ECmdType.Online) {
-            serialNum = msgObjBase.getSerialNum();
-            addressNum = msgObjBase.getAddressNum();
-        }
-        //回复心跳包
-        if (msgObjBase.getCmdType() == ECmdType.HartBeat) {
-            MsgObj_HeartBeat msgObj_heartBeat = new MsgObj_HeartBeat();
-            sendCmd(msgObj_heartBeat);
-        }
-        if (msgObjBase.getCmdType() == ECmdType.RFID) {
-            if (msgObjBase.getCmdData() != null) {
-                Tags tags = null;
-                switch ((ERfid) msgObjBase.getCmdTag()) {
-                    case NotifyReadData:
-                        String jsonStr = DataConverts.Bytes_To_ASCII(msgObjBase.getCmdData());
-                        XLog.get().e("NotifyReadData111====" + new String(msgObjBase.getCmdData()));
-                        XLog.get().e("NotifyReadData222====" + jsonStr);
-                        tags = (Tags) JSON.parseObject(jsonStr, Tags.class);
-                        sendGetAllTagsCmd();
-                        if (this.rfidReadCallback != null) {
-                            this.rfidReadCallback.OnNotifyReadData(tags);
-                        }
-                        break;
-                    case GetAllTags:
-                        String jsonStr2 = DataConverts.Bytes_To_ASCII(msgObjBase.getCmdData());
-                        XLog.get().e("GetAllTags111====" + new String(msgObjBase.getCmdData()));
-                        XLog.get().e("GetAllTags222====" + jsonStr2);
-                        tags = (Tags) JSON.parseObject(jsonStr2, Tags.class);
-                        if (this.rfidReadCallback != null) {
-                            this.rfidReadCallback.OnGetAllTags(tags);
-                        }
-//                                sendCmd(new MsgObj_RFID_ClearTempTags());
-                        break;
-                }
-            }
-        }
-        Logger.info("状态码=======" + msgObjBase.getCmdType().name());
-        if (msgObjBase.getCmdType() == ECmdType.Lock) {
-            if (this.lockStatusCallback != null) {
-                if (msgObjBase.getCmdTag() == ELock.OpenLock) {
-                    this.lockStatusCallback.OnOpenLock();
-                }
-                if (msgObjBase.getCmdTag() == ELock.CloseLock) {
-                    this.lockStatusCallback.OnCloseLock();
-                }
-            }
-        }
-        if (cmdList.size() > 0) {
-            for (int i = 0; i < cmdList.size(); i++) {
-                Logger.info("执行一条命令");
-                Logger.info(cmdList.get(i));
-                sendCmd(cmdList.get(i));
-            }
-            cmdList.clear();
-        }
-    }
-
-    private byte[] toPrimitives(Byte[] oBytes) {
-        byte[] bytes = new byte[oBytes.length];
-        for (int i = 0; i < oBytes.length; i++) {
-            bytes[i] = oBytes[i];
-        }
-        return bytes;
     }
 }
