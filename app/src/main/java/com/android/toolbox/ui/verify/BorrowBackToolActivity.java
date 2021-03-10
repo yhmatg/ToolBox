@@ -82,7 +82,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     private AssetListAdapter adapter;
     private UserInfo currentUser;
     private List<AssetsListItemInfo> wrongList = new ArrayList<>();
-    private String locName = "二楼";
+    private String locName = "一楼工具车";
     private Animation anim;
     private MaterialDialog closeDoorDialog;
     private int recLen = 10;

@@ -71,7 +71,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     private AssetListAdapter adapter;
     private UserInfo currentUser;
     private List<AssetsListItemInfo> wrongList = new ArrayList<>();
-    private String locName = "二楼";
+    private String locName = "一楼工具车";
     private Animation anim;
     private boolean isDestroy;
 
