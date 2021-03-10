@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <bool name="is_test">false</bool>
+    <string name="loc_id">c3f8089e1d924b798f91ae291dcc466a</string>
+    <string name="loc_name">一楼工具车</string>
 </resources>

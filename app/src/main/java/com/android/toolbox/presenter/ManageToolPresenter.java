@@ -4,14 +4,18 @@ import com.android.toolbox.base.presenter.BasePresenter;
 import com.android.toolbox.contract.ManageToolContract;
 import com.android.toolbox.core.DataManager;
 import com.android.toolbox.core.bean.BaseResponse;
+import com.android.toolbox.core.bean.assist.AssetFilterParameter;
 import com.android.toolbox.core.bean.assist.AssetsListItemInfo;
+import com.android.toolbox.core.bean.assist.AssetsListPage;
 import com.android.toolbox.core.bean.terminal.NewBorrowBackPara;
 import com.android.toolbox.core.http.widget.BaseObserver;
 import com.android.toolbox.utils.RxUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ManageToolPresenter extends BasePresenter<ManageToolContract.View> implements ManageToolContract.Presenter {
+    private ArrayList<AssetsListItemInfo> allAssets = new ArrayList<>();
     @Override
     public void fetchAllAssetsInfos() {
         addSubscribe(DataManager.getInstance().fetchAllAssetsInfos()
@@ -47,5 +51,28 @@ public class ManageToolPresenter extends BasePresenter<ManageToolContract.View> 
                 mView.handleBackTools(baseResponse);
             }
         }));
+    }
+
+    @Override
+    public void fetchPageAssetsInfos(Integer size, Integer page, String patternName, String userRealName, AssetFilterParameter conditions) {
+        addSubscribe(DataManager.getInstance().fetchPageAssetsList(size, page, patternName, userRealName, conditions.toString())
+                .compose(RxUtils.rxSchedulerHelper())
+                .compose(RxUtils.handleResult())
+                .subscribeWith(new BaseObserver<AssetsListPage>(mView, false) {
+                    @Override
+                    public void onNext(AssetsListPage assetsInfoPage) {
+                        int pageNum = assetsInfoPage.getPageNum();
+                        int pages = assetsInfoPage.getPages();
+                        if(pageNum == 1){
+                            allAssets.clear();
+                        }
+                        allAssets.addAll(assetsInfoPage.getList());
+                        if (pageNum + 1 <= pages) {
+                            fetchPageAssetsInfos(size, pageNum + 1, patternName, userRealName, conditions);
+                        } else {
+                            mView.handlefetchPageAssetsInfos(allAssets);
+                        }
+                    }
+                }));
     }
 }
