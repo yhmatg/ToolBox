@@ -52,6 +52,7 @@ import com.gg.reader.api.protocol.gx.LogAppGpiStart;
 import com.gg.reader.api.protocol.gx.LogBaseEpcInfo;
 import com.gg.reader.api.protocol.gx.LogBaseEpcOver;
 import com.gg.reader.api.protocol.gx.MsgBaseInventoryEpc;
+import com.gg.reader.api.protocol.gx.MsgBaseStop;
 import com.gg.reader.api.protocol.gx.ParamEpcReadTid;
 import com.gg.reader.api.utils.HexUtils;
 import com.gg.reader.api.utils.ThreadPoolUtils;
@@ -368,7 +369,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                         openView.setVisibility(View.GONE);
                         loadingView.setVisibility(View.VISIBLE);
                         waitView.startAnimation(anim);
-                        startInv(false, false);
+                        startInv(true, false);
                         ToastUtils.showShort("OnCloseLock");
                     }
                 });
@@ -392,7 +393,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     }
 
     private void startInv(boolean isSingleInv, boolean isGetTid) {
-        if (ToolBoxApplication.isClient && isReader) {
+        if (ToolBoxApplication.isClient) {
             MsgBaseInventoryEpc msg = new MsgBaseInventoryEpc();
             msg.setAntennaEnable(getAnt());
             if (isSingleInv) {
@@ -541,5 +542,26 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         super.onDestroy();
         isDestroy = true;
         serialPortUtil.setStart(false);
+        stopInv();
+    }
+
+    public void stopInv() {
+        if (ToolBoxApplication.isClient) {
+            MsgBaseStop msgStop = new MsgBaseStop();
+            ThreadPoolUtils.run(new Runnable() {
+                @Override
+                public void run() {
+                    client.sendSynMsg(msgStop);
+                    if (0x00 == msgStop.getRtCode()) {
+                        Log.e(TAG, "停止成功");
+                    } else {
+                        Log.e(TAG, "停止失败");
+
+                    }
+                }
+            });
+        } else {
+            ToastUtils.showShort("Rfid未连接");
+        }
     }
 }

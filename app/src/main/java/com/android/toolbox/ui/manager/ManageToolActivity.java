@@ -40,6 +40,7 @@ import com.gg.reader.api.protocol.gx.EnumG;
 import com.gg.reader.api.protocol.gx.LogBaseEpcInfo;
 import com.gg.reader.api.protocol.gx.LogBaseEpcOver;
 import com.gg.reader.api.protocol.gx.MsgBaseInventoryEpc;
+import com.gg.reader.api.protocol.gx.MsgBaseStop;
 import com.gg.reader.api.protocol.gx.ParamEpcReadTid;
 import com.gg.reader.api.utils.ThreadPoolUtils;
 import com.multilevel.treelist.Node;
@@ -478,5 +479,26 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         super.onDestroy();
         isDestroy = true;
         serialPortUtil.setStart(false);
+        stopInv();
+    }
+
+    public void stopInv() {
+        if (ToolBoxApplication.isClient) {
+            MsgBaseStop msgStop = new MsgBaseStop();
+            ThreadPoolUtils.run(new Runnable() {
+                @Override
+                public void run() {
+                    client.sendSynMsg(msgStop);
+                    if (0x00 == msgStop.getRtCode()) {
+                        Log.e(TAG, "停止成功");
+                    } else {
+                        Log.e(TAG, "停止失败");
+
+                    }
+                }
+            });
+        } else {
+            ToastUtils.showShort("Rfid未连接");
+        }
     }
 }
