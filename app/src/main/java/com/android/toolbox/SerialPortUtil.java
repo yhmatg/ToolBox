@@ -172,7 +172,7 @@ public class SerialPortUtil {
                                     if (!isLock) {
                                         lockListener.onCloseLock();
                                         isLock = true;
-                                        isStart = false;
+                                        //isStart = false;
                                     }
                                 } else if ("5A080102000F5E0D".equals(serialData)) {
                                     if (isLock) {
