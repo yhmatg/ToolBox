@@ -67,7 +67,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     @BindString(R.string.loc_id)
     String locId;
     @BindString(R.string.loc_name)
-    String locNa;
+    String locName;
     @BindView(R.id.bt_open_door)
     Button reOpenBt;
     private ServerThread serverThread;
@@ -81,7 +81,6 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     private AssetListAdapter adapter;
     private UserInfo currentUser;
     private List<AssetsListItemInfo> wrongList = new ArrayList<>();
-    private String locName = "一楼工具车";
     private Animation anim;
     private boolean isDestroy;
     private int currentPage = 1;
@@ -97,7 +96,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     @Override
     protected void initEventAndData() {
         List<Node> mSelectAssetsLocations = new ArrayList<>();
-        mSelectAssetsLocations.add(new Node(locId, "-1", locNa));
+        mSelectAssetsLocations.add(new Node(locId, "-1", locName));
         conditions.setmSelectAssetsLocations(mSelectAssetsLocations);
         isTest = getResources().getBoolean(R.bool.is_test);
         if (isTest) {
@@ -148,7 +147,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (isDestroy){
+                                if (isDestroy) {
                                     return;
                                 }
                                 reOpenBt.setEnabled(false);
@@ -166,7 +165,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                if (isDestroy){
+                                if (isDestroy) {
                                     return;
                                 }
                                 reOpenBt.setEnabled(true);
@@ -333,6 +332,9 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         for (Tags._tag tag : tags.tag_list) {
             invEpcList.add(tag.epc);
         }
+        //去除不属于工具柜得epc start
+        //invEpcList.retainAll(epcToolMap.keySet());
+        //去除不属于工具柜得epc end
         Date today = new Date();
         AssetBorrowPara assetBorrowPara = new AssetBorrowPara();
         assetBorrowPara.setOdr_transactor_id(currentUser.getId());
@@ -396,7 +398,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (isDestroy){
+                if (isDestroy) {
                     return;
                 }
                 loadingView.setVisibility(View.GONE);

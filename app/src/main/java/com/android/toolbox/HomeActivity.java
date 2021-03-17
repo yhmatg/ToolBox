@@ -2,6 +2,7 @@ package com.android.toolbox;
 
 import android.content.Intent;
 import android.view.View;
+import android.widget.TextView;
 
 import com.android.toolbox.base.activity.BaseActivity;
 import com.android.toolbox.contract.HomeContract;
@@ -14,10 +15,12 @@ import com.android.toolbox.ui.manager.ManagerLoginActivity;
 import com.android.toolbox.ui.toolquery.ToolQueryActivity;
 import com.android.toolbox.ui.verify.VerifyActivity;
 
+import butterknife.BindView;
 import butterknife.OnClick;
 
 public class HomeActivity extends BaseActivity<HomePresenter> implements HomeContract.View {
-
+    @BindView(R.id.tv_code)
+    TextView tvCode;
     @Override
     protected int getLayoutId() {
         return R.layout.activity_main;
@@ -35,6 +38,8 @@ public class HomeActivity extends BaseActivity<HomePresenter> implements HomeCon
 
     @Override
     protected void initEventAndData() {
+        String SerialNumber = android.os.Build.SERIAL;
+        tvCode.setText(SerialNumber);
     }
 
     @OnClick({R.id.iv_inout_tool, R.id.iv_query_tool, R.id.iv_manager})

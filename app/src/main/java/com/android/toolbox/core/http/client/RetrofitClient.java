@@ -68,7 +68,8 @@ public class RetrofitClient {
             //url ="https://cloud.assettag.vip/";
             //url ="http://172.16.61.223:30000/";
             //url ="http://172.16.68.27:12000/";
-            url ="http://deve.esimtek.com:18618/";
+            //url ="http://deve.esimtek.com:18618/";
+            url ="http://121.43.120.180:18624/";
         }
         retrofit = createRetrofit(provideClient(), url);
 
