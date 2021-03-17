@@ -1,8 +1,10 @@
 package com.android.toolbox;
 
 import android.content.Intent;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.android.toolbox.app.GlobalClient;
 import com.android.toolbox.app.ToolBoxApplication;
@@ -20,10 +22,15 @@ import com.android.toolbox.utils.ToastUtils;
 import com.gg.reader.api.dal.GClient;
 import com.gg.reader.api.utils.ThreadPoolUtils;
 
+import org.w3c.dom.Text;
+
+import butterknife.BindView;
 import butterknife.OnClick;
 
 public class HomeActivity extends BaseActivity<HomePresenter> implements HomeContract.View {
     private static String TAG = "HomeActivity";
+    @BindView(R.id.tv_code)
+    TextView tvCode;
     private GClient client = GlobalClient.getClient();
     private SerialPortUtil serialPortUtil;
 
@@ -44,6 +51,8 @@ public class HomeActivity extends BaseActivity<HomePresenter> implements HomeCon
 
     @Override
     protected void initEventAndData() {
+        String SerialNumber = android.os.Build.SERIAL;
+        tvCode.setText(SerialNumber);
         initLockAndRfid();
     }
 

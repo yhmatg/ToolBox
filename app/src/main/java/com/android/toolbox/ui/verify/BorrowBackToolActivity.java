@@ -92,7 +92,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     @BindString(R.string.loc_id)
     String locId;
     @BindString(R.string.loc_name)
-    String locNa;
+    String locName;
     //工具箱中闲置的工具
     private HashMap<String, AssetsListItemInfo> epcToolMap = new HashMap<>();
     private List<String> epcList = new ArrayList<>();
@@ -103,7 +103,6 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     private AssetListAdapter adapter;
     private UserInfo currentUser;
     private List<AssetsListItemInfo> wrongList = new ArrayList<>();
-    private String locName = "一楼工具车";
     private Animation anim;
     private MaterialDialog closeDoorDialog;
     private int recLen = 10;
@@ -147,7 +146,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     @Override
     protected void initEventAndData() {
         List<Node> mSelectAssetsLocations = new ArrayList<>();
-        mSelectAssetsLocations.add(new Node(locId, "-1", locNa));
+        mSelectAssetsLocations.add(new Node(locId, "-1", locName));
         conditions.setmSelectAssetsLocations(mSelectAssetsLocations);
         isTest = getResources().getBoolean(R.bool.is_test);
         if (isTest) {

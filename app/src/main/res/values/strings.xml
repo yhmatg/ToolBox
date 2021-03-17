@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">工具车</string>
     <string name="http_error">网络异常！</string>
     <string name="token_error">登录失效,请重新登录!</string>
     <string name="unKnown_error">未知错误！</string>
@@ -7,7 +6,6 @@
     <string name="url_error">请检查输入的服务器URL是否正确!</string>
     <string name="not_result_error">未获取到数据！</string>
     <string name="empty_page_text">没有数据</string>
-    <string name="box_title">RFID智能工具管理柜</string>
     <string name="original_title">标题</string>
     <string name="confirm">确定</string>
     <string name="assets_title">请输入工具名称，工具编号</string>

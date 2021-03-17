@@ -62,13 +62,15 @@ public class RetrofitClient {
     public static RetrofitClient getInstance() {
         return SingletonHolder.INSTANCE;
     }
+
     private RetrofitClient() {
         url = PreferenceHelperImpl.getInstance().getHostUrl();
-        if(StringUtils.isEmpty(url)){
+        if (StringUtils.isEmpty(url)) {
             //url ="https://cloud.assettag.vip/";
             //url ="http://172.16.61.223:30000/";
             //url ="http://172.16.68.27:12000/";
-            url ="http://deve.esimtek.com:18618/";
+            //url ="http://deve.esimtek.com:18618/";
+            url = "http://121.43.120.180:18624/";
         }
         retrofit = createRetrofit(provideClient(), url);
 
@@ -138,6 +140,7 @@ public class RetrofitClient {
                 .addConverterFactory(GsonConverterFactory.create(DaterylaiGson.getGson()))
                 .build();
     }
+
     /**
      * create you ApiService
      * Create an implementation of the API endpoints defined by the {@code service} interface.

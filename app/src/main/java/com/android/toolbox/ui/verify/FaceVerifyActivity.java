@@ -48,8 +48,8 @@ public class FaceVerifyActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.bt_retry:
-                startActivity(new Intent(this, BorrowBackToolActivity.class));
-                finish();
+               /* startActivity(new Intent(this, BorrowBackToolActivity.class));
+                finish();*/
                 break;
             case R.id.bt_change_card:
                 startActivity(new Intent(this, CardVerifyActivity.class));
