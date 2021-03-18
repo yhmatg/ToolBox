@@ -149,8 +149,8 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         adapter = new AssetListAdapter(toolList, this, true);
         inOutRecycleView.setLayoutManager(new LinearLayoutManager(this));
         inOutRecycleView.setAdapter(adapter);
-        //mPresenter.fetchAllAssetsInfos();
-        mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);
+        mPresenter.fetchAllAssetsInfos();
+        //mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);
         serverThread = ToolBoxApplication.getInstance().getServerThread();
         initAnimation();
         //todo 开门动作
@@ -253,11 +253,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         epcToolMap.clear();
         epcList.clear();
         for (AssetsListItemInfo tool : assetsListItemInfos) {
+            epcToolMap.put(tool.getAst_epc_code(), tool);
             if (tool.getAst_used_status() == 0 && locName.equals(tool.getLoc_name())) {
                 epcList.add(tool.getAst_epc_code());
-            }
-            if (locName.equals(tool.getLoc_name())) {
-                epcToolMap.put(tool.getAst_epc_code(), tool);
             }
         }
     }
@@ -288,11 +286,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         epcToolMap.clear();
         epcList.clear();
         for (AssetsListItemInfo tool : assetsInfos) {
+            epcToolMap.put(tool.getAst_epc_code(), tool);
             if (tool.getAst_used_status() == 0 && locName.equals(tool.getLoc_name())) {
                 epcList.add(tool.getAst_epc_code());
-            }
-            if (locName.equals(tool.getLoc_name())) {
-                epcToolMap.put(tool.getAst_epc_code(), tool);
             }
         }
     }
@@ -341,11 +337,18 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         Tags tags = new Tags();
         tags.tag_list = new ArrayList<>();
         //todo 添加测试epc
-        tags.tag_list.add(new Tags._tag("E22020123118399545740202"));
-        tags.tag_list.add(new Tags._tag("E22020123118399545760202"));
-        tags.tag_list.add(new Tags._tag("E22020123118399545780202"));
-        tags.tag_list.add(new Tags._tag("E22020121626133698580202"));
-        tags.tag_list.add(new Tags._tag("E22020121602221607040202"));
+        tags.tag_list.add(new Tags._tag("E22021031674406266200202"));
+        tags.tag_list.add(new Tags._tag("E22021031674406266190202"));
+        tags.tag_list.add(new Tags._tag("E22021031674406266180202"));
+        tags.tag_list.add(new Tags._tag("E22021031674406266170202"));
+        tags.tag_list.add(new Tags._tag("E22021031674406266160202"));
+        tags.tag_list.add(new Tags._tag("E22021031674406266150202"));
+        tags.tag_list.add(new Tags._tag("E22021031674406266140202"));
+        tags.tag_list.add(new Tags._tag("E22021031674406266130202"));
+        tags.tag_list.add(new Tags._tag("E22021031674406266120202"));
+        tags.tag_list.add(new Tags._tag("aaaaaaaa"));
+        tags.tag_list.add(new Tags._tag("E20161596781242564560202"));
+        tags.tag_list.add(new Tags._tag("E22021031739351451030202"));
         handleAllTags(tags);
     }
 
@@ -358,9 +361,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         for (Tags._tag tag : tags.tag_list) {
             invEpcList.add(tag.epc);
         }
-        //去除不属于工具柜得epc start
-        //invEpcList.retainAll(epcToolMap.keySet());
-        //去除不属于工具柜得epc end
+        //去除不属于系统的epc start
+        invEpcList.retainAll(epcToolMap.keySet());
+        //去除不属于系统的得epc end
         Date today = new Date();
         AssetBorrowPara assetBorrowPara = new AssetBorrowPara();
         assetBorrowPara.setOdr_transactor_id(currentUser.getId());
