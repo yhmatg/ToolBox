@@ -167,8 +167,8 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         adapter = new AssetListAdapter(toolList, this, true);
         inOutRecycleView.setLayoutManager(new LinearLayoutManager(this));
         inOutRecycleView.setAdapter(adapter);
-        //mPresenter.fetchAllAssetsInfos();
-        mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);
+        mPresenter.fetchAllAssetsInfos();
+        //mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);
         initAnimation();
         if (!isTest) {
             initClient();
@@ -206,11 +206,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         epcToolMap.clear();
         epcList.clear();
         for (AssetsListItemInfo tool : assetsListItemInfos) {
+            epcToolMap.put(tool.getAst_epc_code(), tool);
             if (tool.getAst_used_status() == 0 && locName.equals(tool.getLoc_name())) {
                 epcList.add(tool.getAst_epc_code());
-            }
-            if (locName.equals(tool.getLoc_name())) {
-                epcToolMap.put(tool.getAst_epc_code(), tool);
             }
         }
     }
@@ -241,11 +239,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         epcToolMap.clear();
         epcList.clear();
         for (AssetsListItemInfo tool : assetsInfos) {
+            epcToolMap.put(tool.getAst_epc_code(), tool);
             if (tool.getAst_used_status() == 0 && locName.equals(tool.getLoc_name())) {
                 epcList.add(tool.getAst_epc_code());
-            }
-            if (locName.equals(tool.getLoc_name())) {
-                epcToolMap.put(tool.getAst_epc_code(), tool);
             }
         }
     }
@@ -293,10 +289,14 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         ToastUtils.showShort("testOnGetAllTags");
         List<String> epcList = new ArrayList<>();
         //todo 添加测试epc
-       /* epcList.add("E22021022060197121060202");
-        epcList.add("E22021022060197121070202");
-        epcList.add("E22021022060197121080202");
-        epcList.add("E22021022060197121100202");*/
+        epcList.add("E20161596805859755010202");
+        epcList.add("E20161596805857631480202");
+        epcList.add("E20161596805852172060202");
+        epcList.add("E20161596805849679500202");
+        epcList.add("E22021031739351451050202");
+        epcList.add("aaaaaa");
+        epcList.add("E20161596781242564560202");
+        epcList.add("E22021031739351451030202");
         handleAllTags(epcList);
     }
 

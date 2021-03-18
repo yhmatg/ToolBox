@@ -119,8 +119,8 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         adapter = new AssetListAdapter(toolList, this, true);
         inOutRecycleView.setLayoutManager(new LinearLayoutManager(this));
         inOutRecycleView.setAdapter(adapter);
-        //mPresenter.fetchAllAssetsInfos();
-        mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);
+        mPresenter.fetchAllAssetsInfos();
+        //mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);
         initAnimation();
         if (!isTest) {
             initClient();
@@ -160,8 +160,8 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         epcToolMap.clear();
         epcList.clear();
         for (AssetsListItemInfo tool : assetsListItemInfos) {
+            epcToolMap.put(tool.getAst_epc_code(), tool);
             if (locName.equals(tool.getLoc_name())) {
-                epcToolMap.put(tool.getAst_epc_code(), tool);
                 if (tool.getAst_used_status() == 0) {
                     epcList.add(tool.getAst_epc_code());
                 }
@@ -216,9 +216,9 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
             case R.id.bt_open_door:
                 resultView.setVisibility(View.GONE);
                 if (!isTest) {
-                    //mPresenter.fetchAllAssetsInfos();
                     serialPortUtil.totalReceiveSerialPort();
-                    mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);
+                    mPresenter.fetchAllAssetsInfos();
+                    //mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);
                     invEpcList.clear();
                     wrongList.clear();
                     toolList.clear();
@@ -246,8 +246,8 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     public void testOpenClock() {
         openView.setVisibility(View.VISIBLE);
         ToastUtils.showShort("OnOpenLock");
-        //mPresenter.fetchAllAssetsInfos();
-        mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);
+        mPresenter.fetchAllAssetsInfos();
+        //mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);
         invEpcList.clear();
         wrongList.clear();
         toolList.clear();
@@ -268,10 +268,14 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         Tags tags = new Tags();
         List<String> epcList = new ArrayList<>();
         //todo 添加测试epc admin01
-        epcList.add("E22021022060197121060202");
-        epcList.add("E22021022060197121070202");
-        epcList.add("E22021022060197121080202");
-        epcList.add("E22021022060197121100202");
+        epcList.add("E20161596805859755010202");
+        epcList.add("E20161596805857631480202");
+        epcList.add("E20161596805852172060202");
+        epcList.add("E20161596805849679500202");
+        epcList.add("E22021031739351451050202");
+        epcList.add("aaaaaa");
+        epcList.add("E20161596781242564560202");
+        epcList.add("E22021031739351451030202");
         handleAllTags(epcList);
     }
 
@@ -382,6 +386,9 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         for (String epc : epcs) {
             invEpcList.add(epc);
         }
+        //去除不属于系统的epc start
+        invEpcList.retainAll(epcToolMap.keySet());
+        //去除不属于系统的epc end
         Date today = new Date();
         AssetBorrowPara assetBorrowPara = new AssetBorrowPara();
         assetBorrowPara.setOdr_transactor_id(currentUser.getId());
