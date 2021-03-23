@@ -447,7 +447,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         wrongList.clear();
         toolList.clear();
         for (String epc : epcs) {
-            invEpcList.add(epc);
+            if(!invEpcList.contains(epc)){
+                invEpcList.add(epc);
+            }
         }
         //去除不属于系统的epc start
         invEpcList.retainAll(epcToolMap.keySet());
@@ -525,15 +527,11 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
             toolList.addAll(wrongList);
             //todo 开门动作
             if (!isTest) {
-               /* serialPortUtil.setStart(false);
+                serialPortUtil.setStart(false);
                 serialPortUtil.totalReceiveSerialPort();
-                invEpcList.clear();
-                wrongList.clear();
-                toolList.clear();
-                invEpcs.clear();
-                adapter.notifyDataSetChanged();
                 isAutoReopen = true;
-                unlock();*/
+                invEpcs.clear();
+                unlock();
             }
         }
         runOnUiThread(new Runnable() {

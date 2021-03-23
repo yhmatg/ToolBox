@@ -385,7 +385,9 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         wrongList.clear();
         toolList.clear();
         for (String epc : epcs) {
-            invEpcList.add(epc);
+            if(!invEpcList.contains(epc)) {
+                invEpcList.add(epc);
+            }
         }
         //去除不属于系统的epc start
         invEpcList.retainAll(epcToolMap.keySet());
