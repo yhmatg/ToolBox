@@ -182,13 +182,21 @@ public class TaskThread extends Thread {
             int totalSize = -1;
             while ((totalSize = dis.read(data)) > 0) {
                 byte[] dataBytes = Arrays.copyOf(data, totalSize);
+                Log.e(TAG, "totalSize=======" + totalSize);
                 if (totalSize >= 1460) {
-                    longDataOne = Arrays.copyOf(data, totalSize);
+                    //longDataOne = Arrays.copyOf(data, totalSize);
+                     if (longDataOne == null || longDataOne.length == 0) {
+                        longDataOne = Arrays.copyOf(data, totalSize);
+                    } else {
+                        byte[] allData = Arrays.copyOf(longDataOne, longDataOne.length + totalSize);
+                        System.arraycopy(data, 0, allData, longDataOne.length, totalSize);
+                        longDataOne = allData;
+                    }
                     continue;
                 }
                 if(longDataOne != null){
-                    byte[] allData = Arrays.copyOf(longDataOne,longDataOne.length + data.length);
-                    System.arraycopy(data, 0, allData, longDataOne.length, data.length);
+                    byte[] allData = Arrays.copyOf(longDataOne,longDataOne.length + totalSize);
+                    System.arraycopy(data, 0, allData, longDataOne.length, totalSize);
                     dataBytes = allData;
                     longDataOne = null;
                 }

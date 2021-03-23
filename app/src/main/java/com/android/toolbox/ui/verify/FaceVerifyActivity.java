@@ -12,10 +12,16 @@ import android.view.View;
 import com.android.toolbox.R;
 import com.android.toolbox.base.activity.BaseActivity;
 import com.android.toolbox.base.presenter.AbstractPresenter;
+import com.android.toolbox.core.bean.FaceResponse;
+import com.android.toolbox.core.http.api.GeeksApis;
+import com.android.toolbox.core.http.client.FaceRetrofitClient;
+import com.android.toolbox.core.http.widget.BaseObserver;
+import com.android.toolbox.utils.RxUtils;
 
 import java.io.File;
 
 import butterknife.OnClick;
+import retrofit2.http.Header;
 
 public class FaceVerifyActivity extends BaseActivity {
     private static final int REQUEST_CODE_TAKE_PICTURE = 100;
@@ -48,8 +54,7 @@ public class FaceVerifyActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.bt_retry:
-               /* startActivity(new Intent(this, BorrowBackToolActivity.class));
-                finish();*/
+
                 break;
         }
 
@@ -81,6 +86,18 @@ public class FaceVerifyActivity extends BaseActivity {
         Uri fileUri = FileProvider.getUriForFile(this, "com.android.toolbox.provider", newFile); // 路径转换
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); //指定图片存放位置，指定后，在onActivityResult里得到的Data将为null
         startActivityForResult(cameraIntent, REQUEST_CODE_TAKE_PICTURE);
+    }
+
+    private void getUserByFace(String appID, String signature, String requestId, String requestTime, String imgBase) {
+        FaceRetrofitClient.getInstance().create(GeeksApis.class).getUserByFace(appID, signature, requestId, requestTime, imgBase)
+                .compose(RxUtils.rxSchedulerHelper())
+                .subscribe(new BaseObserver<FaceResponse>(this, false) {
+
+                    @Override
+                    public void onNext(FaceResponse faceResponse) {
+
+                    }
+                });
     }
 
 }

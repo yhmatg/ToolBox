@@ -1,6 +1,7 @@
 package com.android.toolbox.core.http.api;
 
 import com.android.toolbox.core.bean.BaseResponse;
+import com.android.toolbox.core.bean.FaceResponse;
 import com.android.toolbox.core.bean.assist.AssetsListItemInfo;
 import com.android.toolbox.core.bean.assist.AssetsListPage;
 import com.android.toolbox.core.bean.assist.AssetsType;
@@ -17,6 +18,7 @@ import java.util.List;
 import io.reactivex.Observable;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -54,7 +56,7 @@ public interface GeeksApis {
 
     //获取所有员工分页
     @GET("user-server/emps")
-    Observable<BaseResponse<ManagerListPage>> getAllEmpUsers(@Query("size") Integer size, @Query("page") Integer page, @Query("pattern_name") String patternName,@Query("dept_id") String deptId);
+    Observable<BaseResponse<ManagerListPage>> getAllEmpUsers(@Query("size") Integer size, @Query("page") Integer page, @Query("pattern_name") String patternName, @Query("dept_id") String deptId);
 
     //获取资产的所有详情
     @GET("assets-server/assets/multiconditions/unpage")
@@ -67,4 +69,8 @@ public interface GeeksApis {
     //归还工具
     @POST("assets-server/general/bussiness/apply/BACK")
     Observable<BaseResponse> backTools(@Body NewBorrowBackPara backPara);
+
+    //人脸获取用户信息
+    @POST("gateway/faceauth")
+    Observable<FaceResponse> getUserByFace(@Header("X-APPID") String appId, @Header("X-SIGNATURE") String signature, @Header("X-REQUEST-ID") String requestId, @Query("requestTime") String requestTime, @Query("imgBase") String imgBase);
 }
