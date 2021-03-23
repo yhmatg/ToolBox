@@ -216,6 +216,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
             case R.id.bt_open_door:
                 resultView.setVisibility(View.GONE);
                 if (!isTest) {
+                    serialPortUtil.setStart(false);
                     serialPortUtil.totalReceiveSerialPort();
                     mPresenter.fetchAllAssetsInfos();
                     //mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);

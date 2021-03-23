@@ -137,6 +137,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     private int currentPage = 1;
     private int pageSize = 500;
     private AssetFilterParameter conditions = new AssetFilterParameter();
+    private boolean isAutoReopen = false;
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -173,6 +174,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         if (!isTest) {
             initClient();
             serialPortUtil.totalReceiveSerialPort();
+            isAutoReopen = false;
             unlock();
         }
     }
@@ -383,7 +385,15 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                         if (isDestroy) {
                             return;
                         }
-                        openView.setVisibility(View.VISIBLE);
+                        if(isAutoReopen){
+                            loadingView.setVisibility(View.GONE);
+                            resultView.setVisibility(View.VISIBLE);
+                            openView.setVisibility(View.GONE);
+                        }else {
+                            loadingView.setVisibility(View.GONE);
+                            resultView.setVisibility(View.GONE);
+                            openView.setVisibility(View.VISIBLE);
+                        }
                         ToastUtils.showShort("OnOpenLock");
                     }
                 });
@@ -439,6 +449,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         for (String epc : epcs) {
             invEpcList.add(epc);
         }
+        //去除不属于系统的epc start
+        invEpcList.retainAll(epcToolMap.keySet());
+        //去除不属于系统的得epc end
         Date today = new Date();
         AssetBorrowPara assetBorrowPara = new AssetBorrowPara();
         assetBorrowPara.setOdr_transactor_id(currentUser.getId());
@@ -497,14 +510,30 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                 mPresenter.borrowTools(new NewBorrowBackPara(formData, "[]", title));
             }
             if (assetBackPara.getAst_ids().size() == 0 && assetBorrowPara.getAstids().size() == 0) {
-                showCloseDoorDialog();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isDestroy) {
+                            return;
+                        }
+                        showCloseDoorDialog();
+                    }
+                });
             }
         } else {
             toolList.clear();
             toolList.addAll(wrongList);
             //todo 开门动作
             if (!isTest) {
-                unlock();
+               /* serialPortUtil.setStart(false);
+                serialPortUtil.totalReceiveSerialPort();
+                invEpcList.clear();
+                wrongList.clear();
+                toolList.clear();
+                invEpcs.clear();
+                adapter.notifyDataSetChanged();
+                isAutoReopen = true;
+                unlock();*/
             }
         }
         runOnUiThread(new Runnable() {
