@@ -118,6 +118,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     private int currentPage = 1;
     private int pageSize = 500;
     private AssetFilterParameter conditions = new AssetFilterParameter();
+    private boolean isAutoReopen = false;
 
 
     @Override
@@ -155,6 +156,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         initAnimation();
         //todo 开门动作
         if (!isTest) {
+            isAutoReopen = false;
             unlock();
         }
 
@@ -193,7 +195,15 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                                 if (isDestroy) {
                                     return;
                                 }
-                                openView.setVisibility(View.VISIBLE);
+                                if(isAutoReopen){
+                                    loadingView.setVisibility(View.GONE);
+                                    resultView.setVisibility(View.VISIBLE);
+                                    openView.setVisibility(View.GONE);
+                                }else {
+                                    loadingView.setVisibility(View.GONE);
+                                    resultView.setVisibility(View.GONE);
+                                    openView.setVisibility(View.VISIBLE);
+                                }
                                 ToastUtils.showShort("OnOpenLock");
                             }
                         });
@@ -435,6 +445,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
             toolList.addAll(wrongList);
             //todo 开门动作
             if (!isTest) {
+                isAutoReopen = true;
                 unlock();
             }
         }
