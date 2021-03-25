@@ -22,8 +22,8 @@
 
     <ImageView
         android:id="@+id/title_back"
-        android:layout_width="@dimen/dp_30"
-        android:layout_height="@dimen/dp_30"
+        android:layout_width="@dimen/dp_40"
+        android:layout_height="@dimen/dp_40"
         android:layout_marginTop="@dimen/dp_16"
         android:padding="@dimen/dp_12"
         android:src="@drawable/left_arrow" />
