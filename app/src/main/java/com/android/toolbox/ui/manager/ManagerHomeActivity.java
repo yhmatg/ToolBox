@@ -6,6 +6,7 @@ import android.view.View;
 import com.android.toolbox.R;
 import com.android.toolbox.base.activity.BaseActivity;
 import com.android.toolbox.base.presenter.AbstractPresenter;
+import com.android.toolbox.ui.toolquery.ToolQueryActivity;
 
 import butterknife.OnClick;
 
@@ -41,7 +42,7 @@ public class ManagerHomeActivity extends BaseActivity {
                 startActivity(new Intent(this,ManageToolActivity.class));
                 break;
             case R.id.iv_manager_user:
-                startActivity(new Intent(this,StaffManageActivity.class));
+                startActivity(new Intent(this, ToolQueryActivity.class));
                 break;
             case R.id.iv_return_home:
                 Intent intent = new Intent();
