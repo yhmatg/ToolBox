@@ -12,6 +12,7 @@ import com.android.toolbox.HomeActivity;
 import com.android.toolbox.R;
 import com.android.toolbox.base.activity.BaseActivity;
 import com.android.toolbox.base.presenter.AbstractPresenter;
+import com.android.toolbox.ui.toolquery.ToolQueryActivity;
 import com.android.toolbox.ui.verify.BorrowBackToolActivity;
 import com.android.toolbox.utils.ScreenSizeUtils;
 
@@ -50,7 +51,7 @@ public class ManagerHomeActivity extends BaseActivity {
                 startActivity(new Intent(this,ManageToolActivity.class));
                 break;
             case R.id.ll_manager_user:
-                startActivity(new Intent(this,StaffManageActivity.class));
+                startActivity(new Intent(this, ToolQueryActivity.class));
                 break;
             case R.id.ll_return_home:
                 Intent intent = new Intent();

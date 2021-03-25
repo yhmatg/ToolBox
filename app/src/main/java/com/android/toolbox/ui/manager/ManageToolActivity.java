@@ -1,5 +1,8 @@
 package com.android.toolbox.ui.manager;
 
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
+import android.media.MediaPlayer;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -33,6 +36,7 @@ import com.android.toolbox.skrfidbox.Logger;
 import com.android.toolbox.skrfidbox.entity.Tags;
 import com.android.toolbox.ui.toolquery.AssetListAdapter;
 import com.android.toolbox.utils.ToastUtils;
+import com.android.toolbox.utils.Utils;
 import com.gg.reader.api.dal.GClient;
 import com.gg.reader.api.dal.HandlerTagEpcLog;
 import com.gg.reader.api.dal.HandlerTagEpcOver;
@@ -47,6 +51,7 @@ import com.multilevel.treelist.Node;
 
 import org.apache.commons.lang3.ThreadUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -100,6 +105,8 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     private int currentPage = 1;
     private int pageSize = 500;
     private AssetFilterParameter conditions = new AssetFilterParameter();
+    private AssetManager assetManager;
+    private MediaPlayer player;
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -172,22 +179,28 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     @Override
     public void handleBorrowTools(BaseResponse borrowToolsResponse) {
         if ("200000".equals(borrowToolsResponse.getCode())) {
+            playMusic("borrow_success.mp3");
             ToastUtils.showShort("借用工具成功");
         } else if ("200002".equals(borrowToolsResponse.getCode())) {
+            playMusic("borrow_failed.mp3");
             ToastUtils.showShort("请求参数异常");
         } else {
-            ToastUtils.showShort("借用失败==" + borrowToolsResponse.getCode());
+            playMusic("borrow_failed.mp3");
+            ToastUtils.showShort("借用失败:" + borrowToolsResponse.getMessage() + borrowToolsResponse.getCode());
         }
     }
 
     @Override
     public void handleBackTools(BaseResponse backToolsResponse) {
         if ("200000".equals(backToolsResponse.getCode())) {
+            playMusic("back_success.mp3");
             ToastUtils.showShort("归还工具成功");
         } else if ("200002".equals(backToolsResponse.getCode())) {
+            playMusic("back_failed.mp3");
             ToastUtils.showShort("请求参数异常");
         } else {
-            ToastUtils.showShort("归还失败");
+            playMusic("back_failed.mp3");
+            ToastUtils.showShort("归还失败:" + backToolsResponse.getMessage() + backToolsResponse.getCode());
         }
     }
 
@@ -303,6 +316,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
             @Override
             public void onCloseLock() {
                 Log.e(TAG, "onCloseLock");
+                playMusic("close_success.mp3");
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -322,6 +336,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
             @Override
             public void onOpenLock() {
                 Log.e(TAG, "onOpenLock");
+                playMusic("open_success.mp3");
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -385,7 +400,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         wrongList.clear();
         toolList.clear();
         for (String epc : epcs) {
-            if(!invEpcList.contains(epc)) {
+            if (!invEpcList.contains(epc)) {
                 invEpcList.add(epc);
             }
         }
@@ -508,6 +523,23 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
             });
         } else {
             ToastUtils.showShort("Rfid未连接");
+        }
+    }
+
+    private void playMusic(String name) {
+        if (player == null) {
+            player = new MediaPlayer();
+        }
+        if (assetManager == null) {
+            assetManager = ToolBoxApplication.getInstance().getResources().getAssets();
+        }
+        try {
+            AssetFileDescriptor fileDescriptor = assetManager.openFd(name);
+            player.setDataSource(fileDescriptor.getFileDescriptor(), fileDescriptor.getStartOffset(), fileDescriptor.getLength());
+            player.prepare();
+            player.start();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
