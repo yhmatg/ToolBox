@@ -1,5 +1,7 @@
 package com.android.toolbox.core.bean.user;
 
+import java.util.List;
+
 /**
  * Auto-generated: 2019-03-05 16:34:54
  *
@@ -17,6 +19,7 @@ public class UserInfo {
     private int env = 1;
     private CorpInfo corpInfo;
     private DeptInfo deptInfo;
+    private List<Roles> roles;
 
     public String getId() {
         return id;
@@ -90,6 +93,14 @@ public class UserInfo {
         this.deptInfo = deptInfo;
     }
 
+    public List<Roles> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Roles> roles) {
+        this.roles = roles;
+    }
+
     public static class CorpInfo {
         /**
          * create_date : 1583136900000
@@ -146,4 +157,35 @@ public class UserInfo {
         }
     }
 
+    public static class Roles {
+        /**
+         * create_date : 1615966231000
+         * id : b6dbc92f470c420a94a331585eb00555
+         * menu_ids : [101,201,212,209,329]
+         * role_code : 0
+         * role_name : 老师
+         * role_remark :
+         * tenantid : tenantid4682
+         * update_date : 1615966231000
+         */
+
+        private String id;
+        private String role_name;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getRole_name() {
+            return role_name;
+        }
+
+        public void setRole_name(String role_name) {
+            this.role_name = role_name;
+        }
+    }
 }

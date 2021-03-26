@@ -20,6 +20,8 @@ import com.android.toolbox.presenter.ManagerLoginPresenter;
 import com.android.toolbox.utils.Md5Util;
 import com.android.toolbox.utils.ToastUtils;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 
@@ -73,10 +75,23 @@ public class ManagerLoginActivity extends BaseActivity<ManagerLoginPresenter> im
 
     @Override
     public void handleLogin(UserLoginResponse userLoginResponse) {
-        DataManager.getInstance().setToken(userLoginResponse.getToken());
-        ToolBoxApplication.getInstance().setCurrentUser(userLoginResponse.getUserinfo());
-        startActivity(new Intent(this,ManagerHomeActivity.class));
-        finish();
+        List<UserInfo.Roles> roles = userLoginResponse.getUserinfo().getRoles();
+        boolean isManager = false;
+        for (UserInfo.Roles role : roles) {
+            if("老师".equals(role.getRole_name())){
+                isManager = true;
+                break;
+            }
+        }
+        if(isManager){
+            DataManager.getInstance().setToken(userLoginResponse.getToken());
+            ToolBoxApplication.getInstance().setCurrentUser(userLoginResponse.getUserinfo());
+            startActivity(new Intent(this,ManagerHomeActivity.class));
+            finish();
+        }else {
+            ToastUtils.showShort("请用管理员账号登录!");
+        }
+
     }
 
     @OnClick({R.id.title_back,R.id.btn_login})
