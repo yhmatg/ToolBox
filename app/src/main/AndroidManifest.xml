@@ -13,7 +13,7 @@
         <activity
             android:name="com.android.toolbox.HomeActivity"
             android:launchMode="singleInstance"
-            android:screenOrientation="portrait">
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -22,11 +22,11 @@
         <activity
             android:name=".ui.verify.VerifyActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="landscape"></activity>
         <activity
             android:name=".ui.verify.FaceVerifyActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="landscape"></activity>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -41,26 +41,26 @@
         <activity
             android:name=".ui.toolquery.ToolQueryActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|adjustPan"></activity>
         <activity
             android:name=".ui.manager.ManagerLoginActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|adjustPan"></activity>
         <activity
             android:name=".ui.manager.ManagerHomeActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="landscape"></activity>
         <activity
             android:name=".ui.manager.StaffManageActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|adjustPan"></activity>
         <activity
             android:name=".SdkActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait">
+            android:screenOrientation="landscape">
             <!-- <intent-filter>
                  <action android:name="android.intent.action.MAIN" />
                  <category android:name="android.intent.category.LAUNCHER" />
@@ -69,18 +69,18 @@
         <activity
             android:name=".ui.manager.ManageToolActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="landscape"></activity>
 
         <activity
             android:name=".ui.verify.CardVerifyActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden|adjustPan"></activity>
 
         <activity
             android:name=".ui.verify.BorrowBackToolActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="landscape"></activity>
 
         <receiver android:name=".ui.BootReceiver">
             <intent-filter>
@@ -88,6 +88,15 @@
             </intent-filter>
         </receiver>
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="com.android.toolbox.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

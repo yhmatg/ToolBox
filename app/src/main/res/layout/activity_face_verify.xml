@@ -26,6 +26,16 @@
         android:padding="@dimen/dp_12"
         android:src="@drawable/left_arrow" />
 
+
+    <ImageView
+        android:id="@+id/im_take_pic"
+        android:layout_width="@dimen/dp_160"
+        android:layout_height="@dimen/dp_160"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dp_120"
+        android:src="@drawable/take_picture" />
+
+
     <Button
         android:id="@+id/bt_change_card"
         android:layout_width="@dimen/dp_130"
@@ -46,6 +56,6 @@
         android:layout_marginEnd="@dimen/dp_140"
         android:layout_marginBottom="@dimen/dp_30"
         android:background="@drawable/retory_verify_bk"
-        android:text="确认登录"
+        android:text="@string/face_auth"
         android:textSize="@dimen/sp_12" />
 </RelativeLayout>

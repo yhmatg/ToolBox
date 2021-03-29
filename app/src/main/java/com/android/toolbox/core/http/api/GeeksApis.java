@@ -6,6 +6,7 @@ import com.android.toolbox.core.bean.assist.AssetsListPage;
 import com.android.toolbox.core.bean.assist.AssetsType;
 import com.android.toolbox.core.bean.assist.DepartmentBean;
 import com.android.toolbox.core.bean.assist.ManagerListPage;
+import com.android.toolbox.core.bean.terminal.FaceAuthPara;
 import com.android.toolbox.core.bean.terminal.NewBorrowBackPara;
 import com.android.toolbox.core.bean.terminal.TerminalInfo;
 import com.android.toolbox.core.bean.terminal.TerminalLoginPara;
@@ -15,8 +16,10 @@ import com.android.toolbox.core.bean.user.UserLoginResponse;
 import java.util.List;
 
 import io.reactivex.Observable;
+import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -67,4 +70,8 @@ public interface GeeksApis {
     //归还工具
     @POST("assets-server/general/bussiness/apply/BACK")
     Observable<BaseResponse> backTools(@Body NewBorrowBackPara backPara);
+
+    //人脸获取用户信息
+    @POST("gateway/faceauth")
+    Observable<ResponseBody> getUserByFace(@Header("X-APPID") String appId, @Header("X-SIGNATURE") String signature, @Header("X-REQUEST-ID") String requestId, @Body FaceAuthPara faceAuthPara);
 }
