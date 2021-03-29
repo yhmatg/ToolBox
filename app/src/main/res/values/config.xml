@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <bool name="is_test">false</bool>
+    <bool name="is_test">true</bool>
     <string name="loc_id">0dbc8807341841deb5db5415af07b32e</string>
     <string name="loc_name">工具柜</string>
 </resources>

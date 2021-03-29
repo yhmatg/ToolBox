@@ -1,7 +1,7 @@
 package com.android.toolbox.core.http.api;
 
 import com.android.toolbox.core.bean.BaseResponse;
-import com.android.toolbox.core.bean.FaceResponse;
+import com.android.toolbox.core.bean.FaceAuthPara;
 import com.android.toolbox.core.bean.assist.AssetsListItemInfo;
 import com.android.toolbox.core.bean.assist.AssetsListPage;
 import com.android.toolbox.core.bean.assist.AssetsType;
@@ -16,6 +16,7 @@ import com.android.toolbox.core.bean.user.UserLoginResponse;
 import java.util.List;
 
 import io.reactivex.Observable;
+import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -72,5 +73,5 @@ public interface GeeksApis {
 
     //人脸获取用户信息
     @POST("gateway/faceauth")
-    Observable<FaceResponse> getUserByFace(@Header("X-APPID") String appId, @Header("X-SIGNATURE") String signature, @Header("X-REQUEST-ID") String requestId, @Query("requestTime") String requestTime, @Query("imgBase") String imgBase);
+    Observable<ResponseBody> getUserByFace(@Header("X-APPID") String appId, @Header("X-SIGNATURE") String signature, @Header("X-REQUEST-ID") String requestId, @Body FaceAuthPara faceAuthPara);
 }

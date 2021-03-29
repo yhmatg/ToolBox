@@ -74,7 +74,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/bt_change_card"
+        android:id="@+id/bt_change_face"
         android:layout_width="@dimen/dp_120"
         android:layout_height="@dimen/dp_34"
         android:layout_alignParentBottom="true"
@@ -86,7 +86,7 @@
         android:id="@+id/btn_login"
         android:layout_width="@dimen/dp_120"
         android:layout_height="@dimen/dp_34"
-        android:layout_alignTop="@+id/bt_change_card"
+        android:layout_alignTop="@+id/bt_change_face"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="@dimen/dp_40"
         android:layout_marginBottom="@dimen/dp_60"

@@ -98,4 +98,5 @@ dependencies {
     implementation 'com.github.zhangke3016:MultilevelTreeList:1.0.2'
     implementation 'com.alibaba:fastjson:1.2.68'
     implementation files('libs/reader.jar')
+    implementation 'id.zelory:compressor:2.1.1'
 }
