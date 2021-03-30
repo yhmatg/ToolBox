@@ -124,7 +124,6 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     private AssetFilterParameter conditions = new AssetFilterParameter();
     private boolean isAutoReopen = false;
     private AssetManager assetManager;
-    private MediaPlayer player;
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -528,9 +527,14 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     }
 
     private void playMusic(String name) {
-        if (player == null) {
-            player = new MediaPlayer();
-        }
+        MediaPlayer player = new MediaPlayer();
+        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.stop();
+                mp.release();
+            }
+        });
         if (assetManager == null) {
             assetManager = ToolBoxApplication.getInstance().getResources().getAssets();
         }

@@ -91,8 +91,6 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     private int pageSize = 500;
     private AssetFilterParameter conditions = new AssetFilterParameter();
     private AssetManager assetManager;
-    private MediaPlayer player;
-
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -373,7 +371,9 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         assetBorrowPara.setBor_user_name(currentUser.getUser_real_name());
 
         AssetBackPara assetBackPara = new AssetBackPara();
-        assetBackPara.setBelong_dept_id(currentUser.getDeptInfo().getId());
+        if (currentUser.getDeptInfo() != null) {
+            assetBackPara.setBelong_dept_id(currentUser.getDeptInfo().getId());
+        }
         assetBackPara.setRev_user_id(currentUser.getId());
         assetBackPara.setRev_user_name(currentUser.getUser_real_name());
         assetBackPara.setActual_rever_date(today);
@@ -447,9 +447,14 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     }
 
     private void playMusic(String name) {
-        if (player == null) {
-            player = new MediaPlayer();
-        }
+        MediaPlayer player = new MediaPlayer();
+        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.stop();
+                mp.release();
+            }
+        });
         if (assetManager == null) {
             assetManager = ToolBoxApplication.getInstance().getResources().getAssets();
         }
