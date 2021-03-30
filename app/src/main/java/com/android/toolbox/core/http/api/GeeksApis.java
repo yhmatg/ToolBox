@@ -1,7 +1,7 @@
 package com.android.toolbox.core.http.api;
 
 import com.android.toolbox.core.bean.BaseResponse;
-import com.android.toolbox.core.bean.FaceAuthPara;
+import com.android.toolbox.core.bean.terminal.FaceAuthPara;
 import com.android.toolbox.core.bean.assist.AssetsListItemInfo;
 import com.android.toolbox.core.bean.assist.AssetsListPage;
 import com.android.toolbox.core.bean.assist.AssetsType;
@@ -10,6 +10,7 @@ import com.android.toolbox.core.bean.assist.ManagerListPage;
 import com.android.toolbox.core.bean.terminal.NewBorrowBackPara;
 import com.android.toolbox.core.bean.terminal.TerminalInfo;
 import com.android.toolbox.core.bean.terminal.TerminalLoginPara;
+import com.android.toolbox.core.bean.user.FaceLoginPara;
 import com.android.toolbox.core.bean.user.UserInfo;
 import com.android.toolbox.core.bean.user.UserLoginResponse;
 
@@ -74,4 +75,8 @@ public interface GeeksApis {
     //人脸获取用户信息
     @POST("gateway/faceauth")
     Observable<ResponseBody> getUserByFace(@Header("X-APPID") String appId, @Header("X-SIGNATURE") String signature, @Header("X-REQUEST-ID") String requestId, @Body FaceAuthPara faceAuthPara);
+
+    //人脸登录接口
+    @POST("user-server/userauth/loginwithface")
+    Observable<BaseResponse<UserLoginResponse>> faceLogin(@Body FaceLoginPara faceLoginPara);
 }

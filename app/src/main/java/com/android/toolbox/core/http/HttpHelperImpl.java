@@ -1,6 +1,7 @@
 package com.android.toolbox.core.http;
 
 import com.android.toolbox.core.bean.BaseResponse;
+import com.android.toolbox.core.bean.terminal.FaceAuthPara;
 import com.android.toolbox.core.bean.assist.AssetsListItemInfo;
 import com.android.toolbox.core.bean.assist.AssetsListPage;
 import com.android.toolbox.core.bean.assist.AssetsType;
@@ -9,6 +10,7 @@ import com.android.toolbox.core.bean.assist.ManagerListPage;
 import com.android.toolbox.core.bean.terminal.NewBorrowBackPara;
 import com.android.toolbox.core.bean.terminal.TerminalInfo;
 import com.android.toolbox.core.bean.terminal.TerminalLoginPara;
+import com.android.toolbox.core.bean.user.FaceLoginPara;
 import com.android.toolbox.core.bean.user.UserInfo;
 import com.android.toolbox.core.bean.user.UserLoginResponse;
 import com.android.toolbox.core.http.api.GeeksApis;
@@ -17,6 +19,7 @@ import com.android.toolbox.core.http.client.RetrofitClient;
 import java.util.List;
 
 import io.reactivex.Observable;
+import okhttp3.ResponseBody;
 
 /**
  * 对外隐藏进行网络请求的实现细节
@@ -99,6 +102,16 @@ public class HttpHelperImpl implements HttpHelper {
     @Override
     public Observable<BaseResponse> backTools(NewBorrowBackPara backPara) {
         return mGeeksApis.backTools(backPara);
+    }
+
+    @Override
+    public Observable<ResponseBody> getUserByFace(String appId, String signature, String requestId, FaceAuthPara faceAuthPara) {
+        return mGeeksApis.getUserByFace(appId, signature, requestId, faceAuthPara);
+    }
+
+    @Override
+    public Observable<BaseResponse<UserLoginResponse>> faceLogin(FaceLoginPara faceLoginPara) {
+        return mGeeksApis.faceLogin(faceLoginPara);
     }
 
 }

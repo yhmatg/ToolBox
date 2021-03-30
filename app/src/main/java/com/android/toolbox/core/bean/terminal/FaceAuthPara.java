@@ -1,4 +1,4 @@
-package com.android.toolbox.core.bean;
+package com.android.toolbox.core.bean.terminal;
 
 public class FaceAuthPara {
     private String requestTime;
