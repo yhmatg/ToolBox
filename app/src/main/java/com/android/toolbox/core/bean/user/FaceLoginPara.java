@@ -1,7 +1,7 @@
 package com.android.toolbox.core.bean.user;
 
 public class FaceLoginPara {
-    private String manager_client = "1";
+    private Integer manager_client = 1;
 
     private String user_name;
 
@@ -9,11 +9,11 @@ public class FaceLoginPara {
         this.user_name = user_name;
     }
 
-    public String getManager_client() {
+    public Integer getManager_client() {
         return manager_client;
     }
 
-    public void setManager_client(String manager_client) {
+    public void setManager_client(Integer manager_client) {
         this.manager_client = manager_client;
     }
 

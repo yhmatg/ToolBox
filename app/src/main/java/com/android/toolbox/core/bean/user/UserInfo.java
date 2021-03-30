@@ -15,7 +15,7 @@ public class UserInfo {
     private String user_real_name;
     private String user_password;
     private String user_mobile;
-    private int managerClient = 0;
+    private int managerClient = 1;
     private int env = 1;
     private CorpInfo corpInfo;
     private DeptInfo deptInfo;
