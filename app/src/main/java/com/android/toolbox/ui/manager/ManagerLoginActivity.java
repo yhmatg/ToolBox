@@ -78,7 +78,7 @@ public class ManagerLoginActivity extends BaseActivity<ManagerLoginPresenter> im
         List<UserInfo.Roles> roles = userLoginResponse.getUserinfo().getRoles();
         boolean isManager = false;
         for (UserInfo.Roles role : roles) {
-            if("老师".equals(role.getRole_name())){
+            if("老师".equals(role.getRole_name()) || "超级管理员".equals(role.getRole_name())){
                 isManager = true;
                 break;
             }
@@ -91,7 +91,6 @@ public class ManagerLoginActivity extends BaseActivity<ManagerLoginPresenter> im
         }else {
             ToastUtils.showShort("请用管理员账号登录!");
         }
-
     }
 
     @OnClick({R.id.title_back,R.id.btn_login})

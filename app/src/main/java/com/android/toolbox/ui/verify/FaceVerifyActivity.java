@@ -19,12 +19,19 @@ import com.android.toolbox.R;
 import com.android.toolbox.app.ToolBoxApplication;
 import com.android.toolbox.base.activity.BaseActivity;
 import com.android.toolbox.base.presenter.AbstractPresenter;
+import com.android.toolbox.contract.FaceVerifyContract;
+import com.android.toolbox.core.DataManager;
+import com.android.toolbox.core.bean.BaseResponse;
 import com.android.toolbox.core.bean.terminal.FaceAuthPara;
 import com.android.toolbox.core.bean.terminal.FaceFailResponse;
 import com.android.toolbox.core.bean.terminal.FaceSucResponse;
+import com.android.toolbox.core.bean.user.FaceLoginPara;
+import com.android.toolbox.core.bean.user.UserLoginResponse;
 import com.android.toolbox.core.http.api.GeeksApis;
 import com.android.toolbox.core.http.client.RetrofitClient;
 import com.android.toolbox.core.http.widget.BaseObserver;
+import com.android.toolbox.presenter.FaceVerifyPresenter;
+import com.android.toolbox.ui.manager.ManagerHomeActivity;
 import com.android.toolbox.utils.RxUtils;
 import com.android.toolbox.utils.ToastUtils;
 import com.google.gson.Gson;
@@ -47,7 +54,7 @@ import butterknife.OnClick;
 import id.zelory.compressor.Compressor;
 import okhttp3.ResponseBody;
 
-public class FaceVerifyActivity extends BaseActivity {
+public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implements FaceVerifyContract.View {
     private String TAG = "FaceVerifyActivity";
     private static final int REQUEST_CODE_TAKE_PICTURE = 100;
     private File newFile;
@@ -55,8 +62,8 @@ public class FaceVerifyActivity extends BaseActivity {
     ImageView imTakePic;
 
     @Override
-    public AbstractPresenter initPresenter() {
-        return null;
+    public FaceVerifyPresenter initPresenter() {
+        return new FaceVerifyPresenter();
     }
 
     @Override
@@ -143,7 +150,8 @@ public class FaceVerifyActivity extends BaseActivity {
                     String signature = "imgBase64=data:image/jpg;base64," + faceBase64 + "&requestTime=" + timeStr;
                     String finalSignature = hMacSha("vd938cyyy83edzdc", signature, "HmacSHA256");
                     FaceAuthPara faceAuthPara = new FaceAuthPara(timeStr, "data:image/jpg;base64," + faceBase64);
-                    getUserByFace("mu2lkq1i", finalSignature, timeStr, faceAuthPara);
+                    //getUserByFace("mu2lkq1i", finalSignature, timeStr, faceAuthPara);
+                    mPresenter.getUserByFace("mu2lkq1i", finalSignature, timeStr, faceAuthPara);
                 }
             }.execute();
         } else {
@@ -240,4 +248,34 @@ public class FaceVerifyActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void handleGetUserByFace(ResponseBody responseBody) {
+        try {
+            String body = responseBody.string();
+            JSONObject json = new JSONObject(body);
+            String code = json.getString("code");
+            String msg = json.getString("msg");
+            if ("1".equals(code)) {
+                FaceSucResponse faceSucResponse = new Gson().fromJson(body, FaceSucResponse.class);
+                String workNo = faceSucResponse.getData().getWorkNo();
+                mPresenter.faceLogin(new FaceLoginPara(workNo));
+                ToastUtils.showShort("用户:" + workNo);
+            } else {
+                FaceFailResponse faceFailResponse = new Gson().fromJson(body, FaceFailResponse.class);
+                ToastUtils.showShort("人脸登录失败:" + faceFailResponse.getData());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void handleFaceLogin(UserLoginResponse loginResponse) {
+        DataManager.getInstance().setToken(loginResponse.getToken());
+        ToolBoxApplication.getInstance().setCurrentUser(loginResponse.getUserinfo());
+        startActivity(new Intent(this, BorrowBackToolActivity.class));
+        finish();
+    }
 }
