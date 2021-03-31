@@ -149,3 +149,7 @@
 -dontwarn kotlin.coroutines.Continuation
 
 -keep class kotlin.coroutines.Continuation { *; }
+
+-dontwarn com.android.toolbox.skrfidbox.**
+
+-keep class com.android.toolbox.skrfidbox.** { *; }
