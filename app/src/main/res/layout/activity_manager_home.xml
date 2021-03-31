@@ -78,7 +78,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/dp_30"
-            android:text="员工管理"
+            android:text="工具查询"
             android:textSize="@dimen/sp_18" />
     </LinearLayout>
 
