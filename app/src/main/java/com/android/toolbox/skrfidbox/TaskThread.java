@@ -62,6 +62,7 @@ public class TaskThread extends Thread {
      * @param times 盘点耗时
      */
     public void sendStartReadTagsCmd(int times, IRfidReadCallback rfidReadCallback) {
+        times = 6;
         this.rfidReadCallback = rfidReadCallback;
         sendCmd(ECmdType.RFID, ERfid.StartReadTags, new byte[]{(byte) times});
     }

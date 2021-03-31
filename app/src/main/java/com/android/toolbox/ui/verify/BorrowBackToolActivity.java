@@ -485,7 +485,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     }
 
     public void showCloseDoorDialog() {
-        if (isTest) {
+        if (isTest || (closeDoorDialog != null && closeDoorDialog.isShowing())) {
             return;
         }
         if (closeDoorDialog != null && !closeDoorDialog.isShowing()) {
