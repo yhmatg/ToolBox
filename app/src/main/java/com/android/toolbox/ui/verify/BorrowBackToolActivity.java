@@ -229,9 +229,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         } else if ("200002".equals(borrowToolsResponse.getCode())) {
             playMusic("borrow_failed.mp3");
             ToastUtils.showShort("请求参数异常");
-        }else {
+        } else {
             playMusic("borrow_failed.mp3");
-            ToastUtils.showShort("借用失败:" + borrowToolsResponse.getMessage() +borrowToolsResponse.getCode());
+            ToastUtils.showShort("借用失败:" + borrowToolsResponse.getMessage() + borrowToolsResponse.getCode());
         }
     }
 
@@ -244,7 +244,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         } else if ("200002".equals(backToolsResponse.getCode())) {
             playMusic("back_failed.mp3");
             ToastUtils.showShort("请求参数异常");
-        }else {
+        } else {
             playMusic("back_failed.mp3");
             ToastUtils.showShort("归还失败:" + backToolsResponse.getMessage() + backToolsResponse.getCode());
         }
@@ -318,7 +318,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     }
 
     public void showCloseDoorDialog() {
-        if (isTest) {
+        if (isTest || (closeDoorDialog != null && closeDoorDialog.isShowing())) {
             return;
         }
         if (closeDoorDialog != null && !closeDoorDialog.isShowing()) {
@@ -402,11 +402,11 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                         if (isDestroy) {
                             return;
                         }
-                        if(isAutoReopen){
+                        if (isAutoReopen) {
                             loadingView.setVisibility(View.GONE);
                             resultView.setVisibility(View.VISIBLE);
                             openView.setVisibility(View.GONE);
-                        }else {
+                        } else {
                             loadingView.setVisibility(View.GONE);
                             resultView.setVisibility(View.GONE);
                             openView.setVisibility(View.VISIBLE);
@@ -464,7 +464,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         wrongList.clear();
         toolList.clear();
         for (String epc : epcs) {
-            if(!invEpcList.contains(epc)){
+            if (!invEpcList.contains(epc)) {
                 invEpcList.add(epc);
             }
         }
@@ -608,7 +608,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         }
     }
 
-    private  void playMusic(String name){
+    private void playMusic(String name) {
         MediaPlayer player = new MediaPlayer();
         player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -617,7 +617,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                 mp.release();
             }
         });
-        if(assetManager == null){
+        if (assetManager == null) {
             assetManager = ToolBoxApplication.getInstance().getResources().getAssets();
         }
         try {
