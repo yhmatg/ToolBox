@@ -257,9 +257,9 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
             String msg = json.getString("msg");
             if ("1".equals(code)) {
                 FaceSucResponse faceSucResponse = new Gson().fromJson(body, FaceSucResponse.class);
-                String workNo = faceSucResponse.getData().getWorkNo();
+                String workNo = "ypzx" + faceSucResponse.getData().getWorkNo();
                 mPresenter.faceLogin(new FaceLoginPara(workNo));
-                ToastUtils.showShort("用户:" + workNo);
+                ToastUtils.showLong("用户:" + workNo);
             } else {
                 FaceFailResponse faceFailResponse = new Gson().fromJson(body, FaceFailResponse.class);
                 ToastUtils.showShort("人脸登录失败:" + faceFailResponse.getData());
