@@ -24,6 +24,7 @@ import com.android.toolbox.core.DataManager;
 import com.android.toolbox.core.bean.terminal.FaceAuthPara;
 import com.android.toolbox.core.bean.FaceFailResponse;
 import com.android.toolbox.core.bean.FaceSucResponse;
+import com.android.toolbox.core.bean.user.FaceLoginPara;
 import com.android.toolbox.core.bean.user.UserLoginResponse;
 import com.android.toolbox.core.http.api.GeeksApis;
 import com.android.toolbox.core.http.client.RetrofitClient;
@@ -254,8 +255,9 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
             String msg = json.getString("msg");
             if ("1".equals(code)) {
                 FaceSucResponse faceSucResponse = new Gson().fromJson(body, FaceSucResponse.class);
-                String workNo = faceSucResponse.getData().getWorkNo();
-                ToastUtils.showShort("用户:" + workNo);
+                String workNo = "ypzx" + faceSucResponse.getData().getWorkNo();
+                mPresenter.faceLogin(new FaceLoginPara(workNo));
+                ToastUtils.showLong("用户:" + workNo);
             } else {
                 FaceFailResponse faceFailResponse = new Gson().fromJson(body, FaceFailResponse.class);
                 ToastUtils.showShort("人脸登录失败:" + faceFailResponse.getData());
