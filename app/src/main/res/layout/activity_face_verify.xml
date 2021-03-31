@@ -55,7 +55,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="@dimen/dp_140"
         android:layout_marginBottom="@dimen/dp_30"
-        android:background="@drawable/retory_verify_bk"
+        android:background="@drawable/verify_bk"
         android:text="@string/face_auth"
         android:textSize="@dimen/sp_12" />
 </RelativeLayout>
