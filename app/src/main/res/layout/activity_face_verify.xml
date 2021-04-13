@@ -26,15 +26,23 @@
         android:padding="@dimen/dp_12"
         android:src="@drawable/left_arrow" />
 
-
-    <ImageView
-        android:id="@+id/im_take_pic"
+    <FrameLayout
         android:layout_width="@dimen/dp_160"
         android:layout_height="@dimen/dp_160"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/dp_120"
-        android:src="@drawable/take_picture" />
+        android:layout_marginTop="@dimen/dp_120">
 
+        <SurfaceView
+            android:id="@+id/im_take_pic"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/take_picture" />
+
+        <com.android.toolbox.ui.camera.FaceView
+            android:id="@+id/faceView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
 
     <Button
         android:id="@+id/bt_change_card"
