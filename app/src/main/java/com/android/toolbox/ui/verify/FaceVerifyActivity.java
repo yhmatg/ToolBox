@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.android.toolbox.R;
 import com.android.toolbox.app.ToolBoxApplication;
@@ -94,9 +95,9 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
 
             @Override
             public void onTakePic(@Nullable byte[] data) {
-                byte[] bytes = Bitmaps.INSTANCE.compressInSampleSize(data, 500, 500);
+                byte[] bytes = Bitmaps.INSTANCE.compressInSampleSize(data, 600, 600);
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                Bitmap rotateBitmap = BitmapUtils.INSTANCE.rotate(bitmap, 90);
+                Bitmap rotateBitmap = BitmapUtils.INSTANCE.rotate(bitmap, 0);
                 byte[] rotateBytes = BitmapUtils.INSTANCE.toByteArray(rotateBitmap);
                 /*String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/default_image.jpg";
                 try {
@@ -121,8 +122,6 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
                     mCameraHelper.takePic();
                     isNeedRecognize = false;
                 }
-
-
             }
         });
     }
@@ -144,7 +143,7 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
                 finish();
                 break;
             case R.id.bt_retry:
-                //recognizeFace();
+                mCameraHelper.takePic();
                 break;
             case R.id.bt_change_card:
                 startActivity(new Intent(this, CardVerifyActivity.class));
