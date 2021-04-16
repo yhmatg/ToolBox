@@ -93,14 +93,15 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
             public void onTakePic(@Nullable byte[] data) {
                 byte[] bytes = Bitmaps.INSTANCE.compressInSampleSize(data, 500, 500);
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                Bitmap rotateBitmap = BitmapUtils.INSTANCE.rotate(bitmap, 180);
+                //前后摄像头旋转180 后摄像头不用旋转
+                Bitmap rotateBitmap = BitmapUtils.INSTANCE.rotate(bitmap, 0);
                 byte[] rotateBytes = BitmapUtils.INSTANCE.toByteArray(rotateBitmap);
-                String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/default_image.jpg";
+               /* String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/default_image.jpg";
                 try {
                     bitmapToFile(path,rotateBitmap,100);
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
+                }*/
                 String faceBase64 = Base64.encodeToString(rotateBytes, Base64.DEFAULT).replaceAll("\r|\n", "");
                 String timeStr = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
                 String signature = "imgBase64=data:image/jpg;base64," + faceBase64 + "&requestTime=" + timeStr;
@@ -141,7 +142,7 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
                 finish();
                 break;
             case R.id.bt_retry:
-                //recognizeFace();
+                mCameraHelper.takePic();
                 break;
             case R.id.bt_change_card:
                 startActivity(new Intent(this, CardVerifyActivity.class));

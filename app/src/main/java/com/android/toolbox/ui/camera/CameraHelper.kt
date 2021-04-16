@@ -25,7 +25,7 @@ class CameraHelper(activity: Activity, surfaceView: SurfaceView) : Camera.Previe
     private var mActivity: Activity = activity
     private var mCallBack: CallBack? = null   //自定义的回调
 
-    var mCameraFacing = Camera.CameraInfo.CAMERA_FACING_FRONT  //摄像头方向
+    var mCameraFacing = Camera.CameraInfo.CAMERA_FACING_BACK  //摄像头方向
     var mDisplayOrientation: Int = 0    //预览旋转的角度
 
     private var picWidth = 2160        //保存图片的宽
@@ -63,7 +63,7 @@ class CameraHelper(activity: Activity, surfaceView: SurfaceView) : Camera.Previe
     }
 
     //打开相机
-    private fun openCamera(cameraFacing: Int = Camera.CameraInfo.CAMERA_FACING_FRONT): Boolean {
+    private fun openCamera(cameraFacing: Int = Camera.CameraInfo.CAMERA_FACING_BACK): Boolean {
         val supportCameraFacing = supportCameraFacing(cameraFacing)
         if (supportCameraFacing) {
             try {

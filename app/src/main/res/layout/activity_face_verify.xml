@@ -27,8 +27,8 @@
         android:src="@drawable/left_arrow" />
 
     <FrameLayout
-        android:layout_width="@dimen/dp_160"
-        android:layout_height="@dimen/dp_160"
+        android:layout_width="@dimen/dp_200"
+        android:layout_height="@dimen/dp_200"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/dp_120">
 
@@ -45,12 +45,12 @@
     </FrameLayout>
 
     <Button
+       android:layout_alignParentBottom="true"
         android:id="@+id/bt_change_card"
         android:layout_width="@dimen/dp_130"
         android:layout_height="@dimen/dp_40"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="@dimen/dp_140"
-        android:layout_marginBottom="@dimen/dp_30"
+        android:layout_marginStart="@dimen/dp_40"
+        android:layout_marginBottom="@dimen/dp_120"
         android:background="@drawable/verify_bk"
         android:text="切换学号登录"
         android:textSize="@dimen/sp_12" />
@@ -61,7 +61,7 @@
         android:layout_height="@dimen/dp_40"
         android:layout_alignTop="@+id/bt_change_card"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/dp_140"
+        android:layout_marginEnd="@dimen/dp_40"
         android:layout_marginBottom="@dimen/dp_30"
         android:background="@drawable/verify_bk"
         android:text="@string/face_auth"
