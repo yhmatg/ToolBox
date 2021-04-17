@@ -29,7 +29,7 @@ class CameraHelper(activity: Activity, surfaceView: SurfaceView) : Camera.Previe
     var mDisplayOrientation: Int = 0    //预览旋转的角度
 
     private var picWidth = 2160        //保存图片的宽
-    private var picHeight = 3840       //保存图片的高
+    private var picHeight = 1620       //保存图片的高
 
     override fun onPreviewFrame(data: ByteArray?, camera: Camera?) {
         mCallBack?.onPreviewFrame(data)
