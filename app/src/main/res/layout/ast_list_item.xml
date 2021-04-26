@@ -129,6 +129,7 @@
         android:textSize="@dimen/sp_13" />
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/tv_ast_user"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -139,6 +140,7 @@
         android:textSize="@dimen/sp_13" />
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/tv_ast_user_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

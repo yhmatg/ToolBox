@@ -15,7 +15,7 @@ public class UserInfo {
     private String user_real_name;
     private String user_password;
     private String user_mobile;
-    private int managerClient = 1;
+    private String managerClient = "11";
     private int env = 1;
     private CorpInfo corpInfo;
     private DeptInfo deptInfo;
@@ -53,11 +53,11 @@ public class UserInfo {
         this.user_password = user_password;
     }
 
-    public int getManagerClient() {
+    public String getManagerClient() {
         return managerClient;
     }
 
-    public void setManagerClient(int managerClient) {
+    public void setManagerClient(String managerClient) {
         this.managerClient = managerClient;
     }
 
