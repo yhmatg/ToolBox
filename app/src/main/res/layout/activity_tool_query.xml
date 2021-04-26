@@ -74,6 +74,15 @@
             android:gravity="center"
             android:text="状态"
             android:textSize="@dimen/sp_13" />
+
+        <TextView
+            android:id="@+id/tv_ast_user"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/dp_24"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="使用人"
+            android:textSize="@dimen/sp_13" />
     </LinearLayout>
 
     <com.scwang.smartrefresh.layout.SmartRefreshLayout

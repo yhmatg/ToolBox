@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.android.toolbox.R;
 import com.android.toolbox.core.bean.assist.AssetsListItemInfo;
 import com.android.toolbox.core.bean.emun.AssetsUseStatus;
+import com.android.toolbox.utils.StringUtils;
 
 import java.util.List;
 
@@ -66,12 +67,18 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.View
                 viewHolder.astStatus.setTextColor(context.getColor(R.color.red_color));
             }
         } else {
+            viewHolder.astUserName.setVisibility(View.VISIBLE);
             String statusName = TextUtils.isEmpty(AssetsUseStatus.getName(astStatus)) ? "" : AssetsUseStatus.getName(astStatus);
             viewHolder.astStatus.setText(statusName);
             if ("闲置".equals(statusName)) {
                 viewHolder.astStatus.setTextColor(context.getColor(R.color.free_color));
+                viewHolder.astUserName.setText("");
             } else {
                 viewHolder.astStatus.setTextColor(context.getColor(R.color.in_use_color));
+                String userName = astItemInfo.getUser_name();
+                if(!StringUtils.isEmpty(userName)){
+                    viewHolder.astUserName.setText(userName);
+                }
             }
         }
 
@@ -104,6 +111,9 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.View
         TextView astStatus;
         @BindView(R.id.item_detail)
         LinearLayout itemLayout;
+        @BindView(R.id.tv_ast_user_name)
+        TextView astUserName;
+
 
         public ViewHolder(@NonNull View view) {
             super(view);

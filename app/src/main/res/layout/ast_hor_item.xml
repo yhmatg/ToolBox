@@ -68,6 +68,17 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="状态"
-        android:textColor="@color/free_color"
+        android:textColor="@color/setting_text_one"
         android:textSize="@dimen/sp_13" />
+
+    <TextView
+        android:id="@+id/tv_ast_user_name"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dp_24"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="使用人"
+        android:textColor="@color/setting_text_one"
+        android:textSize="@dimen/sp_13"
+        android:visibility="gone" />
 </LinearLayout>
