@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.android.toolbox.R;
 import com.android.toolbox.core.bean.assist.AssetsListItemInfo;
 import com.android.toolbox.core.bean.emun.AssetsUseStatus;
+import com.android.toolbox.utils.StringUtils;
 
 import java.util.List;
 
@@ -69,8 +70,16 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.View
             viewHolder.astStatus.setText(statusName);
             if ("闲置".equals(statusName)) {
                 viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.free_status_back));
+                viewHolder.astUser.setVisibility(View.GONE);
+                viewHolder.astUserName.setVisibility(View.GONE);
             } else {
                 viewHolder.astStatus.setBackground(context.getDrawable(R.drawable.inuse_status_back));
+                String userName = astItemInfo.getUser_name();
+                if(!StringUtils.isEmpty(userName)){
+                    viewHolder.astUser.setVisibility(View.VISIBLE);
+                    viewHolder.astUserName.setVisibility(View.VISIBLE);
+                    viewHolder.astUserName.setText(userName);
+                }
             }
         }
 
@@ -103,6 +112,10 @@ public class AssetListAdapter extends RecyclerView.Adapter<AssetListAdapter.View
         TextView astStatus;
         @BindView(R.id.item_detail)
         RelativeLayout itemLayout;
+        @BindView(R.id.tv_ast_user)
+        TextView astUser;
+        @BindView(R.id.tv_ast_user_name)
+        TextView astUserName;
 
         public ViewHolder(@NonNull View view) {
             super(view);
