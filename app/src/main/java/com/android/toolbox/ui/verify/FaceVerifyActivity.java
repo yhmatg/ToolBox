@@ -91,12 +91,12 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
 
             @Override
             public void onTakePic(@Nullable byte[] data) {
-                byte[] bytes = Bitmaps.INSTANCE.compressInSampleSize(data, 500, 500);
+                byte[] bytes = Bitmaps.INSTANCE.compressInSampleSize(data, 800, 800);
                 Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 //前后摄像头旋转180 后摄像头不用旋转
                 Bitmap rotateBitmap = BitmapUtils.INSTANCE.rotate(bitmap, 0);
                 byte[] rotateBytes = BitmapUtils.INSTANCE.toByteArray(rotateBitmap);
-               /* String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/default_image.jpg";
+                /*String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/default_image.jpg";
                 try {
                     bitmapToFile(path,rotateBitmap,100);
                 } catch (IOException e) {
@@ -115,12 +115,10 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
             public void onFaceDetect(@NotNull ArrayList<RectF> faces) {
                 faceView.setFaces(faces);
                 Log.e(TAG, "人脸:" + faces.size());
-                if (isNeedRecognize) {
+                /*if (isNeedRecognize) {
                     mCameraHelper.takePic();
                     isNeedRecognize = false;
-                }
-
-
+                }*/
             }
         });
     }

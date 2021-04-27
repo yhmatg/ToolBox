@@ -25,11 +25,11 @@ class CameraHelper(activity: Activity, surfaceView: SurfaceView) : Camera.Previe
     private var mActivity: Activity = activity
     private var mCallBack: CallBack? = null   //自定义的回调
 
-    var mCameraFacing = Camera.CameraInfo.CAMERA_FACING_BACK  //摄像头方向
+    var mCameraFacing = Camera.CameraInfo.CAMERA_FACING_FRONT  //摄像头方向
     var mDisplayOrientation: Int = 0    //预览旋转的角度
 
-    private var picWidth = 2160        //保存图片的宽
-    private var picHeight = 1620       //保存图片的高
+    private var picWidth = 1920        //保存图片的宽
+    private var picHeight = 1080       //保存图片的高
 
     override fun onPreviewFrame(data: ByteArray?, camera: Camera?) {
         mCallBack?.onPreviewFrame(data)
@@ -67,7 +67,7 @@ class CameraHelper(activity: Activity, surfaceView: SurfaceView) : Camera.Previe
         val supportCameraFacing = supportCameraFacing(cameraFacing)
         if (supportCameraFacing) {
             try {
-                mCamera = Camera.open(cameraFacing)
+                mCamera = Camera.open(0)
                 initParameters(mCamera!!)
                 mCamera?.setPreviewCallback(this)
             } catch (e: Exception) {
@@ -92,10 +92,13 @@ class CameraHelper(activity: Activity, surfaceView: SurfaceView) : Camera.Previe
                 mParameters.setPreviewSize(it.width, it.height)
             }
             //设置保存图片尺寸
-            val bestPicSize = getBestSize(picWidth, picHeight, mParameters.supportedPictureSizes)
+           /* val bestPicSize = getBestSize(picWidth, picHeight, mParameters.supportedPictureSizes)
+            bestPicSize?.width = 1920
+            bestPicSize?.height= 1080
             bestPicSize?.let {
                 mParameters.setPictureSize(it.width, it.height)
-            }
+            }*/
+            mParameters.setPictureSize(1920, 1080)
             //对焦模式
             if (isSupportFocus(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE))
                 mParameters.focusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE
@@ -193,7 +196,7 @@ class CameraHelper(activity: Activity, surfaceView: SurfaceView) : Camera.Previe
     //设置预览旋转的角度
     private fun setCameraDisplayOrientation(activity: Activity) {
         val info = Camera.CameraInfo()
-        Camera.getCameraInfo(mCameraFacing, info)
+        Camera.getCameraInfo(0, info)
         val rotation = activity.windowManager.defaultDisplay.rotation
 
         var screenDegree = 0
