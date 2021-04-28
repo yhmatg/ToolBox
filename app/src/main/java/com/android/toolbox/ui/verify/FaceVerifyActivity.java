@@ -118,10 +118,10 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
             public void onFaceDetect(@NotNull ArrayList<RectF> faces) {
                 faceView.setFaces(faces);
                 Log.e(TAG, "人脸:" + faces.size());
-                if (isNeedRecognize) {
+                /*if (isNeedRecognize) {
                     mCameraHelper.takePic();
                     isNeedRecognize = false;
-                }
+                }*/
             }
         });
     }

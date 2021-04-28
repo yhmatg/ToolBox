@@ -402,7 +402,9 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         assetBorrowPara.setBor_user_name(currentUser.getUser_real_name());
 
         AssetBackPara assetBackPara = new AssetBackPara();
-        assetBackPara.setBelong_dept_id(currentUser.getDeptInfo().getId());
+        if (currentUser.getDeptInfo() != null) {
+            assetBackPara.setBelong_dept_id(currentUser.getDeptInfo().getId());
+        }
         assetBackPara.setRev_user_id(currentUser.getId());
         assetBackPara.setRev_user_name(currentUser.getUser_real_name());
         assetBackPara.setActual_rever_date(today);
