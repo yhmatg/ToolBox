@@ -62,7 +62,6 @@ public class TaskThread extends Thread {
      * @param times 盘点耗时
      */
     public void sendStartReadTagsCmd(int times, IRfidReadCallback rfidReadCallback) {
-        times = 6;
         this.rfidReadCallback = rfidReadCallback;
         sendCmd(ECmdType.RFID, ERfid.StartReadTags, new byte[]{(byte) times});
     }
@@ -217,17 +216,16 @@ public class TaskThread extends Thread {
                 }
                 if (msgObjBase.getCmdType() == ECmdType.RFID) {
                     if (msgObjBase.getCmdData() != null) {
-                        Tags tags = null;
                         switch ((ERfid) msgObjBase.getCmdTag()) {
                             case NotifyReadData:
-                                sendGetAllTagsCmd();
-                               /* String jsonStr = DataConverts.Bytes_To_ASCII(msgObjBase.getCmdData());
+                                String jsonStr = DataConverts.Bytes_To_ASCII(msgObjBase.getCmdData());
                                 XLog.get().e("NotifyReadData222====" + jsonStr);
                                 Log.e(TAG,"jsonStr=======" + jsonStr);
-                                tags = (Tags) JSON.parseObject(jsonStr, Tags.class);
+                                Tags tags = (Tags) JSON.parseObject(jsonStr, Tags.class);
                                 if (this.rfidReadCallback != null) {
                                     this.rfidReadCallback.OnNotifyReadData(tags);
-                                }*/
+                                }
+                                sendGetAllTagsCmd();
                                 break;
                             case GetAllTags:
                                 String jsonStr2 = DataConverts.Bytes_To_ASCII(msgObjBase.getCmdData());

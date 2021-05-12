@@ -124,6 +124,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     private AssetFilterParameter conditions = new AssetFilterParameter();
     private boolean isAutoReopen = false;
     private AssetManager assetManager;
+    public List<Tags._tag> notifyAddTags = new ArrayList<>();
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -200,11 +201,11 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                                 if (isDestroy) {
                                     return;
                                 }
-                                if(isAutoReopen){
+                                if (isAutoReopen) {
                                     loadingView.setVisibility(View.GONE);
                                     resultView.setVisibility(View.VISIBLE);
                                     openView.setVisibility(View.GONE);
-                                }else {
+                                } else {
                                     loadingView.setVisibility(View.GONE);
                                     resultView.setVisibility(View.GONE);
                                     openView.setVisibility(View.VISIBLE);
@@ -250,12 +251,22 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
 
                     @Override
                     public void OnNotifyReadData(Tags tags) {
-
+                        notifyAddTags.clear();
+                        if (tags.add_tag_list != null) {
+                            notifyAddTags.addAll(tags.add_tag_list);
+                        }
                     }
 
                     @Override
                     public void OnGetAllTags(Tags tags) {
                         XLog.get().e("标签数目=======" + tags.tag_list.size() + "\n具体标签==" + tags.tag_list);
+                        if (notifyAddTags.size() > 0) {
+                            notifyAddTags.removeAll(tags.tag_list);
+                            if(notifyAddTags.size() > 0){
+                                XLog.get().e("改变标签数目=======" + notifyAddTags.size() + "\n具体标签==" + notifyAddTags);
+                                tags.tag_list.addAll(notifyAddTags);
+                            }
+                        }
                         handleAllTags(tags);
                     }
                 });
@@ -300,7 +311,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         } else if ("200002".equals(backToolsResponse.getCode())) {
             playMusic("back_failed.mp3");
             ToastUtils.showShort("请求参数异常");
-        }else {
+        } else {
             playMusic("back_failed.mp3");
             ToastUtils.showShort("归还失败:" + backToolsResponse.getMessage() + backToolsResponse.getCode());
         }

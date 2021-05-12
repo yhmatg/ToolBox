@@ -91,6 +91,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     private int pageSize = 500;
     private AssetFilterParameter conditions = new AssetFilterParameter();
     private AssetManager assetManager;
+    public List<Tags._tag> notifyAddTags = new ArrayList<>();
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -201,12 +202,22 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
 
                     @Override
                     public void OnNotifyReadData(Tags tags) {
-
+                        notifyAddTags.clear();
+                        if (tags.add_tag_list != null) {
+                            notifyAddTags.addAll(tags.add_tag_list);
+                        }
                     }
 
                     @Override
                     public void OnGetAllTags(Tags tags) {
                         XLog.get().e("标签数目=======" + tags.tag_list.size() + "\n具体标签==" + tags.tag_list);
+                        if (notifyAddTags.size() > 0) {
+                            notifyAddTags.removeAll(tags.tag_list);
+                            if(notifyAddTags.size() > 0){
+                                XLog.get().e("改变标签数目=======" + notifyAddTags.size() + "\n具体标签==" + notifyAddTags);
+                                tags.tag_list.addAll(notifyAddTags);
+                            }
+                        }
                         handleAllTags(tags);
                     }
                 });
