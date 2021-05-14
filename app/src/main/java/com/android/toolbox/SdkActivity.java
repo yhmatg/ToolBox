@@ -16,17 +16,6 @@ import com.android.toolbox.skrfidbox.econst.ELock;
 import com.android.toolbox.skrfidbox.entity.MsgObjBase;
 import com.android.toolbox.skrfidbox.entity.Tags;
 import com.android.toolbox.utils.ToastUtils;
-import com.gg.reader.api.dal.GClient;
-import com.gg.reader.api.dal.HandlerTagEpcLog;
-import com.gg.reader.api.dal.HandlerTagEpcOver;
-import com.gg.reader.api.protocol.gx.EnumG;
-import com.gg.reader.api.protocol.gx.LogBaseEpcInfo;
-import com.gg.reader.api.protocol.gx.LogBaseEpcOver;
-import com.gg.reader.api.protocol.gx.MsgBaseInventoryEpc;
-import com.gg.reader.api.protocol.gx.MsgBaseStop;
-import com.gg.reader.api.protocol.gx.ParamEpcReadTid;
-import com.gg.reader.api.utils.ThreadPoolUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,11 +24,9 @@ import butterknife.OnClick;
 
 public class SdkActivity extends BaseActivity {
     private static String TAG = "SdkActivity";
-    private GClient client = GlobalClient.getClient();
     private ServerThread serverThread;
     private boolean isInited = false;
     private boolean isInvStarted = false;
-    private ParamEpcReadTid tidParam = null;
     private List<String> invEpcs = new ArrayList<>();
     @BindView(R.id.tv_tags)
     TextView tvTags;
@@ -224,8 +211,5 @@ public class SdkActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(isInited){
-            client.close();
-        }
     }
 }
