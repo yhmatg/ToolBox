@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.android.toolbox.app.Constants;
 import com.android.toolbox.app.GlobalClient;
 import com.android.toolbox.app.ToolBoxApplication;
 import com.android.toolbox.base.activity.BaseActivity;
@@ -19,6 +20,10 @@ import com.android.toolbox.ui.manager.ManagerLoginActivity;
 import com.android.toolbox.ui.toolquery.ToolQueryActivity;
 import com.android.toolbox.ui.verify.VerifyActivity;
 import com.android.toolbox.utils.ToastUtils;
+import com.arcsoft.face.ActiveFileInfo;
+import com.arcsoft.face.ErrorInfo;
+import com.arcsoft.face.FaceEngine;
+import com.arcsoft.face.enums.RuntimeABI;
 import com.gg.reader.api.dal.GClient;
 import com.gg.reader.api.utils.ThreadPoolUtils;
 
@@ -26,6 +31,13 @@ import org.w3c.dom.Text;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class HomeActivity extends BaseActivity<HomePresenter> implements HomeContract.View {
     private static String TAG = "HomeActivity";
@@ -54,6 +66,7 @@ public class HomeActivity extends BaseActivity<HomePresenter> implements HomeCon
         String SerialNumber = android.os.Build.SERIAL;
         tvCode.setText(SerialNumber);
         initLockAndRfid();
+        activeEngine();
     }
 
     @OnClick({R.id.ll_tool_inout, R.id.ll_tool_query, R.id.tool_manage})
@@ -101,5 +114,56 @@ public class HomeActivity extends BaseActivity<HomePresenter> implements HomeCon
             client.close();
             serialPortUtil.closeSerialPort();
         }
+    }
+
+    public void activeEngine() {
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter) {
+                RuntimeABI runtimeABI = FaceEngine.getRuntimeABI();
+                Log.i(TAG, "subscribe: getRuntimeABI() " + runtimeABI);
+
+                long start = System.currentTimeMillis();
+                int activeCode = FaceEngine.activeOnline(HomeActivity.this, Constants.APP_ID, Constants.SDK_KEY);
+                Log.i(TAG, "subscribe cost: " + (System.currentTimeMillis() - start));
+                emitter.onNext(activeCode);
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Integer activeCode) {
+                        if (activeCode == ErrorInfo.MOK) {
+                            ToastUtils.showShort("激活成功");
+                        } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
+                            ToastUtils.showShort("已经激活");
+                        } else {
+                            ToastUtils.showShort("激活失败");
+                        }
+                        ActiveFileInfo activeFileInfo = new ActiveFileInfo();
+                        int res = FaceEngine.getActiveFileInfo(HomeActivity.this, activeFileInfo);
+                        if (res == ErrorInfo.MOK) {
+                            Log.i("HomeActivity", activeFileInfo.toString());
+                        }
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        showToast(e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+
     }
 }

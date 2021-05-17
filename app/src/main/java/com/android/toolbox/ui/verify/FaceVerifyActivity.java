@@ -1,80 +1,99 @@
 package com.android.toolbox.ui.verify;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.RectF;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.v4.content.FileProvider;
-import android.text.TextUtils;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
+import android.hardware.Camera;
 import android.util.Base64;
 import android.util.Log;
-import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.ViewTreeObserver;
 
 import com.android.toolbox.R;
 import com.android.toolbox.app.ToolBoxApplication;
 import com.android.toolbox.base.activity.BaseActivity;
-import com.android.toolbox.base.presenter.AbstractPresenter;
 import com.android.toolbox.contract.FaceVerifyContract;
 import com.android.toolbox.core.DataManager;
-import com.android.toolbox.core.bean.BaseResponse;
 import com.android.toolbox.core.bean.terminal.FaceAuthPara;
 import com.android.toolbox.core.bean.terminal.FaceFailResponse;
 import com.android.toolbox.core.bean.terminal.FaceSucResponse;
 import com.android.toolbox.core.bean.user.FaceLoginPara;
 import com.android.toolbox.core.bean.user.UserLoginResponse;
-import com.android.toolbox.core.http.api.GeeksApis;
-import com.android.toolbox.core.http.client.RetrofitClient;
-import com.android.toolbox.core.http.widget.BaseObserver;
 import com.android.toolbox.presenter.FaceVerifyPresenter;
-import com.android.toolbox.ui.camera.BitmapUtils;
-import com.android.toolbox.ui.camera.Bitmaps;
-import com.android.toolbox.ui.camera.CameraHelper;
-import com.android.toolbox.ui.camera.FaceView;
-import com.android.toolbox.ui.manager.ManagerHomeActivity;
-import com.android.toolbox.utils.RxUtils;
+import com.android.toolbox.ui.arcface.CameraHelper;
+import com.android.toolbox.ui.arcface.CameraListener;
+import com.android.toolbox.ui.arcface.FaceRectView;
+import com.android.toolbox.ui.arcface.LivenessType;
+import com.android.toolbox.ui.arcface.RequestLivenessStatus;
 import com.android.toolbox.utils.ToastUtils;
+import com.arcsoft.face.ErrorInfo;
+import com.arcsoft.face.FaceEngine;
+import com.arcsoft.face.FaceInfo;
+import com.arcsoft.face.LivenessInfo;
+import com.arcsoft.face.enums.DetectFaceOrientPriority;
+import com.arcsoft.face.enums.DetectMode;
 import com.google.gson.Gson;
+import com.xuexiang.xlog.XLog;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import id.zelory.compressor.Compressor;
 import okhttp3.ResponseBody;
 
-public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implements FaceVerifyContract.View {
+public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implements FaceVerifyContract.View, CameraListener, ViewTreeObserver.OnGlobalLayoutListener {
     private static String TAG = "FaceVerifyActivity";
+    private static String TYPE_TAG = "type";
+    private static Integer TYPE_CAPTURE = 0;
+    private static Integer TYPE_RECORD = 1;
     private static final int REQUEST_CODE_TAKE_PICTURE = 100;
-    private File newFile;
     @BindView(R.id.im_take_pic)
-    SurfaceView surfaceView;
+    TextureView surfaceView;
     @BindView(R.id.faceView)
-    FaceView faceView;
+    FaceRectView faceView;
     private CameraHelper mCameraHelper;
     private boolean isNeedRecognize = true;
+    private static final int MAX_DETECT_NUM = 5;
+    /**
+     * VIDEO模式人脸检测引擎，用于预览帧人脸追踪
+     */
+    private FaceEngine ftEngine;
+    private int ftInitCode = -1;
+    /**
+     * IMAGE模式活体检测引擎，用于预览帧人脸活体检测
+     */
+    private FaceEngine flEngine;
+    private int flInitCode = -1;
+    /**
+     * 用于存储活体值
+     */
+    private ConcurrentHashMap<Integer, Integer> livenessMap = new ConcurrentHashMap<>();
+    private Camera.Size previewSize;
+
     @Override
     public FaceVerifyPresenter initPresenter() {
         return new FaceVerifyPresenter();
@@ -82,45 +101,25 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
 
     @Override
     protected void initEventAndData() {
-        mCameraHelper = new CameraHelper(this, surfaceView);
-        mCameraHelper.addCallBack(new CameraHelper.CallBack() {
-            @Override
-            public void onPreviewFrame(@Nullable byte[] data) {
+        initEngine();
+        int flQueueSize = 1;
+        flThreadQueue = new LinkedBlockingQueue<Runnable>(flQueueSize);
+        flExecutor = new ThreadPoolExecutor(1, flQueueSize, 0, TimeUnit.MILLISECONDS, flThreadQueue);
+        XLog.get().e("aaaaheight===" + surfaceView.getMeasuredHeight() + "width===" + surfaceView.getMeasuredWidth());
+        surfaceView.getViewTreeObserver().addOnGlobalLayoutListener(this);
+        mCameraHelper = new CameraHelper(surfaceView, this);
+        mCameraHelper.init();
+    }
 
-            }
-
-            @Override
-            public void onTakePic(@Nullable byte[] data) {
-                byte[] bytes = Bitmaps.INSTANCE.compressInSampleSize(data, 800, 800);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                //前后摄像头旋转180 后摄像头不用旋转
-                Bitmap rotateBitmap = BitmapUtils.INSTANCE.rotate(bitmap, 0);
-                byte[] rotateBytes = BitmapUtils.INSTANCE.toByteArray(rotateBitmap);
-                /*String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/default_image.jpg";
-                try {
-                    bitmapToFile(path,rotateBitmap,100);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }*/
-                String faceBase64 = Base64.encodeToString(rotateBytes, Base64.DEFAULT).replaceAll("\r|\n", "");
-                String timeStr = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
-                String signature = "imgBase64=data:image/jpg;base64," + faceBase64 + "&requestTime=" + timeStr;
-                String finalSignature = hMacSha("vd938cyyy83edzdc", signature, "HmacSHA256");
-                FaceAuthPara faceAuthPara = new FaceAuthPara(timeStr, "data:image/jpg;base64," + faceBase64);
-                //getUserByFace("mu2lkq1i", finalSignature, timeStr, faceAuthPara);
-                mPresenter.getUserByFace("mu2lkq1i", finalSignature, timeStr, faceAuthPara);
-            }
-
-            @Override
-            public void onFaceDetect(@NotNull ArrayList<RectF> faces) {
-                faceView.setFaces(faces);
-                Log.e(TAG, "人脸:" + faces.size());
-                /*if (isNeedRecognize) {
-                    mCameraHelper.takePic();
-                    isNeedRecognize = false;
-                }*/
-            }
-        });
+    private void initEngine() {
+        ftEngine = new FaceEngine();
+        int faceMask = FaceEngine.ASF_FACE_DETECT;
+        ftInitCode = ftEngine.init(this, DetectMode.ASF_DETECT_MODE_VIDEO, DetectFaceOrientPriority.ASF_OP_ALL_OUT,
+                16, MAX_DETECT_NUM, faceMask);
+        int livenessMask = FaceEngine.ASF_LIVENESS;
+        flEngine = new FaceEngine();
+        flInitCode = flEngine.init(this, DetectMode.ASF_DETECT_MODE_IMAGE, DetectFaceOrientPriority.ASF_OP_0_ONLY,
+                16, MAX_DETECT_NUM, livenessMask);
     }
 
     @Override
@@ -140,14 +139,13 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
                 finish();
                 break;
             case R.id.bt_retry:
-                mCameraHelper.takePic();
+                //mCameraHelper.takePic();
                 break;
             case R.id.bt_change_card:
                 startActivity(new Intent(this, CardVerifyActivity.class));
                 finish();
                 break;
         }
-
     }
 
     private String hMacSha(String key, String value, String shaType) {
@@ -209,7 +207,13 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
 
     @Override
     protected void onDestroy() {
-        mCameraHelper.releaseCamera();
+        if (!flExecutor.isShutdown()) {
+            flExecutor.shutdownNow();
+            flThreadQueue.clear();
+        }
+        mCameraHelper.release();
+        ftEngine.unInit();
+        flEngine.unInit();
         super.onDestroy();
     }
 
@@ -231,4 +235,277 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
             bos.close();
         }
     }
+
+    private void drawPreviewInfo(List<FaceInfo> faceInfoList) {
+        faceView.clearFaceInfo();
+        ArrayList<FaceInfo> drawFaceInfo = new ArrayList<>();
+        if (faceInfoList == null || faceInfoList.size() == 0) {
+            return;
+        }
+        for (int i = 0; i < faceInfoList.size(); i++) {
+            FaceInfo faceInfo = new FaceInfo();
+            faceInfo.setRect(adjustRect(faceInfoList.get(0).getRect()));
+            drawFaceInfo.add(faceInfo);
+        }
+        faceView.addFaceInfo(drawFaceInfo);
+    }
+
+    /**
+     * 活体检测线程队列
+     */
+    private LinkedBlockingQueue<Runnable> flThreadQueue = null;
+
+    /**
+     * 活体检测线程池
+     */
+    private ExecutorService flExecutor;
+
+    @Override
+    public void onCameraOpened(Camera camera, int cameraId, int displayOrientation, boolean isMirror) {
+
+    }
+
+    @Override
+    public void onPreview(byte[] data, Camera camera) {
+        previewSize = mCameraHelper.getPreviewSize();
+        List<FaceInfo> faceInfoList = new ArrayList<>();
+        int code = ftEngine.detectFaces(data, previewSize.width, previewSize.height, FaceEngine.CP_PAF_NV21, faceInfoList);
+        drawPreviewInfo(faceInfoList);
+        if (code == ErrorInfo.MOK && faceInfoList.size() > 0) {
+            FaceInfo faceInfo = faceInfoList.get(0);
+            Integer liveness = livenessMap.get(faceInfo.getFaceId());
+            if (liveness == null
+                    || (liveness != LivenessInfo.ALIVE && liveness != LivenessInfo.NOT_ALIVE && liveness != RequestLivenessStatus.ANALYZING)) {
+                livenessMap.put(faceInfo.getFaceId(), RequestLivenessStatus.ANALYZING);
+                if (ftEngine != null && flThreadQueue.remainingCapacity() > 0) {
+                    flExecutor.execute(new FaceLivenessDetectRunnable(data, faceInfo, previewSize.width, previewSize.height, FaceEngine.CP_PAF_NV21, faceInfo.getFaceId(), LivenessType.RGB));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onCameraClosed() {
+
+    }
+
+    @Override
+    public void onCameraError(Exception e) {
+
+    }
+
+    @Override
+    public void onCameraConfigurationChanged(int cameraID, int displayOrientation) {
+
+    }
+
+    @Override
+    public void onGlobalLayout() {
+        surfaceView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+        mCameraHelper.start();
+    }
+
+    /**
+     * 活体检测的线程
+     */
+    public class FaceLivenessDetectRunnable implements Runnable {
+        private FaceInfo faceInfo;
+        private int width;
+        private int height;
+        private int format;
+        private Integer trackId;
+        private byte[] nv21Data;
+        private LivenessType livenessType;
+
+        private FaceLivenessDetectRunnable(byte[] nv21Data, FaceInfo faceInfo, int width, int height, int format, Integer trackId, LivenessType livenessType) {
+            if (nv21Data == null) {
+                return;
+            }
+            this.nv21Data = nv21Data;
+            this.faceInfo = new FaceInfo(faceInfo);
+            this.width = width;
+            this.height = height;
+            this.format = format;
+            this.trackId = trackId;
+            this.livenessType = livenessType;
+        }
+
+        @Override
+        public void run() {
+            if (nv21Data != null) {
+                if (flEngine != null) {
+                    List<LivenessInfo> livenessInfoList = new ArrayList<>();
+                    int flCode;
+                    Log.e(TAG, "width==" + width + "   height==" + height);
+                    synchronized (flEngine) {
+                        if (livenessType == LivenessType.RGB) {
+                            flCode = flEngine.process(nv21Data, width, height, format, Arrays.asList(faceInfo), FaceEngine.ASF_LIVENESS);
+                        } else {
+                            flCode = flEngine.processIr(nv21Data, width, height, format, Arrays.asList(faceInfo), FaceEngine.ASF_IR_LIVENESS);
+                        }
+                    }
+                    Log.e(TAG, "process 结果code==" + flCode);
+                    if (flCode == ErrorInfo.MOK) {
+                        if (livenessType == LivenessType.RGB) {
+                            flCode = flEngine.getLiveness(livenessInfoList);
+                        } else {
+                            flCode = flEngine.getIrLiveness(livenessInfoList);
+                        }
+                    } else {
+                        livenessMap.put(faceInfo.getFaceId(), -1);
+                    }
+                    if (flCode == ErrorInfo.MOK && livenessInfoList.size() > 0) {
+                        if (nv21Data != null) {
+                            LivenessInfo livenessInfo = livenessInfoList.get(0);
+                            //开始人人脸检测
+                            onFaceLivenessInfoGet(livenessInfo, nv21Data);
+                            livenessMap.put(faceInfo.getFaceId(), livenessInfo.getLiveness());
+                            Log.e(TAG, "获取活体信息成功" + livenessInfo.getLiveness());
+                        }
+                    } else {
+                        Log.e(TAG, "获取活体信息失败 code==" + flCode);
+                    }
+                } else {
+                    Log.e(TAG, "人脸引擎为空");
+                }
+            }
+            nv21Data = null;
+        }
+
+    }
+
+    private void onFaceLivenessInfoGet(LivenessInfo livenessInfo, byte[] nv21Data) {
+        if (livenessInfo != null) {
+            int liveness = livenessInfo.getLiveness();
+            if (liveness == LivenessInfo.ALIVE) {
+                YuvImage yuvimage = new YuvImage(nv21Data, ImageFormat.NV21, previewSize.width,
+                        previewSize.height, null);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                yuvimage.compressToJpeg(new Rect(0, 0, previewSize.width,
+                        previewSize.height), 100, baos);
+                byte[] jpegData = baos.toByteArray();
+                //手持机测试用 start
+                Bitmap bitmap = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length);
+               //手持机旋转90度，工具车不用
+               /* Bitmap rotateBitmap = BitmapUtils.rotate(bitmap, 0f);
+                byte[] rotateBytes = BitmapUtils.toByteArray(rotateBitmap);
+                String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/default_image.jpg";
+                try {
+                    bitmapToFile(path, rotateBitmap, 100);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }*/
+                //手持机测试用 end
+                String faceBase64 = Base64.encodeToString(jpegData, Base64.DEFAULT).replaceAll("\r|\n", "");
+                String timeStr = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
+                String signature = "imgBase64=data:image/jpg;base64," + faceBase64 + "&requestTime=" + timeStr;
+                String finalSignature = hMacSha("vd938cyyy83edzdc", signature, "HmacSHA256");
+                FaceAuthPara faceAuthPara = new FaceAuthPara(timeStr, "data:image/jpg;base64," + faceBase64);
+                mPresenter.getUserByFace("mu2lkq1i", finalSignature, timeStr, faceAuthPara);
+            }
+        }
+    }
+
+    public Rect adjustRect(Rect ftRect) {
+        int previewWidth = mCameraHelper.getPreviewSize().width;
+        int previewHeight = mCameraHelper.getPreviewSize().height;
+        int canvasWidth = surfaceView.getWidth();
+        int canvasHeight = surfaceView.getHeight();
+        //前摄后摄修改点手持机270度，工具柜0度
+        int cameraDisplayOrientation = 0;
+        int cameraId = 1;
+        boolean isMirror = false;
+        boolean mirrorHorizontal = false;
+        boolean mirrorVertical = false;
+        if (ftRect == null) {
+            return null;
+        }
+        Rect rect = new Rect(ftRect);
+        float horizontalRatio;
+        float verticalRatio;
+        if (cameraDisplayOrientation % 180 == 0) {
+            horizontalRatio = (float) canvasWidth / (float) previewWidth;
+            verticalRatio = (float) canvasHeight / (float) previewHeight;
+        } else {
+            horizontalRatio = (float) canvasHeight / (float) previewWidth;
+            verticalRatio = (float) canvasWidth / (float) previewHeight;
+        }
+        rect.left *= horizontalRatio;
+        rect.right *= horizontalRatio;
+        rect.top *= verticalRatio;
+        rect.bottom *= verticalRatio;
+
+        Rect newRect = new Rect();
+        switch (cameraDisplayOrientation) {
+            case 0:
+                if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                    newRect.left = canvasWidth - rect.right;
+                    newRect.right = canvasWidth - rect.left;
+                } else {
+                    newRect.left = rect.left;
+                    newRect.right = rect.right;
+                }
+                newRect.top = rect.top;
+                newRect.bottom = rect.bottom;
+                break;
+            case 90:
+                newRect.right = canvasWidth - rect.top;
+                newRect.left = canvasWidth - rect.bottom;
+                if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                    newRect.top = canvasHeight - rect.right;
+                    newRect.bottom = canvasHeight - rect.left;
+                } else {
+                    newRect.top = rect.left;
+                    newRect.bottom = rect.right;
+                }
+                break;
+            case 180:
+                newRect.top = canvasHeight - rect.bottom;
+                newRect.bottom = canvasHeight - rect.top;
+                if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                    newRect.left = rect.left;
+                    newRect.right = rect.right;
+                } else {
+                    newRect.left = canvasWidth - rect.right;
+                    newRect.right = canvasWidth - rect.left;
+                }
+                break;
+            case 270:
+                newRect.left = rect.top;
+                newRect.right = rect.bottom;
+                if (cameraId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                    newRect.top = rect.left;
+                    newRect.bottom = rect.right;
+                } else {
+                    newRect.top = canvasHeight - rect.right;
+                    newRect.bottom = canvasHeight - rect.left;
+                }
+                break;
+            default:
+                break;
+        }
+        /**
+         * isMirror mirrorHorizontal finalIsMirrorHorizontal
+         * true         true                false
+         * false        false               false
+         * true         false               true
+         * false        true                true
+         *
+         * XOR
+         */
+        if (isMirror ^ mirrorHorizontal) {
+            int left = newRect.left;
+            int right = newRect.right;
+            newRect.left = canvasWidth - right;
+            newRect.right = canvasWidth - left;
+        }
+        if (mirrorVertical) {
+            int top = newRect.top;
+            int bottom = newRect.bottom;
+            newRect.top = canvasHeight - bottom;
+            newRect.bottom = canvasHeight - top;
+        }
+        return newRect;
+    }
+
 }

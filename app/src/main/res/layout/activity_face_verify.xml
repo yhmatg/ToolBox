@@ -32,13 +32,13 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/dp_120">
 
-        <SurfaceView
+        <TextureView
             android:id="@+id/im_take_pic"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:src="@drawable/take_picture" />
 
-        <com.android.toolbox.ui.camera.FaceView
+        <com.android.toolbox.ui.arcface.FaceRectView
             android:id="@+id/faceView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
