@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.android.toolbox">
+
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name="com.android.toolbox.app.ToolBoxApplication"
@@ -22,10 +27,6 @@
         </activity>
         <activity
             android:name=".ui.verify.VerifyActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"></activity>
-        <activity
-            android:name=".ui.verify.FaceVerifyActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"></activity>
 
@@ -61,11 +62,11 @@
             android:name=".SdkActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
-           <!-- <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            <!-- <intent-filter>
+                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>-->
+                 <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>-->
         </activity>
         <activity
             android:name=".ui.manager.ManageToolActivity"
@@ -97,6 +98,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+        <activity android:name=".ui.verify.FaceVerifyActivity"></activity>
     </application>
 
 </manifest>

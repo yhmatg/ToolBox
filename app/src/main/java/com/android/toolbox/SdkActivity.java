@@ -4,7 +4,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import com.android.toolbox.app.GlobalClient;
 import com.android.toolbox.app.ToolBoxApplication;
 import com.android.toolbox.base.activity.BaseActivity;
 import com.android.toolbox.base.presenter.AbstractPresenter;
