@@ -7,6 +7,7 @@ import android.graphics.ImageFormat;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
+import android.os.Environment;
 import android.util.Base64;
 import android.util.Log;
 import android.view.TextureView;
@@ -30,6 +31,7 @@ import com.android.toolbox.ui.arcface.FaceRectView;
 import com.android.toolbox.ui.arcface.LivenessType;
 import com.android.toolbox.ui.arcface.RequestLivenessStatus;
 import com.android.toolbox.utils.ToastUtils;
+import com.android.toolbox.utils.logger.BitmapUtils;
 import com.arcsoft.face.ErrorInfo;
 import com.arcsoft.face.FaceEngine;
 import com.arcsoft.face.FaceInfo;
@@ -93,6 +95,7 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
      */
     private ConcurrentHashMap<Integer, Integer> livenessMap = new ConcurrentHashMap<>();
     private Camera.Size previewSize;
+    private FaceInfo faceInfo;
 
     @Override
     public FaceVerifyPresenter initPresenter() {
@@ -185,10 +188,12 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
                 String workNo = "ypzx" + faceSucResponse.getData().getWorkNo();
                 mPresenter.faceLogin(new FaceLoginPara(workNo));
                 ToastUtils.showLong("用户:" + workNo);
+                isNeedRecognize = false;
             } else {
                 FaceFailResponse faceFailResponse = new Gson().fromJson(body, FaceFailResponse.class);
-                isNeedRecognize = true;
                 ToastUtils.showShort("人脸登录失败:" + faceFailResponse.getData());
+                isNeedRecognize = true;
+                livenessMap.put(faceInfo.getFaceId(), -1);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -267,21 +272,21 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
 
     @Override
     public void onPreview(byte[] data, Camera camera) {
-        previewSize = mCameraHelper.getPreviewSize();
-        List<FaceInfo> faceInfoList = new ArrayList<>();
-        int code = ftEngine.detectFaces(data, previewSize.width, previewSize.height, FaceEngine.CP_PAF_NV21, faceInfoList);
-        drawPreviewInfo(faceInfoList);
-        if (code == ErrorInfo.MOK && faceInfoList.size() > 0) {
-            FaceInfo faceInfo = faceInfoList.get(0);
-            Integer liveness = livenessMap.get(faceInfo.getFaceId());
-            if (liveness == null
-                    || (liveness != LivenessInfo.ALIVE && liveness != LivenessInfo.NOT_ALIVE && liveness != RequestLivenessStatus.ANALYZING)) {
-                livenessMap.put(faceInfo.getFaceId(), RequestLivenessStatus.ANALYZING);
-                if (ftEngine != null && flThreadQueue.remainingCapacity() > 0) {
-                    flExecutor.execute(new FaceLivenessDetectRunnable(data, faceInfo, previewSize.width, previewSize.height, FaceEngine.CP_PAF_NV21, faceInfo.getFaceId(), LivenessType.RGB));
+            previewSize = mCameraHelper.getPreviewSize();
+            List<FaceInfo> faceInfoList = new ArrayList<>();
+            int code = ftEngine.detectFaces(data, previewSize.width, previewSize.height, FaceEngine.CP_PAF_NV21, faceInfoList);
+            drawPreviewInfo(faceInfoList);
+            if (code == ErrorInfo.MOK && faceInfoList.size() > 0 && isNeedRecognize) {
+                faceInfo = faceInfoList.get(0);
+                Integer liveness = livenessMap.get(faceInfo.getFaceId());
+                if (liveness == null
+                        || (liveness != LivenessInfo.ALIVE && liveness != RequestLivenessStatus.ANALYZING)) {
+                    livenessMap.put(faceInfo.getFaceId(), RequestLivenessStatus.ANALYZING);
+                    if (ftEngine != null && flThreadQueue.remainingCapacity() > 0) {
+                        flExecutor.execute(new FaceLivenessDetectRunnable(data, faceInfo, previewSize.width, previewSize.height, FaceEngine.CP_PAF_NV21, faceInfo.getFaceId(), LivenessType.RGB));
+                    }
                 }
             }
-        }
     }
 
     @Override
@@ -358,8 +363,8 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
                         if (nv21Data != null) {
                             LivenessInfo livenessInfo = livenessInfoList.get(0);
                             //开始人人脸检测
-                            onFaceLivenessInfoGet(livenessInfo, nv21Data);
                             livenessMap.put(faceInfo.getFaceId(), livenessInfo.getLiveness());
+                            onFaceLivenessInfoGet(livenessInfo, nv21Data);
                             Log.e(TAG, "获取活体信息成功" + livenessInfo.getLiveness());
                         }
                     } else {
@@ -384,10 +389,11 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
                 yuvimage.compressToJpeg(new Rect(0, 0, previewSize.width,
                         previewSize.height), 100, baos);
                 byte[] jpegData = baos.toByteArray();
+                byte[] compressData = BitmapUtils.compressInSampleSize(jpegData, 600, 600);
                 //手持机测试用 start
-                Bitmap bitmap = BitmapFactory.decodeByteArray(jpegData, 0, jpegData.length);
+                /*Bitmap bitmap = BitmapFactory.decodeByteArray(compressData, 0, compressData.length);
                //手持机旋转90度，工具车不用
-               /* Bitmap rotateBitmap = BitmapUtils.rotate(bitmap, 0f);
+                Bitmap rotateBitmap = BitmapUtils.rotate(bitmap, 0f);
                 byte[] rotateBytes = BitmapUtils.toByteArray(rotateBitmap);
                 String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/default_image.jpg";
                 try {
@@ -396,7 +402,7 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
                     e.printStackTrace();
                 }*/
                 //手持机测试用 end
-                String faceBase64 = Base64.encodeToString(jpegData, Base64.DEFAULT).replaceAll("\r|\n", "");
+                String faceBase64 = Base64.encodeToString(compressData, Base64.DEFAULT).replaceAll("\r|\n", "");
                 String timeStr = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
                 String signature = "imgBase64=data:image/jpg;base64," + faceBase64 + "&requestTime=" + timeStr;
                 String finalSignature = hMacSha("vd938cyyy83edzdc", signature, "HmacSHA256");
@@ -508,4 +514,15 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
         return newRect;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isNeedRecognize = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isNeedRecognize = false;
+    }
 }

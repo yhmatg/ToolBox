@@ -149,3 +149,7 @@
 -dontwarn kotlin.coroutines.Continuation
 
 -keep class kotlin.coroutines.Continuation { *; }
+
+-dontwarn com.arcsoft.face.**
+
+-keep class com.arcsoft.face.** { *; }

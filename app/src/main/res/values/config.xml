@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <bool name="is_test">false</bool>
-    <string name="loc_id">428aa91d04ba4048a5c2cb0b09c58264</string>
+    <!--<string name="loc_id">428aa91d04ba4048a5c2cb0b09c58264</string>
     <string name="loc_name">工具车1</string>
     <string name="box_title">RFID智能工具车1</string>
-    <string name="app_name">工具车1</string>
-    <!--<string name="loc_id">b88f5522348341768010ddd1a3adf518</string>
+    <string name="app_name">工具车1</string>-->
+    <string name="loc_id">b88f5522348341768010ddd1a3adf518</string>
     <string name="loc_name">工具车2</string>
     <string name="box_title">RFID智能工具车2</string>
-    <string name="app_name">工具车2</string>-->
+    <string name="app_name">工具车2</string>
 </resources>

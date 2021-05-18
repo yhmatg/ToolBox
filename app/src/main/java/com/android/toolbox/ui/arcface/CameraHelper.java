@@ -26,7 +26,7 @@ public class CameraHelper implements Camera.PreviewCallback {
     private int displayOrientation = 0;
     private int rotation;
     //手持机0，工具车90
-    private int additionalRotation = 90;
+    private int additionalRotation = 0;
     private boolean isMirror = false;
     private Camera.Size previewSize;
     /**
