@@ -42,4 +42,6 @@ public class Constants {
 
     public static final String APP_ID = "EqHSztCcAewGCxpaR9HoJYyiHjKxJwtS8GTeKzqhi5WJ";
     public static final String SDK_KEY = "5WXucLtkT6hk8WxfDHiEmFUUpWdXP5uU9FAZ59zhCi7R";
+
+    public static final String FACE_ACTIVE_STATUS = "faceActiveStatus";
 }

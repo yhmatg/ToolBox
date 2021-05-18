@@ -53,5 +53,15 @@ public class PreferenceHelperImpl implements PreferenceHelper {
         return mPreferences.getString(Constants.TOKEN, "");
     }
 
+    @Override
+    public void saveFaceActiveStatus(boolean status) {
+        mPreferences.edit().putBoolean(Constants.FACE_ACTIVE_STATUS,status).apply();
+    }
+
+    @Override
+    public boolean getFaceActiveStatus() {
+        return mPreferences.getBoolean(Constants.FACE_ACTIVE_STATUS,false);
+    }
+
 
 }

@@ -1,6 +1,6 @@
-package com.android.toolbox.core.bean;
+package com.android.toolbox.core.bean.terminal;
 
-public class FaceFailResponse {
+public class FaceSucResponse {
 
     /**
      * code : 1
@@ -10,7 +10,7 @@ public class FaceFailResponse {
 
     private String code;
     private String msg;
-    private String data;
+    private Data data;
 
     public String getCode() {
         return code;
@@ -28,11 +28,24 @@ public class FaceFailResponse {
         this.msg = msg;
     }
 
-    public String getData() {
+      public Data getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(Data data) {
         this.data = data;
+    }
+
+    public static class Data {
+
+        private String workNo;
+
+        public String getWorkNo() {
+            return workNo;
+        }
+
+        public void setWorkNo(String workNo) {
+            this.workNo = workNo;
+        }
     }
 }

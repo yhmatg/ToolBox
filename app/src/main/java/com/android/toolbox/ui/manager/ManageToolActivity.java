@@ -210,11 +210,11 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
 
                     @Override
                     public void OnGetAllTags(Tags tags) {
-                        XLog.get().e("标签数目=======" + tags.tag_list.size() + "\n具体标签==" + tags.tag_list);
+                        XLog.get().e("ManageToolActivity allTag number=======" + tags.tag_list.size() + "\nallTags===" + tags.tag_list);
                         if (notifyAddTags.size() > 0) {
                             notifyAddTags.removeAll(tags.tag_list);
                             if(notifyAddTags.size() > 0){
-                                XLog.get().e("改变标签数目=======" + notifyAddTags.size() + "\n具体标签==" + notifyAddTags);
+                                XLog.get().e("ManageToolActivity exteraTag number=======" + notifyAddTags.size() + "\nexteraTags===" + notifyAddTags);
                                 tags.tag_list.addAll(notifyAddTags);
                             }
                         }

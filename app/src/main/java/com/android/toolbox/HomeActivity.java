@@ -1,7 +1,6 @@
 package com.android.toolbox;
 
 import android.content.Intent;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -56,7 +55,10 @@ public class HomeActivity extends BaseActivity<HomePresenter> implements HomeCon
     protected void initEventAndData() {
         String SerialNumber = android.os.Build.SERIAL;
         tvCode.setText(SerialNumber);
-        activeEngine();
+        boolean faceActiveStatus = DataManager.getInstance().getFaceActiveStatus();
+        if(!faceActiveStatus){
+            activeEngine();
+        }
     }
 
     @OnClick({R.id.iv_inout_tool, R.id.iv_query_tool, R.id.iv_manager})
@@ -107,8 +109,10 @@ public class HomeActivity extends BaseActivity<HomePresenter> implements HomeCon
                     public void onNext(Integer activeCode) {
                         if (activeCode == ErrorInfo.MOK) {
                             ToastUtils.showShort("激活成功");
+                            DataManager.getInstance().saveFaceActiveStatus(true);
                         } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
                             ToastUtils.showShort("已经激活");
+                            DataManager.getInstance().saveFaceActiveStatus(true);
                         } else {
                             ToastUtils.showShort("激活失败");
                         }

@@ -153,3 +153,7 @@
 -dontwarn com.android.toolbox.skrfidbox.**
 
 -keep class com.android.toolbox.skrfidbox.** { *; }
+
+-dontwarn com.arcsoft.face.**
+
+-keep class com.arcsoft.face.** { *; }
