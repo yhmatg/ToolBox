@@ -13,5 +13,9 @@ public interface PreferenceHelper {
 
     String getHostUrl();
 
+    void saveFaceActiveStatus(boolean status);
+
+    boolean getFaceActiveStatus();
+
 }
 

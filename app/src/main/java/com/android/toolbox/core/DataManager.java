@@ -65,6 +65,16 @@ public class DataManager implements HttpHelper, PreferenceHelper {
     }
 
     @Override
+    public void saveFaceActiveStatus(boolean status) {
+        mPreferenceHelper.saveFaceActiveStatus(status);
+    }
+
+    @Override
+    public boolean getFaceActiveStatus() {
+        return mPreferenceHelper.getFaceActiveStatus();
+    }
+
+    @Override
     public void setToken(String token) {
         mPreferenceHelper.setToken(token);
     }

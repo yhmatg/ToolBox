@@ -48,6 +48,7 @@ import com.gg.reader.api.protocol.gx.MsgBaseStop;
 import com.gg.reader.api.protocol.gx.ParamEpcReadTid;
 import com.gg.reader.api.utils.ThreadPoolUtils;
 import com.multilevel.treelist.Node;
+import com.xuexiang.xlog.XLog;
 
 import org.apache.commons.lang3.ThreadUtils;
 
@@ -307,6 +308,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         client.onTagEpcOver = new HandlerTagEpcOver() {
             public void log(String readerName, LogBaseEpcOver info) {
                 Log.e(TAG, "数量：" + invEpcs.size());
+                XLog.get().e("ManageToolActivity tags   number===" + invEpcs.size() + invEpcs);
                 handleAllTags(invEpcs);
             }
         };

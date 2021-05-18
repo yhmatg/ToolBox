@@ -368,6 +368,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         client.onTagEpcOver = new HandlerTagEpcOver() {
             public void log(String readerName, LogBaseEpcOver info) {
                 Log.e(TAG, "数量：" + invEpcs.size());
+                XLog.get().e("BorrowBackToolActivity tags   number===" + invEpcs.size() + invEpcs);
                 handleAllTags(invEpcs);
             }
         };

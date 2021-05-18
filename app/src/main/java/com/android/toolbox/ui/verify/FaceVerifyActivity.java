@@ -108,7 +108,6 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
         int flQueueSize = 1;
         flThreadQueue = new LinkedBlockingQueue<Runnable>(flQueueSize);
         flExecutor = new ThreadPoolExecutor(1, flQueueSize, 0, TimeUnit.MILLISECONDS, flThreadQueue);
-        XLog.get().e("aaaaheight===" + surfaceView.getMeasuredHeight() + "width===" + surfaceView.getMeasuredWidth());
         surfaceView.getViewTreeObserver().addOnGlobalLayoutListener(this);
         mCameraHelper = new CameraHelper(surfaceView, this);
         mCameraHelper.init();

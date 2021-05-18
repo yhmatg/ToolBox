@@ -66,7 +66,11 @@ public class HomeActivity extends BaseActivity<HomePresenter> implements HomeCon
         String SerialNumber = android.os.Build.SERIAL;
         tvCode.setText(SerialNumber);
         initLockAndRfid();
-        activeEngine();
+        boolean faceActiveStatus = DataManager.getInstance().getFaceActiveStatus();
+        if(!faceActiveStatus){
+            activeEngine();
+        }
+
     }
 
     @OnClick({R.id.ll_tool_inout, R.id.ll_tool_query, R.id.tool_manage})
@@ -141,8 +145,10 @@ public class HomeActivity extends BaseActivity<HomePresenter> implements HomeCon
                     public void onNext(Integer activeCode) {
                         if (activeCode == ErrorInfo.MOK) {
                             ToastUtils.showShort("激活成功");
+                            DataManager.getInstance().saveFaceActiveStatus(true);
                         } else if (activeCode == ErrorInfo.MERR_ASF_ALREADY_ACTIVATED) {
                             ToastUtils.showShort("已经激活");
+                            DataManager.getInstance().saveFaceActiveStatus(true);
                         } else {
                             ToastUtils.showShort("激活失败");
                         }
