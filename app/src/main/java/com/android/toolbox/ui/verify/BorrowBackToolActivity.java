@@ -125,6 +125,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     private boolean isAutoReopen = false;
     private AssetManager assetManager;
     public List<Tags._tag> notifyAddTags = new ArrayList<>();
+    public List<Tags._tag> notifyDeleteTags = new ArrayList<>();
 
     @Override
     public ManageToolPresenter initPresenter() {
@@ -252,8 +253,12 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                     @Override
                     public void OnNotifyReadData(Tags tags) {
                         notifyAddTags.clear();
+                        notifyDeleteTags.clear();
                         if (tags.add_tag_list != null) {
                             notifyAddTags.addAll(tags.add_tag_list);
+                        }
+                        if (tags.loss_tag_list != null) {
+                            notifyDeleteTags.addAll(tags.loss_tag_list);
                         }
                     }
 
@@ -262,10 +267,13 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                         XLog.get().e("BorrowBackToolActivity allTag number=======" + tags.tag_list.size() + "\nallTags==" + tags.tag_list);
                         if (notifyAddTags.size() > 0) {
                             notifyAddTags.removeAll(tags.tag_list);
-                            if(notifyAddTags.size() > 0){
+                            if (notifyAddTags.size() > 0) {
                                 XLog.get().e("BorrowBackToolActivity exteraTag number=======" + notifyAddTags.size() + "\nexteraTags==" + notifyAddTags);
                                 tags.tag_list.addAll(notifyAddTags);
                             }
+                        }
+                        if (notifyDeleteTags.size() > 0) {
+                            tags.tag_list.removeAll(notifyDeleteTags);
                         }
                         handleAllTags(tags);
                     }
