@@ -264,17 +264,15 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
 
                     @Override
                     public void OnGetAllTags(Tags tags) {
-                        XLog.get().e("BorrowBackToolActivity allTag number=======" + tags.tag_list.size() + "\nallTags==" + tags.tag_list);
+                        notifyAddTags.removeAll(tags.tag_list);
                         if (notifyAddTags.size() > 0) {
-                            notifyAddTags.removeAll(tags.tag_list);
-                            if (notifyAddTags.size() > 0) {
-                                XLog.get().e("BorrowBackToolActivity exteraTag number=======" + notifyAddTags.size() + "\nexteraTags==" + notifyAddTags);
-                                tags.tag_list.addAll(notifyAddTags);
-                            }
+                            XLog.get().e("BorrowBackToolActivity exteraTag number=======" + notifyAddTags.size() + "\nexteraTags==" + notifyAddTags);
+                            tags.tag_list.addAll(notifyAddTags);
                         }
                         if (notifyDeleteTags.size() > 0) {
                             tags.tag_list.removeAll(notifyDeleteTags);
                         }
+                        XLog.get().e("BorrowBackToolActivity end allTag number=======" + tags.tag_list.size() + "\nallTags==" + tags.tag_list);
                         handleAllTags(tags);
                     }
                 });

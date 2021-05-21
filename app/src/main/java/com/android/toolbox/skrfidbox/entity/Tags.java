@@ -1,6 +1,7 @@
 package com.android.toolbox.skrfidbox.entity;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 盘点到的标签
@@ -26,6 +27,19 @@ public class Tags {
         @Override
         public String toString() {
             return epc;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof _tag)) return false;
+            _tag tag = (_tag) o;
+            return epc.equals(tag.epc);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(epc);
         }
     }
 
