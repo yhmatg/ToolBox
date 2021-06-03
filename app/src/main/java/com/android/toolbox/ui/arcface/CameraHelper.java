@@ -147,6 +147,8 @@ public class CameraHelper implements Camera.PreviewCallback {
                 if (supportedPreviewSizes != null && supportedPreviewSizes.size() > 0) {
                     previewSize = getBestSupportedSize(supportedPreviewSizes, previewViewSize);
                 }
+               /* previewSize.width = 2592;
+                previewSize.height = 1944;*/
                 parameters.setPreviewSize(previewSize.width, previewSize.height);
                 //对焦模式设置
                 List<String> supportedFocusModes = parameters.getSupportedFocusModes();
