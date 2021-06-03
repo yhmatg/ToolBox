@@ -185,6 +185,7 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
             if ("1".equals(code)) {
                 FaceSucResponse faceSucResponse = new Gson().fromJson(body, FaceSucResponse.class);
                 String workNo = "ypzx" + faceSucResponse.getData().getWorkNo();
+                XLog.get().e("login start time===" + System.currentTimeMillis());
                 mPresenter.faceLogin(new FaceLoginPara(workNo));
                 ToastUtils.showLong("用户:" + workNo);
                 isNeedRecognize = false;
@@ -203,6 +204,7 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
 
     @Override
     public void handleFaceLogin(UserLoginResponse loginResponse) {
+        XLog.get().e("login end time===" + System.currentTimeMillis());
         DataManager.getInstance().setToken(loginResponse.getToken());
         ToolBoxApplication.getInstance().setCurrentUser(loginResponse.getUserinfo());
         startActivity(new Intent(this, BorrowBackToolActivity.class));
@@ -271,21 +273,21 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
 
     @Override
     public void onPreview(byte[] data, Camera camera) {
-            previewSize = mCameraHelper.getPreviewSize();
-            List<FaceInfo> faceInfoList = new ArrayList<>();
-            int code = ftEngine.detectFaces(data, previewSize.width, previewSize.height, FaceEngine.CP_PAF_NV21, faceInfoList);
-            drawPreviewInfo(faceInfoList);
-            if (code == ErrorInfo.MOK && faceInfoList.size() > 0 && isNeedRecognize) {
-                faceInfo = faceInfoList.get(0);
-                Integer liveness = livenessMap.get(faceInfo.getFaceId());
-                if (liveness == null
-                        || (liveness != LivenessInfo.ALIVE && liveness != RequestLivenessStatus.ANALYZING)) {
-                    livenessMap.put(faceInfo.getFaceId(), RequestLivenessStatus.ANALYZING);
-                    if (ftEngine != null && flThreadQueue.remainingCapacity() > 0) {
-                        flExecutor.execute(new FaceLivenessDetectRunnable(data, faceInfo, previewSize.width, previewSize.height, FaceEngine.CP_PAF_NV21, faceInfo.getFaceId(), LivenessType.RGB));
-                    }
+        previewSize = mCameraHelper.getPreviewSize();
+        List<FaceInfo> faceInfoList = new ArrayList<>();
+        int code = ftEngine.detectFaces(data, previewSize.width, previewSize.height, FaceEngine.CP_PAF_NV21, faceInfoList);
+        drawPreviewInfo(faceInfoList);
+        if (code == ErrorInfo.MOK && faceInfoList.size() > 0 && isNeedRecognize) {
+            faceInfo = faceInfoList.get(0);
+            Integer liveness = livenessMap.get(faceInfo.getFaceId());
+            if (liveness == null
+                    || (liveness != LivenessInfo.ALIVE && liveness != RequestLivenessStatus.ANALYZING)) {
+                livenessMap.put(faceInfo.getFaceId(), RequestLivenessStatus.ANALYZING);
+                if (ftEngine != null && flThreadQueue.remainingCapacity() > 0) {
+                    flExecutor.execute(new FaceLivenessDetectRunnable(data, faceInfo, previewSize.width, previewSize.height, FaceEngine.CP_PAF_NV21, faceInfo.getFaceId(), LivenessType.RGB));
                 }
             }
+        }
     }
 
     @Override
@@ -382,6 +384,7 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
         if (livenessInfo != null) {
             int liveness = livenessInfo.getLiveness();
             if (liveness == LivenessInfo.ALIVE) {
+                XLog.get().e("get face data start time===" + System.currentTimeMillis());
                 YuvImage yuvimage = new YuvImage(nv21Data, ImageFormat.NV21, previewSize.width,
                         previewSize.height, null);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -406,6 +409,7 @@ public class FaceVerifyActivity extends BaseActivity<FaceVerifyPresenter> implem
                 String signature = "imgBase64=data:image/jpg;base64," + faceBase64 + "&requestTime=" + timeStr;
                 String finalSignature = hMacSha("vd938cyyy83edzdc", signature, "HmacSHA256");
                 FaceAuthPara faceAuthPara = new FaceAuthPara(timeStr, "data:image/jpg;base64," + faceBase64);
+                XLog.get().e("face recognize start time===" + System.currentTimeMillis());
                 mPresenter.getUserByFace("mu2lkq1i", finalSignature, timeStr, faceAuthPara);
             }
         }
