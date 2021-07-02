@@ -24,6 +24,7 @@
 
         <ImageView
             android:id="@+id/titleLeft"
+            android:visibility="gone"
             android:layout_width="@dimen/dp_40"
             android:layout_height="@dimen/dp_40"
             android:padding="@dimen/dp_12"
