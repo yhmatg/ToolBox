@@ -76,8 +76,8 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
     RecyclerView inOutRecycleView;
     @BindView(R.id.tv_result)
     TextView tvResult;
-    @BindView(R.id.iv_loading)
-    ImageView waitView;
+    /*@BindView(R.id.iv_loading)
+    ImageView waitView;*/
     @BindView(R.id.test_layout)
     LinearLayout testLayout;
     @BindString(R.string.loc_id)
@@ -128,7 +128,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         inOutRecycleView.setAdapter(adapter);
         mPresenter.fetchAllAssetsInfos();
         //mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);
-        initAnimation();
+        //initAnimation();
         if (!isTest) {
             initClient();
             serialPortUtil.totalReceiveSerialPort();
@@ -273,7 +273,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
         ToastUtils.showShort("OnCloseLock");
         openView.setVisibility(View.GONE);
         loadingView.setVisibility(View.VISIBLE);
-        waitView.startAnimation(anim);
+        //waitView.startAnimation(anim);
     }
 
     public void testOnGetAllTags() {
@@ -327,7 +327,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                         reOpenBt.setEnabled(true);
                         openView.setVisibility(View.GONE);
                         loadingView.setVisibility(View.VISIBLE);
-                        waitView.startAnimation(anim);
+                        //waitView.startAnimation(anim);
                         startInv(true, false);
                         ToastUtils.showShort("OnCloseLock");
                     }
@@ -477,7 +477,7 @@ public class ManageToolActivity extends BaseActivity<ManageToolPresenter> implem
                     return;
                 }
                 loadingView.setVisibility(View.GONE);
-                waitView.clearAnimation();
+                //waitView.clearAnimation();
                 resultView.setVisibility(View.VISIBLE);
                 if (wrongList.size() == 0) {
                     tvResult.setText(ManageToolActivity.this.getString(R.string.maintenance_result, invEpcList.size(), tempEpcList.size()));

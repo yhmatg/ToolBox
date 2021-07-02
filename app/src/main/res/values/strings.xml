@@ -42,4 +42,5 @@
     <string name="yes_str">是</string>
     <string name="face_auth">认证</string>
     <string name="user_name">使用人</string>
+    <string name="close_loading_str">关门盘点中.....</string>
 </resources>
