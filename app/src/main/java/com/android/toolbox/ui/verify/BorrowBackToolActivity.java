@@ -15,7 +15,6 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -72,8 +71,8 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
     RecyclerView inOutRecycleView;
     @BindView(R.id.tv_result)
     TextView tvResult;
-    @BindView(R.id.iv_loading)
-    ImageView waitView;
+   /* @BindView(R.id.iv_loading)
+    ImageView waitView;*/
     @BindView(R.id.test_layout)
     LinearLayout testLayout;
     @BindView(R.id.bottom_layout)
@@ -159,7 +158,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         mPresenter.fetchAllAssetsInfos();
         //mPresenter.fetchPageAssetsInfos(pageSize, currentPage, "", "", conditions);
         serverThread = ToolBoxApplication.getInstance().getServerThread();
-        initAnimation();
+        //initAnimation();
         //todo 开门动作
         if (!isTest) {
             isAutoReopen = false;
@@ -228,7 +227,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                                 }
                                 openView.setVisibility(View.GONE);
                                 loadingView.setVisibility(View.VISIBLE);
-                                waitView.startAnimation(anim);
+                                //waitView.startAnimation(anim);
                                 startRfid();
                                 ToastUtils.showShort("OnCloseLock");
                             }
@@ -371,7 +370,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
         ToastUtils.showShort("OnCloseLock");
         openView.setVisibility(View.GONE);
         loadingView.setVisibility(View.VISIBLE);
-        waitView.startAnimation(anim);
+        //waitView.startAnimation(anim);
     }
 
     public void testOnGetAllTags() {
@@ -491,7 +490,7 @@ public class BorrowBackToolActivity extends BaseActivity<ManageToolPresenter> im
                     return;
                 }
                 loadingView.setVisibility(View.GONE);
-                waitView.clearAnimation();
+                //waitView.clearAnimation();
                 resultView.setVisibility(View.VISIBLE);
                 if (wrongList.size() == 0) {
                     tvResult.setText(BorrowBackToolActivity.this.getString(R.string.maintenance_result, invEpcList.size(), tempEpcList.size()));
