@@ -40,8 +40,8 @@ public class Constants {
 
     public static final String TOKEN = "token";
 
-    public static final String APP_ID = "EqHSztCcAewGCxpaR9HoJYyiHjKxJwtS8GTeKzqhi5WJ";
-    public static final String SDK_KEY = "5WXucLtkT6hk8WxfDHiEmFUUpWdXP5uU9FAZ59zhCi7R";
+    public static final String APP_ID = "7YzghmRUQ9GfjPbp8soW4RE976QU3sictkwGWAFjd1BB";
+    public static final String SDK_KEY = "G9H1NPAkLqh7XGu45nAb3y6Yi88wgNM48KRekf1R4egz";
 
     public static final String FACE_ACTIVE_STATUS = "faceActiveStatus";
 }
